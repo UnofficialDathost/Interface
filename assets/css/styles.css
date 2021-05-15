@@ -265,3 +265,28 @@ i {
   width: 30px;
 }
 
+.console-card {
+  background-color: rgba(0,0,0,.03);
+}
+
+.form-control {
+  border: 0;
+  border-radius: 0;
+  background-color: #2a2c38;
+}
+
+.form-control:focus {
+  background-color: #181921;
+  color: #fff;
+}
+
+.console {
+  background-color: #000;
+  height: 60vh;
+  overflow-y: auto;
+}
+
+.console p {
+  margin-bottom: 1px;
+}
+
