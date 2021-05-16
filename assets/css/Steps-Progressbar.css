@@ -66,3 +66,20 @@
   height: 50px;
 }
 
+.side-option.active-right {
+  background: rgba(255,161,75,.1);
+  border-right: 2px solid #ffa14b;
+  color: #fff;
+  padding-left: 28px;
+  text-decoration: none;
+}
+
+.flag {
+  width: 100%;
+}
+
+.location-card {
+  margin-bottom: 15px;
+  min-height: 150px;
+}
+
