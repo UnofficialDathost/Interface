@@ -11,7 +11,7 @@
             </div>
             <div class="text-left nav-footer">
                 <b-dropdown id="dropdown-dropright" block size="lg" dropright text="Account" variant="primary">
-                    <b-dropdown-item href="#"><b-icon icon="credit-card"></b-icon> Billing <b-icon icon="box-arrow-up-right"></b-icon></b-dropdown-item>
+                    <b-dropdown-item href="#"><b-icon icon="credit-card"></b-icon> Billing</b-dropdown-item>
                     <b-dropdown-item href="#"><b-icon icon="tv"></b-icon> Interface</b-dropdown-item>
                     <b-dropdown-item href="#" style="background: var(--red);"><b-icon icon="arrow-bar-right"></b-icon> Logout</b-dropdown-item>
                 </b-dropdown>
@@ -20,10 +20,12 @@
                     <p style="margin-bottom: 5px;">This site stores local cookies what contain identifiers, this is purely for functionality.</p>
                     <p style="margin-bottom: 5px;">This website has zero&nbsp;affiliation with dathost.net.</p><a href="https://github.com/UnofficialDathost/Interface" target="_blank">Proudly licensed under&nbsp;GNU Affero 3</a>
                 </div>
-            </div><button class="btn btn-primary btn-lg text-uppercase" type="button">&nbsp;<i class="fa fa-plus"></i>&nbsp;Add Game Server</button>
+            </div><button class="btn btn-primary btn-lg text-uppercase" type="button">&nbsp;<b-icon icon="plus" scale="1.7"></b-icon>&nbsp;Add Game Server</button>
         </div>
-        <div class="col-md-8 col-xl-10 content">
-            <router-view/>
+        <div class="col-md-8 col-xl-10">
+            <div class="container-fluid content">
+                <router-view/>
+            </div>
         </div>
     </div>
   </div>
