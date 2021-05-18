@@ -1,0 +1,384 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap');
+@import url('https://fonts.googleapis.com/css?family=Poppins');
+
+body {
+    background-color: rgb(52, 55, 70);
+    font-family: Poppins, sans-serif;
+}
+
+.left-nav {
+    background: #424556;
+    height: 100vh;
+    padding: 0 2em;
+    box-shadow: 2px 0px 0px rgb(255 255 255 / 15%);
+}
+
+.nav-branding {
+    border-bottom: 1px solid rgb(45,47,58);
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    align-items: center;
+    overflow: hidden;
+}
+
+.nav-branding > img {
+    height: 60%;
+}
+
+.nav-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+a {
+    color: #ffa14b;
+}
+
+a:hover {
+    color: #ee9544;
+    text-decoration: none;
+}
+
+.card {
+    background-color: #424556;
+}
+
+.btn-primary {
+    color: #343746;
+    background-color: #FFA14B;
+    border-color: #FFA14B;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
+    color: #343746;
+    background-color: #CF823A;
+    border-color: #FFA14B;
+}
+
+.btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
+    background-image: none;
+}
+
+.btn-primary.disabled, .btn-primary[disabled], fieldset[disabled] .btn-primary, .btn-primary.disabled:hover, .btn-primary[disabled]:hover, fieldset[disabled] .btn-primary:hover, .btn-primary.disabled:focus, .btn-primary[disabled]:focus, fieldset[disabled] .btn-primary:focus, .btn-primary.disabled:active, .btn-primary[disabled]:active, fieldset[disabled] .btn-primary:active, .btn-primary.disabled.active, .btn-primary[disabled].active, fieldset[disabled] .btn-primary.active {
+    background-color: #FFA14B;
+    border-color: #FFA14B;
+}
+
+.btn-primary .badge {
+    color: #FFA14B;
+    background-color: #343746;
+}
+
+.btn-primary:focus {
+    box-shadow: none!important;
+    color: #343746!important;
+    border: none!important;
+    background-color: #CF823A!important;
+}
+
+button {
+    border-radius: 0!important;
+}
+
+.disclaimer {
+    padding: 1em;
+    background-color: #2a2c38;
+    font-size: .8em;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show > .btn-primary.dropdown-toggle {
+    background-color: #ffa14b;
+    border: none;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    background-color: #b57234;
+}
+
+.dropdown-item:focus, .dropdown-item:hover {
+    background-color: #b57234;
+}
+
+.dropdown-menu {
+    background-color: #424556;
+    border-radius: 0;
+}
+
+.content {
+    padding-top: 5px;
+}
+
+.dathost-orange {
+    color: #FFA14B;
+}
+
+.game-icon {
+    vertical-align: middle;
+    opacity: 0.7;
+    filter: brightness(100);
+    width: 25px;
+}
+
+.game-name {
+    margin-bottom: 0px;
+}
+
+.btn-secondary {
+    background: #343746;
+    border: 1px solid #343746;
+    color: #fff;
+    fill: #fff;
+}
+
+.btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active, .btn-secondary.active, .open .dropdown-toggle.btn-secondary {
+    background-color: #343746;
+    border-color: #343746;
+}
+
+.btn-secondary.disabled, .btn-secondary[disabled], fieldset[disabled] .btn-secondary, .btn-secondary.disabled:hover, .btn-secondary[disabled]:hover, fieldset[disabled] .btn-secondary:hover, .btn-secondary.disabled:focus, .btn-secondary[disabled]:focus, fieldset[disabled] .btn-secondary:focus, .btn-secondary.disabled:active, .btn-secondary[disabled]:active, fieldset[disabled] .btn-secondary:active, .btn-secondary.disabled.active, .btn-secondary[disabled].active, fieldset[disabled] .btn-secondary.active {
+    background-color: #343746;
+    border-color: #343746;
+}
+
+.btn-secondary .badge {
+    color: #343746;
+    background-color: #343746;
+}
+
+.btn-secondary:focus {
+    box-shadow: none!important;
+    border: none!important;
+    background-color: #292c37!important;
+}
+
+.btn-secondary:active, .btn-secondary.active, .open .dropdown-toggle.btn-secondary {
+    background-image: none;
+}
+
+.game-footer {
+    font-size: 0.7em;
+}
+
+.game-card {
+    margin-top: 10px;
+}
+
+.game-selected {
+    border: 2.5px solid rgb(255,161,75);
+}
+
+.card {
+    border-radius: 0;
+}
+
+.b-icon {
+    font-size: 1.2em!important;
+}
+
+.custom-search-input {
+    border: none;
+    border-bottom: 2px solid #383a49;
+    color: #fffff4;
+    background: transparent;
+    outline: none;
+    padding-bottom: 5px;
+    min-width: 250px;
+    text-indent: 40px;
+}
+
+.search-area {
+    display: inline-block;
+}
+
+.search-icon {
+    font-size: 18px;
+    margin-right: -20px;
+    margin-top: 3px;
+}
+
+.gutter-2.row {
+    margin-right: -2px;
+    margin-left: -2px;
+}
+
+.gutter-2 > [class^="col-"], .gutter-2 > [class^=" col-"] {
+    padding-right: 2px;
+    padding-left: 2px;
+}
+
+.card.login {
+    width: 40%;
+}
+
+.form-control:focus {
+    outline: 0;
+    box-shadow: none;
+    border: none;
+}
+
+@media screen and (max-width: 800px) {
+    .card.login {
+        width: 100%;
+    }
+}
+
+.game-select-card {
+    min-height: 130px;
+}
+
+.nav-pills .nav-link.active, .nav-tabs .nav-link.active {
+    background-color: #ffa14b;
+}
+
+.game-select-icon {
+    margin-bottom: 5px;
+    width: 45px;
+}
+
+.side-option.active {
+    background: rgba(255,161,75,.1);
+    border-left: 2px solid #ffa14b;
+    color: #fff;
+    padding-left: 28px;
+    text-decoration: none;
+}
+
+.side-option-large {
+    align-items: center;
+    background: transparent;
+    border: 0px;
+    color: rgba(255,255,255,.77);
+    display: flex;
+    font-size: 1.1em;
+    height: 40px;
+    width: 100%;
+}
+
+.side-option {
+    display: block;
+    padding-left: 30px;
+    padding-right: 28px;
+}
+
+.side-option > i {
+    width: 30px;
+}
+
+.console-card {
+    background-color: rgba(0,0,0,.03);
+}
+
+.form-control {
+    border: 0;
+    border-radius: 0;
+    background-color: #2a2c38;
+}
+
+.form-control:focus {
+    background-color: #181921;
+    color: #fff;
+}
+
+.console {
+    background-color: #000;
+    height: 60vh;
+    overflow-y: auto;
+}
+
+.console p {
+    margin-bottom: 1px;
+    font-size: .9em;
+}
+
+.steps-progressbar > ul {
+    display: table;
+    table-layout: fixed;
+    border-collapse: separate;
+    margin: 12px 0 10px;
+    width: 100%;
+    padding: 0;
+    list-style: none;
+    color: #999;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.steps-progressbar > ul > li {
+    position: relative;
+    display: table-cell;
+    list-style-type: none;
+    font-weight: 400;
+    text-align: center;
+}
+
+.steps-progressbar > ul > li:before {
+    position: inherit;
+    display: block;
+    margin: 10px auto 20px;
+    width: 30px;
+    height: 30px;
+    border: 2px solid #343746;
+    border-radius: 50%;
+    background-color: #343746;
+    line-height: 30px;
+    content: " ";
+    z-index: 1;
+}
+
+.steps-progressbar > ul > li:after {
+    position: absolute;
+    top: 19px;
+    right: 50%;
+    width: 100%;
+    height: 12px;
+    box-shadow: inset 0 0 5px #343746;
+    background-color: #343746;
+    content: " ";
+    z-index: 0;
+}
+
+.steps-progressbar > ul > li:first-child:after {
+    content: none;
+}
+
+.steps-progressbar > ul > li.active:before, .steps-progressbar > ul > li.previous:before {
+    border-color: #ffa14b;
+    background-color: #ffa14b;
+}
+
+.steps-progressbar > ul > li.active:after, .steps-progressbar > ul > li.previous:after {
+    box-shadow: none;
+    background-color: #ffa14b;
+}
+
+.steps-progressbar > ul > li.active:before {
+    margin-top: 0;
+    margin-bottom: 10px;
+    width: 50px;
+    height: 50px;
+}
+
+.side-option.active-right {
+    background: rgba(255,161,75,.1);
+    border-right: 2px solid #ffa14b;
+    color: #fff;
+    padding-left: 28px;
+    text-decoration: none;
+}
+
+.flag {
+    width: 100%;
+}
+
+.location-card {
+    margin-bottom: 15px;
+    min-height: 150px;
+}
+
+thead {
+    background-color: #2a2c38;
+}
