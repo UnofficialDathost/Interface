@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins');
 
 body {
-    background-color: rgb(52, 55, 70);
+    background-color: #343746;
     font-family: Poppins, sans-serif;
 }
 
@@ -21,7 +21,7 @@ body {
 }
 
 .nav-branding {
-    border-bottom: 1px solid rgb(45,47,58);
+    border-bottom: 1px solid var(--dathost-dark-dark);
     padding-bottom: 1em;
     margin-bottom: 1em;
     display: flex;
@@ -223,12 +223,6 @@ button {
     border: none;
 }
 
-@media screen and (max-width: 800px) {
-    .card.login {
-        width: 100%;
-    }
-}
-
 .game-select-card {
     min-height: 130px;
 }
@@ -384,4 +378,10 @@ button {
 
 thead {
     background-color: var(--dathost-dark-dark);
+}
+
+@media screen and (max-width: 800px) {
+    .card.login {
+        width: 100%;
+    }
 }
