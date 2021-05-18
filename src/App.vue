@@ -6,8 +6,8 @@
                 <p style="margin-top: 8px;margin-bottom: 0px;">Unofficial interface created by&nbsp;<a href="https://github.com/WardPearce" target="_blank">Ward Pearce</a></p>
             </div>
             <div class="nav-branding">
-                <h6>Credits:&nbsp;<span class="dathost-orange">16.76 NZD</span></h6>
-                <h6 style="margin-bottom: 0px;">This will last&nbsp;<span class="dathost-orange">indefinitely</span></h6>
+                <h6>Credits:&nbsp;<span style="color: var(--dathost-orange);">16.76 NZD</span></h6>
+                <h6 style="margin-bottom: 0px;">This will last&nbsp;<span style="color: var(--dathost-orange);">indefinitely</span></h6>
             </div>
             <div class="text-left nav-footer">
                 <b-dropdown id="dropdown-dropright" block size="lg" dropright text="Account" variant="primary">

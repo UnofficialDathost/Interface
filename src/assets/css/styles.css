@@ -6,8 +6,15 @@ body {
     font-family: Poppins, sans-serif;
 }
 
+:root {
+    --dathost-orange: #FFA14B;
+    --dathost-orange-dark: #CF823A;
+    --dathost-dark: #424556;
+    --dathost-dark-dark: #2a2c38;
+}
+
 .left-nav {
-    background: #424556;
+    background: var(--dathost-dark);
     height: 100vh;
     padding: 0 2em;
     box-shadow: 2px 0px 0px rgb(255 255 255 / 15%);
@@ -35,7 +42,7 @@ body {
 }
 
 a {
-    color: #ffa14b;
+    color: var(--dathost-orange);
 }
 
 a:hover {
@@ -44,19 +51,19 @@ a:hover {
 }
 
 .card {
-    background-color: #424556;
+    background-color: var(--dathost-dark);
 }
 
 .btn-primary {
     color: #343746;
-    background-color: #FFA14B;
-    border-color: #FFA14B;
+    background-color: var(--dathost-orange);
+    border-color: var(--dathost-orange);
 }
 
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
     color: #343746;
-    background-color: #CF823A;
-    border-color: #FFA14B;
+    background-color: var(--dathost-orange-dark);
+    border-color: var(--dathost-orange);
 }
 
 .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
@@ -64,12 +71,12 @@ a:hover {
 }
 
 .btn-primary.disabled, .btn-primary[disabled], fieldset[disabled] .btn-primary, .btn-primary.disabled:hover, .btn-primary[disabled]:hover, fieldset[disabled] .btn-primary:hover, .btn-primary.disabled:focus, .btn-primary[disabled]:focus, fieldset[disabled] .btn-primary:focus, .btn-primary.disabled:active, .btn-primary[disabled]:active, fieldset[disabled] .btn-primary:active, .btn-primary.disabled.active, .btn-primary[disabled].active, fieldset[disabled] .btn-primary.active {
-    background-color: #FFA14B;
-    border-color: #FFA14B;
+    background-color: var(--dathost-orange);
+    border-color: var(--dathost-orange);
 }
 
 .btn-primary .badge {
-    color: #FFA14B;
+    color: var(--dathost-orange);
     background-color: #343746;
 }
 
@@ -77,7 +84,7 @@ a:hover {
     box-shadow: none!important;
     color: #343746!important;
     border: none!important;
-    background-color: #CF823A!important;
+    background-color: var(--dathost-orange-dark)!important;
 }
 
 button {
@@ -86,34 +93,30 @@ button {
 
 .disclaimer {
     padding: 1em;
-    background-color: #2a2c38;
+    background-color: var(--dathost-dark-dark);
     font-size: .8em;
 }
 
 .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show > .btn-primary.dropdown-toggle {
-    background-color: #ffa14b;
+    background-color: var(--dathost-orange);
     border: none;
 }
 
 .dropdown-item.active, .dropdown-item:active {
-    background-color: #b57234;
+    background-color: var(--dathost-orange-dark);
 }
 
 .dropdown-item:focus, .dropdown-item:hover {
-    background-color: #b57234;
+    background-color: var(--dathost-orange-dark);
 }
 
 .dropdown-menu {
-    background-color: #424556;
+    background-color: var(--dathost-dark);
     border-radius: 0;
 }
 
 .content {
     padding-top: 10px;
-}
-
-.dathost-orange {
-    color: #FFA14B;
 }
 
 .game-icon {
@@ -231,7 +234,7 @@ button {
 }
 
 .nav-pills .nav-link.active, .nav-tabs .nav-link.active {
-    background-color: #ffa14b;
+    background-color: var(--dathost-orange);
 }
 
 .game-select-icon {
@@ -241,7 +244,7 @@ button {
 
 .side-option.active {
     background: rgba(255,161,75,.1);
-    border-left: 2px solid #ffa14b;
+    border-left: 2px solid var(--dathost-orange);
     color: #fff;
     padding-left: 28px;
     text-decoration: none;
@@ -275,7 +278,7 @@ button {
 .form-control {
     border: 0;
     border-radius: 0;
-    background-color: #2a2c38;
+    background-color: var(--dathost-dark-dark);
 }
 
 .form-control:focus {
@@ -346,13 +349,13 @@ button {
 }
 
 .steps-progressbar > ul > li.active:before, .steps-progressbar > ul > li.previous:before {
-    border-color: #ffa14b;
-    background-color: #ffa14b;
+    border-color: var(--dathost-orange);
+    background-color: var(--dathost-orange);
 }
 
 .steps-progressbar > ul > li.active:after, .steps-progressbar > ul > li.previous:after {
     box-shadow: none;
-    background-color: #ffa14b;
+    background-color: var(--dathost-orange);
 }
 
 .steps-progressbar > ul > li.active:before {
@@ -364,7 +367,7 @@ button {
 
 .side-option.active-right {
     background: rgba(255,161,75,.1);
-    border-right: 2px solid #ffa14b;
+    border-right: 2px solid var(--dathost-orange);
     color: #fff;
     padding-left: 28px;
     text-decoration: none;
@@ -380,5 +383,5 @@ button {
 }
 
 thead {
-    background-color: #2a2c38;
+    background-color: var(--dathost-dark-dark);
 }
