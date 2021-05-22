@@ -1,4 +1,5 @@
 <template>
+  <div v-if="!deleted" class="col-md-4">
     <div class="card game-card">
         <div class="card-header">
             <div class="row">
@@ -8,7 +9,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body d-flex d-xl-flex flex-column justify-content-center justify-content-xl-center">
+        <div v-if="!serverStatus.deleting" class="card-body d-flex d-xl-flex flex-column justify-content-center justify-content-xl-center">
             <div class="row">
                 <div class="col-md-6 col-xl-4 d-xl-flex justify-content-xl-start">
                     <p class="text-capitalize"><b-icon icon="compass"></b-icon>&nbsp;{{ server.location }}&nbsp;</p>
@@ -29,7 +30,7 @@
                 </button>
                 <button v-else-if="server.on === false" @click="startServer()" class="btn btn-primary" type="button"><b-icon icon="play-circle"></b-icon>&nbsp;Start</button>
                 <template v-else>
-                  <button v-if="serverStatus.stoppingServer" class="btn btn-secondary" type="button">
+                  <button v-if="serverStatus.stopping" class="btn btn-secondary" type="button">
                     <b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner>&nbsp;Stopping
                   </button>
                   <button v-else @click="stopServer()" class="btn btn-secondary" type="button"><b-icon icon="stop-circle"></b-icon>&nbsp;Stop</button>
@@ -43,11 +44,18 @@
                 <b-dropdown text="More" variant="secondary">
                   <b-dropdown-item href="#"><b-icon icon="file-break"></b-icon> Clone</b-dropdown-item>
                   <b-dropdown-item href="#"><b-icon icon="arrow-repeat"></b-icon> Restart</b-dropdown-item>
-                  <b-dropdown-item href="#" style="background: var(--red);"><b-icon icon="trash"></b-icon> Delete</b-dropdown-item>
+                  <b-dropdown-item @click="deleteServer()" style="background: var(--red);"><b-icon icon="trash"></b-icon> Delete</b-dropdown-item>
                 </b-dropdown>
             </div>
         </div>
+        <div v-else class="card-body">
+          <h6 class="text-center">Deleting server</h6>
+          <div class="d-flex justify-content-center mb-3">
+            <b-spinner label="Loading..."></b-spinner>
+          </div>
+        </div>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -71,8 +79,11 @@ export default class ServerCard extends VueMixin {
 
   serverStatus = {
     startingUp: false,
-    stoppingServer: false
+    stopping: false,
+    deleting: false
   }
+
+  deleted = false
 
   created (): void {
     this.serverObj = this.$dathost.server(this.server.id)
@@ -86,10 +97,18 @@ export default class ServerCard extends VueMixin {
   }
 
   async stopServer (): Promise<void> {
-    this.serverStatus.stoppingServer = true
+    this.serverStatus.stopping = true
     await this.serverObj.stop()
     this.server.on = false
-    this.serverStatus.stoppingServer = false
+    this.serverStatus.stopping = false
+  }
+
+  async deleteServer (): Promise<void> {
+    if (confirm(`Are you sure you want to delete this?\n\nName: ${this.server.name}\nID: ${this.server.id}`)) {
+      this.serverStatus.deleting = true
+      await this.serverObj.delete()
+      this.deleted = true
+    }
   }
 }
 </script>

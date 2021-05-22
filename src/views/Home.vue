@@ -5,9 +5,7 @@
       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
     </div>
     <div v-else class="row gutter-2">
-      <div v-for="(server, index) in servers" :key="index" class="col-md-4">
-        <ServerCard :server="server" />
-      </div>
+      <ServerCard v-for="(server, index) in servers" :key="index" :server="server" />
     </div>
   </div>
 </template>

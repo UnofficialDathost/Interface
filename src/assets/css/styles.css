@@ -4,6 +4,7 @@
 body {
     background-color: #343746;
     font-family: Poppins, sans-serif;
+    overflow-x: hidden;
 }
 
 :root {
