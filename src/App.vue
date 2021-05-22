@@ -6,18 +6,17 @@
                 <p style="margin-top: 8px;margin-bottom: 0px;">Unofficial interface created by&nbsp;<a href="https://github.com/WardPearce" target="_blank">Ward Pearce</a></p>
             </div>
             <div class="nav-branding">
-                <h6>Credits:&nbsp;<span style="color: var(--dathost-orange);">16.76 NZD</span></h6>
-                <h6 style="margin-bottom: 0px;">This will last&nbsp;<span style="color: var(--dathost-orange);">indefinitely</span></h6>
+                <h6>Credits:&nbsp;<span style="color: var(--dathost-orange);">{{ account.credits }} EUROS</span></h6>
+                <h6 style="margin-bottom: 0px;">This will last&nbsp;<span style="color: var(--dathost-orange);">{{ account.time_left }}</span></h6>
             </div>
             <div class="text-left nav-footer">
                 <b-dropdown id="dropdown-dropright" block size="lg" dropright text="Account" variant="primary">
                     <b-dropdown-item href="#"><b-icon icon="credit-card"></b-icon> Billing</b-dropdown-item>
                     <b-dropdown-item href="#"><b-icon icon="tv"></b-icon> Interface</b-dropdown-item>
-                    <b-dropdown-item href="#" style="background: var(--red);"><b-icon icon="arrow-bar-right"></b-icon> Logout</b-dropdown-item>
+                    <b-dropdown-item @click="logout()" href="#" style="background: var(--red);"><b-icon icon="arrow-bar-right"></b-icon> Logout</b-dropdown-item>
                 </b-dropdown>
                 <div class="disclaimer">
-                    <p style="margin-bottom: 5px;">This site stores local cookies what contain identifiers, this is purely for functionality.</p>
-                    <p style="margin-bottom: 5px;">This website has zero&nbsp;affiliation with dathost.net.</p><a href="https://github.com/UnofficialDathost/Interface" target="_blank">Proudly licensed under&nbsp;GNU Affero 3</a>
+                  <Disclaimer />
                 </div>
             </div><button class="btn btn-primary btn-lg text-uppercase" type="button">&nbsp;<b-icon icon="plus" scale="1.7"></b-icon>&nbsp;Add Game Server</button>
         </div>
@@ -50,8 +49,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <p style="margin-bottom: 5px;">This site stores local cookies that contain identifiers, this is purely for functionality.</p>
-                <p style="margin-bottom: 5px;">This website has zero&nbsp;affiliation with dathost.net.</p><a href="https://github.com/UnofficialDathost/Interface" target="_blank">Proudly licensed under&nbsp;GNU Affero 3</a>
+              <Disclaimer />
             </div>
         </div>
     </div>
@@ -60,11 +58,21 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
-import Dathost from 'dathost'
+import { Component, Vue } from 'vue-property-decorator'
 
-@Component
-export default class App extends Vue {
+import Dathost from 'dathost'
+import { IAccount } from 'dathost/src/interfaces/account'
+
+import Disclaimer from '@/components/disclaimer.vue'
+
+import VueMixin from '@/mixins/vue'
+
+@Component({
+  components: {
+    Disclaimer
+  }
+})
+export default class App extends VueMixin {
   login: Record<string, string> = {
     email: '',
     password: ''
@@ -74,17 +82,34 @@ export default class App extends Vue {
   invalidLogin = false
   loginLoading = false
 
+  account: IAccount
+
+  async mounted (): Promise<void> {
+    if (localStorage.getItem('loginDetails') !== null) {
+      this.login = JSON.parse(localStorage.getItem('loginDetails') || '')
+      await this.checkLogin()
+    }
+  }
+
   async checkLogin (): Promise<void> {
     const dathost = new Dathost(this.login.email, this.login.password, 'https://cors-anywhere.wardpearce.com/dathost.net/api/0.1/')
     this.loginLoading = true
     try {
-      await dathost.account()
+      this.account = await dathost.account()
       this.invalidLogin = false
       this.loggedIn = true
+
+      Vue.prototype.$dathost = dathost
+      localStorage.setItem('loginDetails', JSON.stringify(this.login))
     } catch {
       this.invalidLogin = true
     }
     this.loginLoading = false
+  }
+
+  logout (): void {
+    this.loggedIn = false
+    localStorage.removeItem('loginDetails')
   }
 }
 </script>

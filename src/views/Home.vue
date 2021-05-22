@@ -5,7 +5,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Component } from 'vue-property-decorator'
+import VueMixin from '@/mixins/vue'
 
 import ActionCard from '@/components/action-card.vue'
 
@@ -14,5 +15,9 @@ import ActionCard from '@/components/action-card.vue'
     ActionCard
   }
 })
-export default class Home extends Vue {}
+export default class Home extends VueMixin {
+  created (): void {
+    console.log(this.$dathost)
+  }
+}
 </script>
