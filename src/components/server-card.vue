@@ -25,7 +25,10 @@
                 </div>
             </div>
             <div class="btn-group" role="group">
-                <button v-if="serverStatus.startingUp || server.booting" @click="startServer()" class="btn btn-primary" type="button">
+                <button v-if="serverStatus.restarting" class="btn btn-primary" type="button">
+                  <b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner>&nbsp;Restarting
+                </button>
+                <button v-else-if="serverStatus.startingUp || server.booting" class="btn btn-primary" type="button">
                   <b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner>&nbsp;Starting
                 </button>
                 <button v-else-if="server.on === false" @click="startServer()" class="btn btn-primary" type="button"><b-icon icon="play-circle"></b-icon>&nbsp;Start</button>
@@ -35,15 +38,15 @@
                   </button>
                   <button v-else @click="stopServer()" class="btn btn-secondary" type="button"><b-icon icon="stop-circle"></b-icon>&nbsp;Stop</button>
                 </template>
-                <b-dropdown text="Connect" variant="secondary">
-                  <b-dropdown-item href="#"><b-icon icon="arrow-up-right-square-fill"></b-icon> Connect</b-dropdown-item>
-                  <b-dropdown-item href="#"><b-icon icon="clipboard"></b-icon> Dathost IP</b-dropdown-item>
-                  <b-dropdown-item href="#"><b-icon icon="clipboard"></b-icon> Raw IP</b-dropdown-item>
-                  <b-dropdown-item href="#"><b-icon icon="clipboard"></b-icon> GOTV IP</b-dropdown-item>
+                <b-dropdown v-if="server.game === 'csgo' || server.game === 'teamfortress2'" text="Connect" variant="secondary">
+                  <b-dropdown-item :href="`steam://connect/${server.raw_ip}:${server.ports.game}${steamProtocolPass}`"><b-icon icon="arrow-up-right-square-fill"></b-icon> Connect</b-dropdown-item>
+                  <b-dropdown-item @click="copyToClipboard(`connect ${server.ip}:${server.ports.game}${password}`)"><b-icon icon="clipboard"></b-icon> Dathost IP</b-dropdown-item>
+                  <b-dropdown-item @click="copyToClipboard(`connect ${server.raw_ip}:${server.ports.game}${password}`)"><b-icon icon="clipboard"></b-icon> Raw IP</b-dropdown-item>
+                  <b-dropdown-item v-if="gotvEnabled" @click="copyToClipboard(`connect ${server.raw_ip}:${server.ports.gotv}`)"><b-icon icon="clipboard"></b-icon> GOTV IP</b-dropdown-item>
                 </b-dropdown>
                 <b-dropdown text="More" variant="secondary">
                   <b-dropdown-item href="#"><b-icon icon="file-break"></b-icon> Clone</b-dropdown-item>
-                  <b-dropdown-item href="#"><b-icon icon="arrow-repeat"></b-icon> Restart</b-dropdown-item>
+                  <b-dropdown-item @click="restartServer()"><b-icon icon="arrow-repeat"></b-icon> Restart</b-dropdown-item>
                   <b-dropdown-item @click="deleteServer()" style="background: var(--red);"><b-icon icon="trash"></b-icon> Delete</b-dropdown-item>
                 </b-dropdown>
             </div>
@@ -80,13 +83,36 @@ export default class ServerCard extends VueMixin {
   serverStatus = {
     startingUp: false,
     stopping: false,
-    deleting: false
+    deleting: false,
+    restarting: false
   }
 
   deleted = false
 
+  password = ''
+  steamProtocolPass = ''
+  gotvEnabled = false
+
   created (): void {
     this.serverObj = this.$dathost.server(this.server.id)
+
+    if (this.server.game === 'csgo') {
+      if (this.server.csgo_settings.password) {
+        this.password = `; password ${this.server.csgo_settings.password}`
+        this.steamProtocolPass = `/${this.server.csgo_settings.password}`
+      }
+      this.gotvEnabled = this.server.csgo_settings.enable_gotv
+    } else if (this.server.game === 'teamfortress2') {
+      if (this.server.teamfortress2_settings.password) {
+        this.password = `; password ${this.server.teamfortress2_settings.password}`
+        this.steamProtocolPass = `/${this.server.teamfortress2_settings.password}`
+      }
+      this.gotvEnabled = this.server.teamfortress2_settings.enable_gotv
+    }
+  }
+
+  async copyToClipboard (txt: string): Promise<void> {
+    await navigator.clipboard.writeText(txt)
   }
 
   async startServer (): Promise<void> {
@@ -109,6 +135,14 @@ export default class ServerCard extends VueMixin {
       await this.serverObj.delete()
       this.deleted = true
     }
+  }
+
+  async restartServer (): Promise<void> {
+    this.serverStatus.restarting = true
+    await this.serverObj.stop()
+    await this.serverObj.start()
+    this.serverStatus.restarting = false
+    this.server.on = true
   }
 }
 </script>
