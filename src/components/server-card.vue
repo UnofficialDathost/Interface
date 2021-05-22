@@ -23,13 +23,22 @@
                     <p><b-icon icon="lightning"></b-icon>&nbsp;{{ server.month_credits }} / {{ server.max_cost_per_month }}</p>
                 </div>
             </div>
-            <div class="btn-group" role="group"><button class="btn btn-primary" type="button"><i class="fa fa-play-circle-o"></i>&nbsp;Start</button>
-                <div class="dropdown btn-group" role="group"><button class="btn btn-secondary dropdown-toggle" aria-expanded="false" data-toggle="dropdown" type="button"><i class="fa fa-share-alt"></i>&nbsp;Connect</button>
-                    <div class="dropdown-menu"><a class="dropdown-item" href="#"><i class="fa fa-external-link"></i>&nbsp;Connect</a><a class="dropdown-item" href="#"><i class="fa fa-clipboard"></i>&nbsp;Dathost IP</a><a class="dropdown-item" href="#"><i class="fa fa-clipboard"></i>&nbsp;Raw IP</a><a class="dropdown-item" href="#"><i class="fa fa-clipboard"></i>&nbsp;GOTV IP</a></div>
-                </div>
-                <div class="dropdown btn-group" role="group"><button class="btn btn-secondary dropdown-toggle" aria-expanded="false" data-toggle="dropdown" type="button"><i class="fa fa-th-list"></i>&nbsp;More</button>
-                    <div class="dropdown-menu"><a class="dropdown-item" href="#"><i class="fa fa-clone"></i>&nbsp;Clone</a><a class="dropdown-item" href="#"><i class="fa fa-repeat"></i>&nbsp;Restart</a><a class="dropdown-item" href="#" style="background: var(--red);"><i class="fa fa-trash-o"></i>&nbsp;Delete</a></div>
-                </div>
+            <div class="btn-group" role="group">
+                <button v-if="serverStatus.startingUp" @click="startServer()" class="btn btn-primary" type="button">
+                  <b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner>&nbsp;Starting
+                </button>
+                <button v-else-if="server.on === false && server.booting === false" @click="startServer()" class="btn btn-primary" type="button"><b-icon icon="play-circle"></b-icon>&nbsp;Start</button>
+                <b-dropdown text="Connect" variant="secondary">
+                  <b-dropdown-item href="#"><b-icon icon="arrow-up-right-square-fill"></b-icon> Connect</b-dropdown-item>
+                  <b-dropdown-item href="#"><b-icon icon="clipboard"></b-icon> Dathost IP</b-dropdown-item>
+                  <b-dropdown-item href="#"><b-icon icon="clipboard"></b-icon> Raw IP</b-dropdown-item>
+                  <b-dropdown-item href="#"><b-icon icon="clipboard"></b-icon> GOTV IP</b-dropdown-item>
+                </b-dropdown>
+                <b-dropdown text="More" variant="secondary">
+                  <b-dropdown-item href="#"><b-icon icon="file-break"></b-icon> Clone</b-dropdown-item>
+                  <b-dropdown-item href="#"><b-icon icon="arrow-repeat"></b-icon> Restart</b-dropdown-item>
+                  <b-dropdown-item href="#" style="background: var(--red);"><b-icon icon="trash"></b-icon> Delete</b-dropdown-item>
+                </b-dropdown>
             </div>
         </div>
     </div>
@@ -37,16 +46,36 @@
 
 <script lang="ts">
 import VueMixin from '@/mixins/vue'
-import Component from 'vue-class-component'
+import { Component, Prop } from 'vue-property-decorator'
+
+import Server from 'dathost/src/server'
+import { IServer } from 'dathost/src/interfaces/server'
 
 import Slots from '@/components/slots.vue'
 
 @Component({
   name: 'ServerCard',
-  props: {
-    server: Object
-  },
   components: { Slots }
 })
-export default class ServerCard extends VueMixin {}
+export default class ServerCard extends VueMixin {
+  @Prop({ type: Object })
+  server: IServer
+
+  serverObj: Server
+
+  serverStatus = {
+    startingUp: false
+  }
+
+  created (): void {
+    this.serverObj = this.$dathost.server(this.server.id)
+  }
+
+  async startServer (): Promise<void> {
+    this.serverStatus.startingUp = true
+    await this.serverObj.start()
+    this.serverStatus.startingUp = false
+    this.server.on = true
+  }
+}
 </script>
