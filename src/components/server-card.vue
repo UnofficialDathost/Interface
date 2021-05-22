@@ -9,7 +9,13 @@
                 </div>
             </div>
         </div>
-        <div v-if="!serverStatus.deleting" class="card-body d-flex d-xl-flex flex-column justify-content-center justify-content-xl-center">
+        <div v-if="cloned" class="card-body">
+          <h6 class="text-center">Cloning server</h6>
+          <div class="d-flex justify-content-center mb-3">
+            <b-spinner label="Loading..."></b-spinner>
+          </div>
+        </div>
+        <div v-else-if="!serverStatus.deleting" class="card-body d-flex d-xl-flex flex-column justify-content-center justify-content-xl-center">
             <div class="row">
                 <div class="col-md-6 col-xl-4 d-xl-flex justify-content-xl-start">
                     <p class="text-capitalize"><b-icon icon="compass"></b-icon>&nbsp;{{ server.location }}&nbsp;</p>
@@ -45,7 +51,7 @@
                   <b-dropdown-item v-if="gotvEnabled" @click="copyToClipboard(`connect ${server.raw_ip}:${server.ports.gotv}`)"><b-icon icon="clipboard"></b-icon> GOTV IP</b-dropdown-item>
                 </b-dropdown>
                 <b-dropdown text="More" variant="secondary">
-                  <b-dropdown-item href="#"><b-icon icon="file-break"></b-icon> Clone</b-dropdown-item>
+                  <b-dropdown-item @click="cloneServer()"><b-icon icon="file-break"></b-icon> Clone</b-dropdown-item>
                   <b-dropdown-item @click="restartServer()"><b-icon icon="arrow-repeat"></b-icon> Restart</b-dropdown-item>
                   <b-dropdown-item @click="deleteServer()" style="background: var(--red);"><b-icon icon="trash"></b-icon> Delete</b-dropdown-item>
                 </b-dropdown>
@@ -77,6 +83,9 @@ import Slots from '@/components/slots.vue'
 export default class ServerCard extends VueMixin {
   @Prop({ type: Object })
   server: IServer
+
+  @Prop({ type: Boolean, default: false })
+  cloned: boolean
 
   serverObj: Server
 
@@ -143,6 +152,12 @@ export default class ServerCard extends VueMixin {
     await this.serverObj.start()
     this.serverStatus.restarting = false
     this.server.on = true
+  }
+
+  async cloneServer (): Promise<void> {
+    this.$emit('serverCloned', this.server)
+    const clonedServer = await this.serverObj.duplicate()
+    this.$emit('serverAdded', clonedServer[0])
   }
 }
 </script>

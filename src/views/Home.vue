@@ -5,7 +5,8 @@
       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
     </div>
     <div v-else class="row gutter-2">
-      <ServerCard v-for="(server, index) in servers" :key="index" :server="server" />
+      <ServerCard @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="(server, index) in servers" :key="index" :server="server" />
+      <ServerCard v-for="(server, index) in clonedServers" :key="index" :server="server" :cloned="true" />
     </div>
   </div>
 </template>
@@ -27,6 +28,7 @@ import ServerCard from '@/components/server-card.vue'
 })
 export default class Home extends VueMixin {
   servers: IServer[] = []
+  clonedServers: IServer[] = []
   serversLoading = true
 
   async mounted (): Promise<void> {
@@ -41,6 +43,20 @@ export default class Home extends VueMixin {
     }
 
     this.serversLoading = false
+  }
+
+  addServer (server: IServer): void {
+    for (const clonedServer of this.clonedServers) {
+      if (clonedServer.name === server.name) {
+        this.clonedServers.splice(this.clonedServers.indexOf(clonedServer), 1)
+        break
+      }
+    }
+    this.servers.push(server)
+  }
+
+  addCloneDecoy (server: IServer): void {
+    this.clonedServers.push(server)
   }
 }
 </script>
