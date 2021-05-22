@@ -6,7 +6,7 @@
     </div>
     <div v-else class="row gutter-2">
       <div v-for="(server, index) in servers" :key="index" class="col-md-4">
-        <ServerCard />
+        <ServerCard :server="server" />
       </div>
     </div>
   </div>

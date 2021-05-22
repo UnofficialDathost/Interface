@@ -2,22 +2,25 @@
     <div class="card game-card">
         <div class="card-header">
             <div class="row">
-                <div class="col-md-6 d-xl-flex justify-content-xl-start align-items-xl-center"><img class="game-icon" src="https://cdn.dathost.net/assets/img/game_icons/csgo.svg"></div>
+                <div class="col-md-6 d-xl-flex justify-content-xl-start align-items-xl-center"><img class="game-icon" :src="require(`@/assets/img/games/${server.game}.svg`)"></div>
                 <div class="col-md-6 d-xl-flex justify-content-xl-end align-items-xl-center">
-                    <h6 class="game-name">&nbsp;Retake #1</h6>
+                    <h6 class="game-name">&nbsp;{{ server.name }}</h6>
                 </div>
             </div>
         </div>
         <div class="card-body d-flex d-xl-flex flex-column justify-content-center justify-content-xl-center">
             <div class="row">
                 <div class="col-md-6 col-xl-4 d-xl-flex justify-content-xl-start">
-                    <p><b-icon icon="compass"></b-icon>&nbsp;Sydney&nbsp;</p>
+                    <p class="text-capitalize"><b-icon icon="compass"></b-icon>&nbsp;{{ server.location }}&nbsp;</p>
                 </div>
                 <div class="col-md-6 col-xl-4 d-xl-flex justify-content-xl-center">
-                    <p><b-icon icon="people"></b-icon>&nbsp;12 slots</p>
+                    <p>
+                      <b-icon icon="people"></b-icon>&nbsp;
+                      <Slots :server="server" /> slots
+                    </p>
                 </div>
                 <div class="col-md-6 col-xl-4 d-xl-flex justify-content-xl-end">
-                    <p><b-icon icon="lightning"></b-icon>&nbsp;0.0 / 11.8</p>
+                    <p><b-icon icon="lightning"></b-icon>&nbsp;{{ server.month_credits }} / {{ server.max_cost_per_month }}</p>
                 </div>
             </div>
             <div class="btn-group" role="group"><button class="btn btn-primary" type="button"><i class="fa fa-play-circle-o"></i>&nbsp;Start</button>
@@ -36,8 +39,14 @@
 import VueMixin from '@/mixins/vue'
 import Component from 'vue-class-component'
 
+import Slots from '@/components/slots.vue'
+
 @Component({
-  name: 'ServerCard'
+  name: 'ServerCard',
+  props: {
+    server: Object
+  },
+  components: { Slots }
 })
 export default class ServerCard extends VueMixin {}
 </script>

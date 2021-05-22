@@ -6,7 +6,7 @@
                 <div class="col-md-3" v-for="(game, index) in games" :key="index">
                     <div class="card game-select-card" @click="selectedGame = game.name" v-bind:class="{'game-selected': game.name === selectedGame}">
                         <div class="card-body d-flex d-xl-flex flex-column justify-content-center align-items-center justify-content-xl-center align-items-xl-center">
-                          <img class="game-icon game-select-icon" :src="require(`@/assets/img/games/${game.logo}`)">
+                          <img class="game-icon game-select-icon" :src="require(`@/assets/img/games/${game.logo}.svg`)">
                           <h5 style="margin-bottom: 0px;">{{ game.name }}</h5>
                         </div>
                     </div>
@@ -46,10 +46,10 @@ import VueMixin from '@/mixins/vue'
 @Component
 export default class CreateServer extends VueMixin {
   games = [
-    { name: 'CS: GO', logo: 'csgo.svg' },
-    { name: 'Valheim', logo: 'valheim.svg' },
-    { name: 'TF2', logo: 'teamfortress2.svg' },
-    { name: 'TS3', logo: 'teamspeak3.svg' }
+    { name: 'CS: GO', logo: 'csgo' },
+    { name: 'Valheim', logo: 'valheim' },
+    { name: 'TF2', logo: 'teamfortress2' },
+    { name: 'TS3', logo: 'teamspeak3' }
   ]
 
   selectedGame = null
