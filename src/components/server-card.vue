@@ -24,10 +24,16 @@
                 </div>
             </div>
             <div class="btn-group" role="group">
-                <button v-if="serverStatus.startingUp" @click="startServer()" class="btn btn-primary" type="button">
+                <button v-if="serverStatus.startingUp || server.booting" @click="startServer()" class="btn btn-primary" type="button">
                   <b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner>&nbsp;Starting
                 </button>
-                <button v-else-if="server.on === false && server.booting === false" @click="startServer()" class="btn btn-primary" type="button"><b-icon icon="play-circle"></b-icon>&nbsp;Start</button>
+                <button v-else-if="server.on === false" @click="startServer()" class="btn btn-primary" type="button"><b-icon icon="play-circle"></b-icon>&nbsp;Start</button>
+                <template v-else>
+                  <button v-if="serverStatus.stoppingServer" class="btn btn-secondary" type="button">
+                    <b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner>&nbsp;Stopping
+                  </button>
+                  <button v-else @click="stopServer()" class="btn btn-secondary" type="button"><b-icon icon="stop-circle"></b-icon>&nbsp;Stop</button>
+                </template>
                 <b-dropdown text="Connect" variant="secondary">
                   <b-dropdown-item href="#"><b-icon icon="arrow-up-right-square-fill"></b-icon> Connect</b-dropdown-item>
                   <b-dropdown-item href="#"><b-icon icon="clipboard"></b-icon> Dathost IP</b-dropdown-item>
@@ -64,7 +70,8 @@ export default class ServerCard extends VueMixin {
   serverObj: Server
 
   serverStatus = {
-    startingUp: false
+    startingUp: false,
+    stoppingServer: false
   }
 
   created (): void {
@@ -76,6 +83,13 @@ export default class ServerCard extends VueMixin {
     await this.serverObj.start()
     this.serverStatus.startingUp = false
     this.server.on = true
+  }
+
+  async stopServer (): Promise<void> {
+    this.serverStatus.stoppingServer = true
+    await this.serverObj.stop()
+    this.server.on = false
+    this.serverStatus.stoppingServer = false
   }
 }
 </script>
