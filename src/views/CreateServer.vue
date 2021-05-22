@@ -4,7 +4,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-3" v-for="(game, index) in games" :key="index">
-                    <div class="card game-select-card" @click="selectedGame = game.name" v-bind:class="{'game-selected': game.name === selectedGame}">
+                    <div class="card game-select-card" style="cursor: pointer;" @click="selectedGame = game.name" v-bind:class="{'game-selected': game.name === selectedGame}">
                         <div class="card-body d-flex d-xl-flex flex-column justify-content-center align-items-center justify-content-xl-center align-items-xl-center">
                           <img class="game-icon game-select-icon" :src="require(`@/assets/img/games/${game.logo}.svg`)">
                           <h5 style="margin-bottom: 0px;">{{ game.name }}</h5>

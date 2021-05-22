@@ -7,7 +7,7 @@
               <p style="margin-top: 8px;margin-bottom: 0px;">Unofficial interface created by&nbsp;<a href="https://github.com/WardPearce" target="_blank">Ward Pearce</a></p>
             </div>
             <div class="nav-branding">
-                <h6>Credits:&nbsp;<span style="color: var(--dathost-orange);">{{ account.credits }} EUROS</span></h6>
+                <h6>Credits:&nbsp;<span style="color: var(--dathost-orange);">{{ account.credits }}</span></h6>
                 <h6 style="margin-bottom: 0px;">This will last&nbsp;<span style="color: var(--dathost-orange);">{{ account.time_left }}</span></h6>
             </div>
             <div class="text-left nav-footer">
@@ -44,7 +44,10 @@
                   <label for="password" style="margin-top: .5rem;">Password</label>
                   <input v-model="login.password" class="form-control" type="password" name="password" placeholder="...">
 
-                  <button @click="checkLogin()" class="btn btn-primary btn-block" style="margin-top: 1.5rem;"><i class="fa fa-sign-in"></i>&nbsp;Login</button>
+                  <label for="proxy" style="margin-top: .5rem;">CORS Proxy</label>
+                  <input v-model="login.proxy" class="form-control" type="text" name="proxy" placeholder="...">
+
+                  <button @click="checkLogin()" class="btn btn-primary btn-block" style="margin-top: 1.5rem;"><b-icon icon="box-arrow-in-right"></b-icon>&nbsp;Login</button>
                 </template>
                 <div v-else class="d-flex justify-content-center mb-3">
                   <b-spinner label="Loading..."></b-spinner>
@@ -77,7 +80,8 @@ import VueMixin from '@/mixins/vue'
 export default class App extends VueMixin {
   login: Record<string, string> = {
     email: '',
-    password: ''
+    password: '',
+    proxy: 'https://cors-anywhere.wardpearce.com'
   }
 
   loggedIn = false
@@ -94,7 +98,7 @@ export default class App extends VueMixin {
   }
 
   async checkLogin (): Promise<void> {
-    const dathost = new Dathost(this.login.email, this.login.password, 'https://cors-anywhere.wardpearce.com/dathost.net/api/0.1/')
+    const dathost = new Dathost(this.login.email, this.login.password, `${this.login.proxy}/dathost.net/api/0.1/`)
     this.loginLoading = true
     try {
       this.account = await dathost.account()
