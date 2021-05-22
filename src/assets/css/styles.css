@@ -17,6 +17,10 @@ body {
   background-color: var(--dathost-orange);
 }
 
+.btn {
+  border-radius: 0;
+}
+
 .left-nav {
     background: var(--dathost-dark);
     height: 100vh;

@@ -2,8 +2,9 @@
   <div id="app">
     <div v-if="loggedIn" class="row no-gutters">
         <div class="col-md-4 col-xl-2 text-center left-nav">
-            <div class="nav-branding" style="padding-top:1em;"><img src="@/assets/img/logo.svg">
-                <p style="margin-top: 8px;margin-bottom: 0px;">Unofficial interface created by&nbsp;<a href="https://github.com/WardPearce" target="_blank">Ward Pearce</a></p>
+            <div class="nav-branding" style="padding-top:1em;">
+              <router-link :to="{ name: 'Home' }"><img src="@/assets/img/logo.svg"></router-link>
+              <p style="margin-top: 8px;margin-bottom: 0px;">Unofficial interface created by&nbsp;<a href="https://github.com/WardPearce" target="_blank">Ward Pearce</a></p>
             </div>
             <div class="nav-branding">
                 <h6>Credits:&nbsp;<span style="color: var(--dathost-orange);">{{ account.credits }} EUROS</span></h6>
@@ -11,14 +12,15 @@
             </div>
             <div class="text-left nav-footer">
                 <b-dropdown id="dropdown-dropright" block size="lg" dropright text="Account" variant="primary">
-                    <b-dropdown-item href="#"><b-icon icon="credit-card"></b-icon> Billing</b-dropdown-item>
+                    <b-dropdown-item href="https://dathost.net/control-panel/add-credits" target="_blank"><b-icon icon="credit-card"></b-icon> Add credits</b-dropdown-item>
                     <b-dropdown-item href="#"><b-icon icon="tv"></b-icon> Interface</b-dropdown-item>
                     <b-dropdown-item @click="logout()" href="#" style="background: var(--red);"><b-icon icon="arrow-bar-right"></b-icon> Logout</b-dropdown-item>
                 </b-dropdown>
                 <div class="disclaimer">
                   <Disclaimer />
                 </div>
-            </div><button class="btn btn-primary btn-lg text-uppercase" type="button">&nbsp;<b-icon icon="plus" scale="1.7"></b-icon>&nbsp;Add Game Server</button>
+            </div>
+            <router-link v-if="$route.name !== 'CreateServer'" class="btn btn-primary btn-lg text-uppercase" :to="{ name: 'CreateServer' }">&nbsp;<b-icon icon="plus" scale="1.7"></b-icon>&nbsp;Add Game Server</router-link>
         </div>
         <div class="col-md-8 col-xl-10">
             <div class="container-fluid content">
