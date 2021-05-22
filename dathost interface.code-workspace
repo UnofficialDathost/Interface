@@ -1,12 +1,14 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
+    "folders": [
+        {
+            "path": "."
+        }
     ],
     "settings": {
         "cSpell.words": [
             "dathost"
-        ]
+        ],
+        "editor.tabSize": 2,
+        "editor.detectIndentation": false
     }
 }

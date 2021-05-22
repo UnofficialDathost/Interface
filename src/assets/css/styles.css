@@ -13,6 +13,10 @@ body {
     --dathost-dark-dark: #2a2c38;
 }
 
+.alert-warning {
+  background-color: var(--dathost-orange);
+}
+
 .left-nav {
     background: var(--dathost-dark);
     height: 100vh;
@@ -273,6 +277,7 @@ button {
     border: 0;
     border-radius: 0;
     background-color: var(--dathost-dark-dark);
+    color: #fff;
 }
 
 .form-control:focus {
