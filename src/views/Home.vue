@@ -1,11 +1,19 @@
 <template>
   <div class="home">
-    <ActionCard @mangingServers="toggleMangement" />
+    <ActionCard
+    @startServers="startServers"
+    @stopServers="stopServers"
+    @restartServers="restartServers"
+    @cloneServers="cloneServers"
+    @deleteServers="deleteServers"
+    @mangingServers="toggleMangement" />
     <div v-if="serversLoading" class="d-flex justify-content-center mb-3">
       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
     </div>
     <div v-else class="row gutter-2">
-      <ServerCard @serverClicked="selectServer" :selected="selectedServerIds.includes(server.id)" @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="(server, index) in servers" :key="index" :server="server" />
+      <ServerCard :ref="server.id" @serverClicked="selectServer" :selected="selectedServerIds.includes(server.id)"
+      @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="(server, index) in servers" :key="index" :server="server" />
+
       <ServerCard v-for="(server, index) in clonedServers" :key="index" :server="server" :cloned="true" />
     </div>
   </div>
@@ -78,6 +86,56 @@ export default class Home extends VueMixin {
 
   addCloneDecoy (server: IServer): void {
     this.clonedServers.push(server)
+  }
+
+  async startServers (): Promise<void> {
+    await Promise.all(
+      this.selectedServerIds.map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (serverId) => { (this.$refs[serverId] as any)[0].startServer() }
+      )
+    )
+    this.selectedServerIds = []
+  }
+
+  async stopServers (): Promise<void> {
+    await Promise.all(
+      this.selectedServerIds.map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (serverId) => { (this.$refs[serverId] as any)[0].stopServer() }
+      )
+    )
+    this.selectedServerIds = []
+  }
+
+  async restartServers (): Promise<void> {
+    await Promise.all(
+      this.selectedServerIds.map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (serverId) => { (this.$refs[serverId] as any)[0].restartServer() }
+      )
+    )
+    this.selectedServerIds = []
+  }
+
+  async cloneServers (): Promise<void> {
+    await Promise.all(
+      this.selectedServerIds.map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (serverId) => { (this.$refs[serverId] as any)[0].cloneServer() }
+      )
+    )
+    this.selectedServerIds = []
+  }
+
+  async deleteServers (): Promise<void> {
+    await Promise.all(
+      this.selectedServerIds.map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (serverId) => { (this.$refs[serverId] as any)[0].deleteServer() }
+      )
+    )
+    this.selectedServerIds = []
   }
 }
 </script>

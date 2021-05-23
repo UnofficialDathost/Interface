@@ -5,10 +5,11 @@
                 <div class="col-md-6">
                     <div v-if="bulkActions" class="btn-group" role="group">
                         <button @click="toggleActions()" class="btn btn-secondary" style="margin-right: 20px;" type="button"><b-icon icon="collection"></b-icon>&nbsp;Stop managing</button>
-                        <button class="btn btn-primary" type="button"><b-icon icon="play-circle"></b-icon>&nbsp;Start</button>
-                        <button class="btn btn-secondary" type="button"><b-icon icon="stop-circle"></b-icon>&nbsp;Stop</button>
-                        <button class="btn btn-secondary" type="button"><b-icon icon="arrow-repeat"></b-icon>&nbsp;Restart</button>
-                        <button class="btn btn-secondary" type="button"><b-icon icon="trash"></b-icon>&nbsp;Delete</button>
+                        <button class="btn btn-primary" @click="$emit('startServers')" type="button"><b-icon icon="play-circle"></b-icon>&nbsp;Start</button>
+                        <button class="btn btn-secondary" @click="$emit('stopServers')" type="button"><b-icon icon="stop-circle"></b-icon>&nbsp;Stop</button>
+                        <button class="btn btn-secondary" @click="$emit('restartServers')" type="button"><b-icon icon="arrow-repeat"></b-icon>&nbsp;Restart</button>
+                        <button class="btn btn-secondary" @click="$emit('cloneServers')" type="button"><b-icon icon="file-break"></b-icon>&nbsp;Clone</button>
+                        <button class="btn btn-secondary" @click="$emit('deleteServers')" type="button"><b-icon icon="trash"></b-icon>&nbsp;Delete</button>
                     </div>
                     <button @click="toggleActions()" v-else class="btn btn-secondary" type="button"><b-icon icon="collection"></b-icon>&nbsp;Manage Servers</button>
                 </div>
