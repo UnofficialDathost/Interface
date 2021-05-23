@@ -44,7 +44,7 @@ import { Component } from 'vue-property-decorator'
 import VueMixin from '@/mixins/vue'
 
 @Component
-export default class CreateServer extends VueMixin {
+export default class CreateServerView extends VueMixin {
   games = [
     { name: 'CS: GO', logo: 'csgo' },
     { name: 'Valheim', logo: 'valheim' },

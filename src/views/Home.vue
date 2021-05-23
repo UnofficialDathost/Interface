@@ -34,7 +34,7 @@ import ServerCard from '@/components/server-card.vue'
     ServerCard
   }
 })
-export default class Home extends VueMixin {
+export default class HomeView extends VueMixin {
   servers: IServer[] = []
   clonedServers: IServer[] = []
   selectedServerIds: string[] = []

@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 
-import Home from '@/views/Home.vue'
-import CreateServer from '@/views/CreateServer.vue'
+import HomeView from '@/views/Home.vue'
+import CreateServerView from '@/views/CreateServer.vue'
+import ServerView from '@/views/Server.vue'
 
 Vue.use(VueRouter)
 
@@ -10,12 +11,17 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: HomeView
   },
   {
     path: '/create',
     name: 'CreateServer',
-    component: CreateServer
+    component: CreateServerView
+  },
+  {
+    path: '/server/:serverId',
+    name: 'Server',
+    component: ServerView
   }
 ]
 

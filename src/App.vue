@@ -20,7 +20,33 @@
                   <Disclaimer />
                 </div>
             </div>
-            <router-link v-if="$route.name !== 'CreateServer'" class="btn btn-primary btn-lg text-uppercase" :to="{ name: 'CreateServer' }">&nbsp;<b-icon icon="plus" scale="1.7"></b-icon>&nbsp;Add Game Server</router-link>
+            <div v-if="$route.name === 'Server'">
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+                <b-icon icon="thermometer" scale="1"></b-icon>&nbsp;Status
+              </a>
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+                <b-icon icon="terminal" scale=".9"></b-icon>&nbsp; Console
+              </a>
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+                <b-icon icon="gear" scale=".9"></b-icon>&nbsp;Settings
+              </a>
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+                <b-icon icon="list-nested" scale=".9"></b-icon>&nbsp; Mods
+              </a>
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+                <b-icon icon="pencil-square" scale=".9"></b-icon>&nbsp; Config
+              </a>
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+                <b-icon icon="folder" scale=".9"></b-icon>&nbsp; File Manager
+              </a>
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+                <b-icon icon="code-slash" scale=".9"></b-icon>&nbsp; Commands
+              </a>
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+                <b-icon icon="clock-history" scale=".9"></b-icon>&nbsp; Backups
+              </a>
+            </div>
+            <router-link v-else-if="$route.name !== 'CreateServer'" class="btn btn-primary btn-lg text-uppercase" :to="{ name: 'CreateServer' }">&nbsp;<b-icon icon="plus" scale="1.5"></b-icon>&nbsp;Add Game Server</router-link>
         </div>
         <div class="col-md-8 col-xl-10">
             <div class="container-fluid content">
