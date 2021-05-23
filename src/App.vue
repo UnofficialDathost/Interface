@@ -91,8 +91,9 @@ export default class App extends VueMixin {
   account: IAccount
 
   async mounted (): Promise<void> {
-    if (localStorage.getItem('loginDetails') !== null) {
-      this.login = JSON.parse(localStorage.getItem('loginDetails') || '')
+    const loginDetails = localStorage.getItem('loginDetails')
+    if (loginDetails !== null) {
+      this.login = JSON.parse(loginDetails)
       await this.checkLogin()
     }
   }

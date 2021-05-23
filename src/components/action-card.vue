@@ -3,12 +3,14 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <div class="btn-group" role="group">
+                    <div v-if="bulkActions" class="btn-group" role="group">
+                        <button @click="toggleActions()" class="btn btn-secondary" style="margin-right: 20px;" type="button"><b-icon icon="collection"></b-icon>&nbsp;Stop managing</button>
                         <button class="btn btn-primary" type="button"><b-icon icon="play-circle"></b-icon>&nbsp;Start</button>
                         <button class="btn btn-secondary" type="button"><b-icon icon="stop-circle"></b-icon>&nbsp;Stop</button>
                         <button class="btn btn-secondary" type="button"><b-icon icon="arrow-repeat"></b-icon>&nbsp;Restart</button>
                         <button class="btn btn-secondary" type="button"><b-icon icon="trash"></b-icon>&nbsp;Delete</button>
                     </div>
+                    <button @click="toggleActions()" v-else class="btn btn-secondary" type="button"><b-icon icon="collection"></b-icon>&nbsp;Manage Servers</button>
                 </div>
                 <div class="col-md-6">
                     <!-- Start: Search Input (responsive) -->
@@ -28,5 +30,12 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 @Component({ name: 'ActionCard' })
-export default class ActionCard extends Vue {}
+export default class ActionCard extends Vue {
+  bulkActions = false
+
+  toggleActions (): void {
+    this.bulkActions = !this.bulkActions
+    this.$emit('mangingServers', this.bulkActions)
+  }
+}
 </script>

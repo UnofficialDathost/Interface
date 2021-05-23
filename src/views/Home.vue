@@ -1,11 +1,11 @@
 <template>
   <div class="home">
-    <ActionCard />
+    <ActionCard @mangingServers="toggleMangement" />
     <div v-if="serversLoading" class="d-flex justify-content-center mb-3">
       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
     </div>
     <div v-else class="row gutter-2">
-      <ServerCard @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="(server, index) in servers" :key="index" :server="server" />
+      <ServerCard @serverClicked="selectServer" :selected="selectedServerIds.includes(server.id)" @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="(server, index) in servers" :key="index" :server="server" />
       <ServerCard v-for="(server, index) in clonedServers" :key="index" :server="server" :cloned="true" />
     </div>
   </div>
@@ -29,7 +29,9 @@ import ServerCard from '@/components/server-card.vue'
 export default class Home extends VueMixin {
   servers: IServer[] = []
   clonedServers: IServer[] = []
+  selectedServerIds: string[] = []
   serversLoading = true
+  beingManged = false
 
   async mounted (): Promise<void> {
     await this.getServers()
@@ -53,6 +55,25 @@ export default class Home extends VueMixin {
       }
     }
     this.servers.push(server)
+  }
+
+  toggleMangement (beingManged: boolean): void {
+    this.beingManged = beingManged
+    if (!beingManged) {
+      this.selectedServerIds = []
+    }
+  }
+
+  selectServer (server: IServer): void {
+    if (this.beingManged) {
+      if (this.selectedServerIds.includes(server.id)) {
+        this.selectedServerIds.splice(this.selectedServerIds.indexOf(server.id), 1)
+      } else {
+        this.selectedServerIds.push(server.id)
+      }
+    } else {
+      this.$router.push({ name: 'Server', params: { serverId: server.id } })
+    }
   }
 
   addCloneDecoy (server: IServer): void {

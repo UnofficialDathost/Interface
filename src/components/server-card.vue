@@ -1,7 +1,7 @@
 <template>
   <div v-if="!deleted" class="col-md-4">
-    <div class="card game-card">
-        <div class="card-header">
+    <div class="card game-card" style="cursor: pointer;" v-bind:class="{'game-selected': selected}">
+        <div class="card-header" @click="$emit('serverClicked', server)">
             <div class="row">
                 <div class="col-md-6 d-xl-flex justify-content-xl-start align-items-xl-center"><img class="game-icon" :src="require(`@/assets/img/games/${server.game}.svg`)"></div>
                 <div class="col-md-6 d-xl-flex justify-content-xl-end align-items-xl-center">
@@ -15,8 +15,8 @@
             <b-spinner label="Loading..."></b-spinner>
           </div>
         </div>
-        <div v-else-if="!serverStatus.deleting" class="card-body d-flex d-xl-flex flex-column justify-content-center justify-content-xl-center">
-            <div class="row">
+        <div v-else-if="!serverStatus.deleting" @click.self="$emit('serverClicked', server)" class="card-body d-flex d-xl-flex flex-column justify-content-center justify-content-xl-center">
+            <div class="row" @click="$emit('serverClicked', server)">
                 <div class="col-md-6 col-xl-4 d-xl-flex justify-content-xl-start">
                     <p class="text-capitalize"><b-icon icon="compass"></b-icon>&nbsp;{{ server.location }}&nbsp;</p>
                 </div>
@@ -86,6 +86,9 @@ export default class ServerCard extends VueMixin {
 
   @Prop({ type: Boolean, default: false })
   cloned: boolean
+
+  @Prop({ type: Boolean, default: false })
+  selected: boolean
 
   serverObj: Server
 
