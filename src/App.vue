@@ -17,7 +17,7 @@
                     <b-dropdown-item @click="logout()" href="#" style="background: var(--red);"><b-icon icon="arrow-bar-right"></b-icon> Logout</b-dropdown-item>
                 </b-dropdown>
                 <div class="disclaimer">
-                  <Disclaimer />
+                  <DisclaimerComp />
                 </div>
             </div>
             <div v-if="$route.name === 'Server'">
@@ -80,7 +80,7 @@
                 </div>
             </div>
             <div class="card-footer">
-              <Disclaimer />
+              <DisclaimerComp />
             </div>
         </div>
     </div>
@@ -94,13 +94,13 @@ import { Component, Vue } from 'vue-property-decorator'
 import Dathost from 'dathost'
 import { IAccount } from 'dathost/src/interfaces/account'
 
-import Disclaimer from '@/components/disclaimer.vue'
+import DisclaimerComp from '@/components/disclaimer.vue'
 
 import VueMixin from '@/mixins/vue'
 
 @Component({
   components: {
-    Disclaimer
+    DisclaimerComp
   }
 })
 export default class App extends VueMixin {

@@ -31,7 +31,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 @Component({ name: 'ActionCard' })
-export default class ActionCard extends Vue {
+export default class ActionCardComp extends Vue {
   bulkActions = false
 
   toggleActions (): void {

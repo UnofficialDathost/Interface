@@ -10,5 +10,5 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 @Component({ name: 'Disclaimer' })
-export default class Disclaimer extends Vue {}
+export default class DisclaimerComp extends Vue {}
 </script>

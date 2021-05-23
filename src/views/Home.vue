@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <ActionCard
+    <ActionCardComp
     @startServers="startServers"
     @stopServers="stopServers"
     @restartServers="restartServers"
@@ -11,10 +11,10 @@
       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
     </div>
     <div v-else class="row gutter-2">
-      <ServerCard :ref="server.id" @serverClicked="selectServer" :selected="selectedServerIds.includes(server.id)"
+      <ServerCardComp :ref="server.id" @serverClicked="selectServer" :selected="selectedServerIds.includes(server.id)"
       @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="(server, index) in servers" :key="index" :server="server" />
 
-      <ServerCard v-for="(server, index) in clonedServers" :key="index" :server="server" :cloned="true" />
+      <ServerCardComp v-for="(server, index) in clonedServers" :key="index" :server="server" :cloned="true" />
     </div>
   </div>
 </template>
@@ -25,13 +25,13 @@ import VueMixin from '@/mixins/vue'
 
 import { IServer } from 'dathost/src/interfaces/server'
 
-import ActionCard from '@/components/action-card.vue'
-import ServerCard from '@/components/server-card.vue'
+import ActionCardComp from '@/components/action-card.vue'
+import ServerCardComp from '@/components/server-card.vue'
 
 @Component({
   components: {
-    ActionCard,
-    ServerCard
+    ActionCardComp,
+    ServerCardComp
   }
 })
 export default class HomeView extends VueMixin {

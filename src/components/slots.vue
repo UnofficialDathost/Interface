@@ -17,5 +17,5 @@ import Component from 'vue-class-component'
     server: Object
   }
 })
-export default class Slots extends VueMixin {}
+export default class SlotsComp extends VueMixin {}
 </script>
