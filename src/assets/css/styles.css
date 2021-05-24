@@ -272,6 +272,7 @@ button {
 
 .side-option > svg {
     width: 30px;
+    margin-right: 5px;
 }
 
 .console-card {
