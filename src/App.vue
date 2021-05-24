@@ -11,7 +11,7 @@
                 <h6 style="margin-bottom: 0px;">This will last&nbsp;<span style="color: var(--dathost-orange);">{{ account.time_left }}</span></h6>
             </div>
             <div class="text-left nav-footer">
-                <b-dropdown id="dropdown-dropright" block size="lg" dropright text="Account" variant="primary">
+                <b-dropdown id="dropdown-dropright" text="Account" block size="lg" dropright variant="primary">
                     <b-dropdown-item href="https://dathost.net/control-panel/add-credits" target="_blank"><b-icon icon="credit-card"></b-icon> Add credits</b-dropdown-item>
                     <b-dropdown-item href="#"><b-icon icon="tv"></b-icon> Interface</b-dropdown-item>
                     <b-dropdown-item @click="logout()" href="#" style="background: var(--red);"><b-icon icon="arrow-bar-right"></b-icon> Logout</b-dropdown-item>
@@ -25,25 +25,25 @@
                 <b-icon icon="thermometer" scale="1"></b-icon>&nbsp;Status
               </a>
               <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#console' }" href="#console">
-                <b-icon icon="terminal" scale=".9"></b-icon>&nbsp; Console
+                <b-icon icon="terminal" scale="1"></b-icon>&nbsp; Console
               </a>
               <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#settings' }" href="#settings">
-                <b-icon icon="gear" scale=".9"></b-icon>&nbsp;Settings
+                <b-icon icon="gear" scale="1"></b-icon>&nbsp;Settings
               </a>
               <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#mods' }" href="#mods">
-                <b-icon icon="list-nested" scale=".9"></b-icon>&nbsp; Mods
+                <b-icon icon="list-nested" scale="1"></b-icon>&nbsp; Mods
               </a>
               <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#config' }" href="#config">
-                <b-icon icon="pencil-square" scale=".9"></b-icon>&nbsp; Config
+                <b-icon icon="pencil-square" scale="1"></b-icon>&nbsp; Config
               </a>
               <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#files' }" href="#files">
-                <b-icon icon="folder" scale=".9"></b-icon>&nbsp; Files
+                <b-icon icon="folder" scale="1"></b-icon>&nbsp; Files
               </a>
               <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#commands' }" href="#commands">
-                <b-icon icon="code-slash" scale=".9"></b-icon>&nbsp; Commands
+                <b-icon icon="code-slash" scale="1"></b-icon>&nbsp; Commands
               </a>
               <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#backups' }" href="#backups">
-                <b-icon icon="clock-history" scale=".9"></b-icon>&nbsp; Backups
+                <b-icon icon="clock-history" scale="1"></b-icon>&nbsp; Backups
               </a>
             </div>
             <router-link v-else-if="$route.name !== 'CreateServer'" class="btn btn-primary btn-lg text-uppercase" :to="{ name: 'CreateServer' }">&nbsp;<b-icon icon="plus" scale="1.5"></b-icon>&nbsp;Add Game Server</router-link>

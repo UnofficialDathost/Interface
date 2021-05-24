@@ -270,7 +270,7 @@ button {
     padding-right: 28px;
 }
 
-.side-option > i {
+.side-option > svg {
     width: 30px;
 }
 
@@ -293,7 +293,7 @@ button {
 .console {
     background-color: #000;
     height: 60vh;
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 .console p {
@@ -388,6 +388,18 @@ button {
 
 thead {
     background-color: var(--dathost-dark-dark);
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  background: var(--dathost-orange);
+  border-color: var(--dathost-orange);
+  border-radius: 0;
+}
+
+.custom-radio .custom-control-input:checked~.custom-control-label::before,
+.custom-radio .custom-control-input:checked~.custom-control-label::after {
+  background: var(--dathost-orange);
+  border-radius: 0;
 }
 
 @media screen and (max-width: 800px) {
