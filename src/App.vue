@@ -21,30 +21,10 @@
                 </div>
             </div>
             <div v-if="$route.name === 'Server'">
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#status' }" href="#status">
-                <b-icon icon="thermometer" scale="1"></b-icon>&nbsp;Status
-              </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#console' }" href="#console">
-                <b-icon icon="terminal" scale="1"></b-icon>&nbsp; Console
-              </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#settings' }" href="#settings">
-                <b-icon icon="gear" scale="1"></b-icon>&nbsp;Settings
-              </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#mods' }" href="#mods">
-                <b-icon icon="list-nested" scale="1"></b-icon>&nbsp; Mods
-              </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#config' }" href="#config">
-                <b-icon icon="pencil-square" scale="1"></b-icon>&nbsp; Config
-              </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#files' }" href="#files">
-                <b-icon icon="folder" scale="1"></b-icon>&nbsp; Files
-              </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#commands' }" href="#commands">
-                <b-icon icon="code-slash" scale="1"></b-icon>&nbsp; Commands
-              </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#backups' }" href="#backups">
-                <b-icon icon="clock-history" scale="1"></b-icon>&nbsp; Backups
-              </a>
+              <router-link v-for="(tab, index) in serverTabs" :key="index" :to="{ name: 'Server', params: { serverId: $route.params.serverId, 'tab': tab.name.toLowerCase() } }"
+              v-bind:class="{ active: $route.params.tab === tab.name.toLowerCase() }" class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large">
+                <b-icon :icon="tab.icon" scale="1"></b-icon>&nbsp;{{ tab.name }}
+              </router-link>
             </div>
             <router-link v-else-if="$route.name !== 'CreateServer'" class="btn btn-primary btn-lg text-uppercase" :to="{ name: 'CreateServer' }">&nbsp;<b-icon icon="plus" scale="1.5"></b-icon>&nbsp;Add Game Server</router-link>
         </div>
@@ -115,6 +95,17 @@ export default class App extends VueMixin {
   loginLoading = false
 
   account: IAccount
+
+  serverTabs = [
+    { name: 'Status', icon: 'thermometer' },
+    { name: 'Console', icon: 'terminal' },
+    { name: 'Settings', icon: 'gear' },
+    { name: 'Mods', icon: 'list-nested' },
+    { name: 'Config', icon: 'pencil-square' },
+    { name: 'Files', icon: 'folder' },
+    { name: 'Commands', icon: 'code-slash' },
+    { name: 'Backups', icon: 'clock-history' }
+  ]
 
   async mounted (): Promise<void> {
     const loginDetails = localStorage.getItem('loginDetails')

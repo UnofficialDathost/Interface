@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="card-body">
-          <ServerConsoleComp :serverObj="serverObj" v-if="$route.hash === '#console'" />
+          <ServerConsoleComp :serverObj="serverObj" v-if="$route.params.tab === 'console'" />
         </div>
         <div class="card-footer">
             <div class="row">

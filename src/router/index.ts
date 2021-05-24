@@ -17,7 +17,7 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/CreateServer.vue')
   },
   {
-    path: '/server/:serverId',
+    path: '/server/:serverId/:tab',
     name: 'Server',
     component: () => import('../views/Server.vue')
   }

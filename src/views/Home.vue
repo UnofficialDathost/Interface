@@ -80,7 +80,7 @@ export default class HomeView extends VueMixin {
         this.selectedServerIds.push(server.id)
       }
     } else {
-      this.$router.push({ name: 'Server', params: { serverId: server.id } })
+      this.$router.push({ name: 'Server', params: { serverId: server.id, tab: 'status' } })
     }
   }
 
