@@ -41,7 +41,9 @@
                 </div>
             </div>
         </div>
-        <div class="card-body"></div>
+        <div class="card-body">
+          <ServerConsoleComp :serverObj="serverObj" v-if="$route.hash === '#console'" />
+        </div>
         <div class="card-footer">
             <div class="row">
                 <div class="col-md-6">
@@ -71,9 +73,13 @@ import { IServer } from 'dathost/src/interfaces/server'
 import Server from 'dathost/src/server'
 
 import ServerMixin from '@/mixins/server'
+import ServerConsoleComp from '@/components/server-console.vue'
 
 @Component({
-  mixins: [ServerMixin]
+  mixins: [ServerMixin],
+  components: {
+    ServerConsoleComp
+  }
 })
 export default class ServerView extends VueMixin {
   server: IServer
