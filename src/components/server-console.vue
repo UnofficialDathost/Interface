@@ -7,13 +7,18 @@
                       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
                     </div>
                     <template v-else>
-                      <p v-for="(line, index) in consoleLines" :key="index"><span class="text-secondary"></span>{{ line }}<br></p>
+                      <p v-for="(line, index) in consoleLines" :key="index">{{ line }}<br></p>
                     </template>
                 </div>
             </div>
             <div class="form-inline">
-              <input class="form-control" type="text" style="width: 40%;">
-              <button class="btn btn-primary" type="button"><b-icon icon="arrow-return-right"></b-icon>&nbsp;Send</button>
+              <input v-model="consoleCommand" placeholder="..." class="form-control" type="text" style="width: 40%;">
+              <button @click="sendCommand()" class="btn btn-primary" v-bind:class="{ disabled: consoleCommand === '' }" type="button">
+                <template v-if="consoleCommandSending">
+                  <b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner>&nbsp;Sending
+                </template>
+                <template v-else><b-icon icon="arrow-return-right"></b-icon>&nbsp;Send</template>
+              </button>
               <b-form-checkbox style="margin-left: 25px;" :checked="true" @input="toggleAutoScroll">Autoscroll</b-form-checkbox>
             </div>
         </div>
@@ -33,6 +38,8 @@ export default class ServerConsoleComp extends VueMixin {
 
   consoleLines: string[] = []
   consoleLoading = true
+  consoleCommand = ''
+  consoleCommandSending = false
 
   autoScroll: ReturnType<typeof setInterval>
 
@@ -42,6 +49,13 @@ export default class ServerConsoleComp extends VueMixin {
     this.consoleLoading = false
 
     this.toggleAutoScroll(true)
+  }
+
+  async sendCommand (): Promise<void> {
+    this.consoleCommandSending = true
+    await this.serverObj.consoleSend(this.consoleCommand)
+    this.consoleCommand = ''
+    this.consoleCommandSending = false
   }
 
   toggleAutoScroll (enabled: boolean): void {
