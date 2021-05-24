@@ -50,6 +50,9 @@
                   <label for="password" style="margin-top: .5rem;">Password</label>
                   <input v-model="login.password" class="form-control" type="password" name="password" placeholder="...">
 
+                  <label for="steam" style="margin-top: .5rem;" v-b-tooltip.hover.right title="Provides automation using the steam API if provided.">Steam API Key (optional) <b-icon scale=".7" icon="info-circle"></b-icon></label>
+                  <input v-model="login.steam" class="form-control" type="text" name="steam" placeholder="...">
+
                   <label for="proxy" style="margin-top: .5rem;">CORS Proxy</label>
                   <input v-model="login.proxy" class="form-control" type="text" name="proxy" placeholder="...">
 
@@ -87,6 +90,7 @@ export default class App extends VueMixin {
   login: Record<string, string> = {
     email: '',
     password: '',
+    steam: '',
     proxy: 'https://cors-anywhere.wardpearce.com'
   }
 
