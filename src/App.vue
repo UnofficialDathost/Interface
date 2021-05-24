@@ -21,28 +21,28 @@
                 </div>
             </div>
             <div v-if="$route.name === 'Server'">
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#status' }" href="#status">
                 <b-icon icon="thermometer" scale="1"></b-icon>&nbsp;Status
               </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#console' }" href="#console">
                 <b-icon icon="terminal" scale=".9"></b-icon>&nbsp; Console
               </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#settings' }" href="#settings">
                 <b-icon icon="gear" scale=".9"></b-icon>&nbsp;Settings
               </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#mods' }" href="#mods">
                 <b-icon icon="list-nested" scale=".9"></b-icon>&nbsp; Mods
               </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#config' }" href="#config">
                 <b-icon icon="pencil-square" scale=".9"></b-icon>&nbsp; Config
               </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
-                <b-icon icon="folder" scale=".9"></b-icon>&nbsp; File Manager
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#files' }" href="#files">
+                <b-icon icon="folder" scale=".9"></b-icon>&nbsp; Files
               </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#commands' }" href="#commands">
                 <b-icon icon="code-slash" scale=".9"></b-icon>&nbsp; Commands
               </a>
-              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" href="#">
+              <a class="d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large" v-bind:class="{ active: $route.hash === '#backups' }" href="#backups">
                 <b-icon icon="clock-history" scale=".9"></b-icon>&nbsp; Backups
               </a>
             </div>

@@ -22,7 +22,7 @@ export default class ServerMixin extends VueMixin {
   steamProtocolPass = ''
   gotvEnabled = false
 
-  created (): void {
+  mounted (): void {
     this.serverObj = this.$dathost.server(this.server.id)
 
     if (this.server.game === 'csgo') {
