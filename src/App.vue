@@ -129,6 +129,11 @@ export default class App extends VueMixin {
 
       Vue.prototype.$dathost = dathost
       localStorage.setItem('loginDetails', JSON.stringify(this.login))
+
+      // Update account details every 30 seconds in the background.
+      setInterval(async () => {
+        this.account = await dathost.account()
+      }, 30000)
     } catch {
       this.invalidLogin = true
     }

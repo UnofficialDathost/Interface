@@ -26,7 +26,8 @@
 <script lang="ts">
 import VueMixin from '@/mixins/vue'
 import { Component, Prop } from 'vue-property-decorator'
-import { WebsocketBuilder } from 'websocket-ts'
+import { Route } from 'vue-router/types'
+import { Websocket, WebsocketBuilder } from 'websocket-ts'
 
 import { IServer } from 'dathost/src/interfaces/server'
 import Server from 'dathost/src/server'
@@ -47,13 +48,14 @@ export default class ServerConsoleComp extends VueMixin {
   serverRegionRegExp = new RegExp(/([^\\.]+)/)
 
   autoScroll: ReturnType<typeof setInterval>
+  ws: Websocket
 
   async mounted (): Promise<void> {
     this.consoleLoading = true
 
     const serverRegion = this.server.ip.match(this.serverRegionRegExp)
     if (serverRegion !== null) {
-      new WebsocketBuilder(`wss://${serverRegion[0]}.dathost.net/console-server/`
+      this.ws = new WebsocketBuilder(`wss://${serverRegion[0]}.dathost.net/console-server/`
       ).onOpen(async (i) => {
         const consoleAuth = await this.serverObj.consoleAuth()
         i.send(JSON.stringify({
@@ -71,6 +73,12 @@ export default class ServerConsoleComp extends VueMixin {
     }
 
     this.toggleAutoScroll(true)
+  }
+
+  beforeRouteLeave (to: Route, from: Route, next: FunctionConstructor): void {
+    clearInterval(this.autoScroll)
+    this.ws.close()
+    next()
   }
 
   async sendCommand (): Promise<void> {

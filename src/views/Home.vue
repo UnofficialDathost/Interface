@@ -21,6 +21,7 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
+import { Route } from 'vue-router/types'
 import VueMixin from '@/mixins/vue'
 
 import { IServer } from 'dathost/src/interfaces/server'
@@ -40,17 +41,30 @@ export default class HomeView extends VueMixin {
   selectedServerIds: string[] = []
   serversLoading = true
   beingManged = false
+  serverInterval: ReturnType<typeof setInterval>
 
   async mounted (): Promise<void> {
     await this.getServers()
+
+    this.serverInterval = setInterval(async () => {
+      await this.getServers(false)
+    }, 30000)
   }
 
-  async getServers (): Promise<void> {
-    this.serversLoading = true
+  beforeRouteLeave (to: Route, from: Route, next: FunctionConstructor): void {
+    clearInterval(this.serverInterval)
+    next()
+  }
 
+  async getServers (showLoading = true): Promise<void> {
+    this.serversLoading = showLoading
+
+    const servers = []
     for await (const server of this.$dathost.servers()) {
-      this.servers.push(server[0])
+      servers.push(server[0])
     }
+
+    this.servers = servers
 
     this.serversLoading = false
   }
