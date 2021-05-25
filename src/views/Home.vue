@@ -59,11 +59,12 @@ export default class HomeView extends VueMixin {
   async getServers (showLoading = true): Promise<void> {
     this.serversLoading = showLoading
 
+    // Updates everything all at once instead
+    // of showing elements popping in.
     const servers = []
     for await (const server of this.$dathost.servers()) {
       servers.push(server[0])
     }
-
     this.servers = servers
 
     this.serversLoading = false
