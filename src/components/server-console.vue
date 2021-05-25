@@ -55,9 +55,9 @@ export default class ServerConsoleComp extends VueMixin {
 
     const serverRegion = this.server.ip.match(this.serverRegionRegExp)
     if (serverRegion) {
-      const consoleAuth = await this.serverObj.consoleAuth()
       new WebsocketBuilder(`wss://${serverRegion[0]}.dathost.net/console-server/`
-      ).onOpen((i) => {
+      ).onOpen(async (i) => {
+        const consoleAuth = await this.serverObj.consoleAuth()
         i.send(JSON.stringify({
           cmd: 'auth',
           args: {
