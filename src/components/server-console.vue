@@ -6,9 +6,7 @@
                     <div v-if="consoleLoading" class="d-flex justify-content-center mb-3">
                       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
                     </div>
-                    <template v-else>
-                      <p>{{ consoleLines }}<br></p>
-                    </template>
+                    <p v-else>{{ consoleLines }}<br></p>
                 </div>
             </div>
             <div class="form-inline">

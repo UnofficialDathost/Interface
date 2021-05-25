@@ -67,29 +67,25 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
+import { mixins } from 'vue-class-component'
+
 import VueMixin from '@/mixins/vue'
-
-import { IServer } from 'dathost/src/interfaces/server'
-import Server from 'dathost/src/server'
-
 import ServerMixin from '@/mixins/server'
 import ServerConsoleComp from '@/components/server-console.vue'
 
 @Component({
-  mixins: [ServerMixin],
   components: {
     ServerConsoleComp
   }
 })
-export default class ServerView extends VueMixin {
-  server: IServer
-  serverObj: Server
+export default class ServerView extends mixins(VueMixin, ServerMixin) {
   serverLoading = true
 
   async mounted (): Promise<void> {
     this.serverObj = this.$dathost.server(this.$route.params.serverId)
     try {
-      this.server = await this.serverObj.get()
+      const server = await this.serverObj.get()
+      this.createServer(server)
     } catch {
       this.$router.push({ name: 'Home' })
     }

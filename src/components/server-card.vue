@@ -70,6 +70,7 @@
 <script lang="ts">
 import VueMixin from '@/mixins/vue'
 import { Component, Prop } from 'vue-property-decorator'
+import { mixins } from 'vue-class-component'
 
 import { IServer } from 'dathost/src/interfaces/server'
 
@@ -78,10 +79,9 @@ import ServerMixin from '@/mixins/server'
 
 @Component({
   name: 'ServerCard',
-  components: { SlotsComp },
-  mixins: [ServerMixin]
+  components: { SlotsComp }
 })
-export default class ServerCardComp extends VueMixin {
+export default class ServerCardComp extends mixins(VueMixin, ServerMixin) {
   @Prop({ type: Object })
   server: IServer
 
@@ -90,5 +90,9 @@ export default class ServerCardComp extends VueMixin {
 
   @Prop({ type: Boolean, default: false })
   selected: boolean
+
+  mounted (): void {
+    this.createServer(this.server)
+  }
 }
 </script>
