@@ -42,8 +42,8 @@ export default class ServerConsoleComp extends VueMixin {
   serverObj: Server
 
   consoleLines = ''
-  consoleLoading = true
   consoleCommand = ''
+  consoleLoading = true
   consoleCommandSending = false
 
   serverRegionRegExp = new RegExp(/([^\\.]+)/)
@@ -54,7 +54,7 @@ export default class ServerConsoleComp extends VueMixin {
     this.consoleLoading = true
 
     const serverRegion = this.server.ip.match(this.serverRegionRegExp)
-    if (serverRegion) {
+    if (serverRegion !== null) {
       new WebsocketBuilder(`wss://${serverRegion[0]}.dathost.net/console-server/`
       ).onOpen(async (i) => {
         const consoleAuth = await this.serverObj.consoleAuth()
@@ -83,7 +83,7 @@ export default class ServerConsoleComp extends VueMixin {
   }
 
   toggleAutoScroll (enabled: boolean): void {
-    if (enabled) {
+    if (enabled === true) {
       this.autoScroll = setInterval(() => {
         const consoleDiv = document.getElementById('console')
         if (consoleDiv) {
