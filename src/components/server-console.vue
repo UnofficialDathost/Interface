@@ -7,7 +7,7 @@
                       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
                     </div>
                     <template v-else>
-                      <p v-for="(line, index) in consoleLines" :key="index">{{ line }}<br></p>
+                      <p>{{ consoleLines }}<br></p>
                     </template>
                 </div>
             </div>
@@ -28,25 +28,49 @@
 <script lang="ts">
 import VueMixin from '@/mixins/vue'
 import { Component, Prop } from 'vue-property-decorator'
+import { WebsocketBuilder } from 'websocket-ts'
 
+import { IServer } from 'dathost/src/interfaces/server'
 import Server from 'dathost/src/server'
 
 @Component({ name: 'ServerConsole' })
 export default class ServerConsoleComp extends VueMixin {
   @Prop({ type: Object })
+  server: IServer
+
+  @Prop({ type: Object })
   serverObj: Server
 
-  consoleLines: string[] = []
+  consoleLines = ''
   consoleLoading = true
   consoleCommand = ''
   consoleCommandSending = false
+
+  serverRegionRegExp = new RegExp(/([^\\.]+)/)
 
   autoScroll: ReturnType<typeof setInterval>
 
   async mounted (): Promise<void> {
     this.consoleLoading = true
-    this.consoleLines = await this.serverObj.consoleRetrieve()
-    this.consoleLoading = false
+
+    const serverRegion = this.server.ip.match(this.serverRegionRegExp)
+    if (serverRegion) {
+      const consoleAuth = await this.serverObj.consoleAuth()
+      new WebsocketBuilder(`wss://${serverRegion[0]}.dathost.net/console-server/`
+      ).onOpen((i) => {
+        i.send(JSON.stringify({
+          cmd: 'auth',
+          args: {
+            timestamp: consoleAuth.timestamp,
+            serverId: this.server.id,
+            token: consoleAuth.token
+          }
+        }))
+      }).onMessage((i, ev) => {
+        this.consoleLines += (JSON.parse(ev.data)).args.data
+        this.consoleLoading = false
+      }).build()
+    }
 
     this.toggleAutoScroll(true)
   }
@@ -65,7 +89,7 @@ export default class ServerConsoleComp extends VueMixin {
         if (consoleDiv) {
           consoleDiv.scrollTop = consoleDiv.scrollHeight
         }
-      }, 1000)
+      }, 500)
     } else {
       clearInterval(this.autoScroll)
     }

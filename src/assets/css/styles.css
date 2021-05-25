@@ -295,6 +295,7 @@ button {
     background-color: #000;
     height: 60vh;
     overflow-y: scroll;
+    white-space: pre-line;
 }
 
 .console p {
