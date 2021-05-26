@@ -14,7 +14,7 @@
       <ServerCardComp :ref="server.id" @serverClicked="selectServer" :selected="selectedServerIds.includes(server.id)"
       @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="(server, index) in servers" :key="index" :server="server" />
 
-      <ServerCardComp v-for="(server, index) in clonedServers" :key="index" :server="server" :cloned="true" />
+      <ServerCardComp v-for="(server, index) in clonedServers" :key="'clone-'+index" :server="server" :cloned="true" />
     </div>
   </div>
 </template>
@@ -45,15 +45,18 @@ export default class HomeView extends VueMixin {
 
   async mounted (): Promise<void> {
     await this.getServers()
-
-    this.serverInterval = setInterval(async () => {
-      await this.getServers(false)
-    }, 30000)
+    await this.setServerInterval()
   }
 
   beforeRouteLeave (to: Route, from: Route, next: FunctionConstructor): void {
     clearInterval(this.serverInterval)
     next()
+  }
+
+  async setServerInterval (): Promise<void> {
+    this.serverInterval = setInterval(async () => {
+      await this.getServers(false)
+    }, 30000)
   }
 
   async getServers (showLoading = true): Promise<void> {
@@ -104,52 +107,57 @@ export default class HomeView extends VueMixin {
   }
 
   async startServers (): Promise<void> {
+    clearInterval(this.serverInterval)
     await Promise.all(
       this.selectedServerIds.map(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (serverId) => { (this.$refs[serverId] as any)[0].startServer() }
       )
-    )
+    ).then(async () => { await this.setServerInterval() })
     this.selectedServerIds = []
   }
 
   async stopServers (): Promise<void> {
+    clearInterval(this.serverInterval)
     await Promise.all(
       this.selectedServerIds.map(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (serverId) => { (this.$refs[serverId] as any)[0].stopServer() }
       )
-    )
+    ).then(async () => { await this.setServerInterval() })
     this.selectedServerIds = []
   }
 
   async restartServers (): Promise<void> {
+    clearInterval(this.serverInterval)
     await Promise.all(
       this.selectedServerIds.map(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (serverId) => { (this.$refs[serverId] as any)[0].restartServer() }
       )
-    )
+    ).then(async () => { await this.setServerInterval() })
     this.selectedServerIds = []
   }
 
   async cloneServers (): Promise<void> {
+    clearInterval(this.serverInterval)
     await Promise.all(
       this.selectedServerIds.map(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (serverId) => { (this.$refs[serverId] as any)[0].cloneServer() }
       )
-    )
+    ).then(async () => { await this.setServerInterval() })
     this.selectedServerIds = []
   }
 
   async deleteServers (): Promise<void> {
+    clearInterval(this.serverInterval)
     await Promise.all(
       this.selectedServerIds.map(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (serverId) => { (this.$refs[serverId] as any)[0].deleteServer() }
       )
-    )
+    ).then(async () => { await this.setServerInterval() })
     this.selectedServerIds = []
   }
 }

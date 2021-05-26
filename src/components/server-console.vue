@@ -27,7 +27,7 @@
 import VueMixin from '@/mixins/vue'
 import { Component, Prop } from 'vue-property-decorator'
 import { Route } from 'vue-router/types'
-import { Websocket, WebsocketBuilder } from 'websocket-ts'
+import { Websocket, WebsocketBuilder, LinearBackoff } from 'websocket-ts'
 
 import { IServer } from 'dathost/src/interfaces/server'
 import Server from 'dathost/src/server'
@@ -57,22 +57,28 @@ export default class ServerConsoleComp extends VueMixin {
     if (serverRegion !== null) {
       this.ws = new WebsocketBuilder(`wss://${serverRegion[0]}.dathost.net/console-server/`
       ).onOpen(async (i) => {
-        const consoleAuth = await this.serverObj.consoleAuth()
-        i.send(JSON.stringify({
-          cmd: 'auth',
-          args: {
-            timestamp: consoleAuth.timestamp,
-            serverId: this.server.id,
-            token: consoleAuth.token
-          }
-        }))
+        await this.sendWsAuth(i)
+      }).onRetry(async (i) => {
+        await this.sendWsAuth(i)
       }).onMessage((i, ev) => {
         this.consoleLines += (JSON.parse(ev.data)).args.data
         this.consoleLoading = false
-      }).build()
+      }).withBackoff(new LinearBackoff(0, 1000, 8000)).build()
     }
 
     this.toggleAutoScroll(true)
+  }
+
+  async sendWsAuth (i: Websocket): Promise<void> {
+    const consoleAuth = await this.serverObj.consoleAuth()
+    i.send(JSON.stringify({
+      cmd: 'auth',
+      args: {
+        timestamp: consoleAuth.timestamp,
+        serverId: this.server.id,
+        token: consoleAuth.token
+      }
+    }))
   }
 
   beforeRouteLeave (to: Route, from: Route, next: FunctionConstructor): void {
