@@ -95,15 +95,18 @@ export default class ServerConsoleComp extends VueMixin {
   }
 
   toggleAutoScroll (enabled: boolean): void {
-    if (enabled === true) {
-      this.autoScroll = setInterval(() => {
-        const consoleDiv = document.getElementById('console')
-        if (consoleDiv) {
-          consoleDiv.scrollTop = consoleDiv.scrollHeight
+    const consoleDiv = document.getElementById('console')
+    if (consoleDiv) {
+      if (enabled === true) {
+        if (this.autoScroll) {
+          clearInterval(this.autoScroll)
         }
-      }, 500)
-    } else {
-      clearInterval(this.autoScroll)
+        this.autoScroll = setInterval(() => {
+          consoleDiv.scrollTop = consoleDiv.scrollHeight
+        }, 500)
+      } else {
+        clearInterval(this.autoScroll)
+      }
     }
   }
 }
