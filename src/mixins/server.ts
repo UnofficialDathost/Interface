@@ -49,7 +49,10 @@ export default class ServerMixin extends VueMixin {
   async startServer (): Promise<void> {
     this.serverStatus.startingUp = true
 
-    await this.serverObj.start()
+    try {
+      await this.serverObj.start()
+    } catch { }
+
     await new Promise(resolve => setTimeout(resolve, 5000))
 
     this.server = await this.serverObj.get()
