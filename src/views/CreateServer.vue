@@ -20,9 +20,7 @@
             <div class="steps-progressbar">
                 <ul>
                     <li class="previous">Game</li>
-                    <li class="active">Plugin Bundles</li>
-                    <li>Slots &amp; Tickrate</li>
-                    <li>Settings</li>
+                    <li v-for="(step, index) in steps" @click="stepPointClick(index)" :key="index" v-bind:class="{ active: index === currentStep, previous: index < currentStep }" style="cursor: pointer;">{{ step.name }}</li>
                     <li>Finished</li>
                 </ul>
             </div>
@@ -33,7 +31,11 @@
         </div>
 
         <div class="card-footer">
-          <button class="btn btn-primary btn-block" type="button">Next&nbsp;<i class="fa fa-arrow-right"></i></button>
+          <template v-if="currentStep < steps.length">
+            <button v-if="checkStep(currentStep)" @click="currentStep += 1" class="btn btn-primary btn-block" type="button">Next&nbsp;<b-icon icon="arrow-right"></b-icon></button>
+            <button v-else class="btn btn-primary btn-block" type="button">Next&nbsp;<b-icon icon="arrow-right"></b-icon></button>
+          </template>
+          <button v-else class="btn btn-primary btn-block" type="button">Create Server&nbsp;<b-icon icon="plus"></b-icon></button>
         </div>
     </div>
   </div>
@@ -52,6 +54,24 @@ export default class CreateServerView extends VueMixin {
     { name: 'TS3', logo: 'teamspeak3' }
   ]
 
+  steps = [
+    { name: 'Plugin Bundles', required: false, completed: false },
+    { name: 'Slots & Tickrate', required: true, completed: false },
+    { name: 'Settings', required: true, completed: false }
+  ]
+
+  currentStep = 0
+
   selectedGame = null
+
+  checkStep (index: number): boolean {
+    return (this.steps[index].required && this.steps[index].completed) || !this.steps[index].required
+  }
+
+  stepPointClick (index: number): void {
+    if (this.checkStep(index)) {
+      this.currentStep = index
+    }
+  }
 }
 </script>
