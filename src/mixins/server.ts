@@ -94,6 +94,7 @@ export default class ServerMixin extends VueMixin {
   async restartServer (): Promise<void> {
     this.serverStatus.restarting = true
     await this.serverObj.stop()
+    await new Promise(resolve => setTimeout(resolve, 5000))
     await this.serverObj.start()
     this.serverStatus.restarting = false
     this.server.on = true
