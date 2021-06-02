@@ -19,9 +19,9 @@
       <draggable @end="serverMoved" :list="servers" class="row gutter-2">
         <ServerCardComp :ref="server.id" @serverClicked="selectServer" :selected="selectedServerIds.includes(server.id)"
         @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="(server, index) in servers" :key="index" :server="server" />
-      </draggable>
 
-      <ServerCardComp v-for="(server, index) in clonedServers" :key="'clone-'+index" :server="server" :cloned="true" />
+        <ServerCardComp v-for="(server, index) in clonedServers" :key="'clone-'+index" :server="server" :cloned="true" />
+      </draggable>
     </div>
   </div>
 </template>
@@ -135,7 +135,7 @@ export default class HomeView extends VueMixin {
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
   async serverMoved (event: any): Promise<void> {
-    if (event.newIndex !== event.oldIndex) {
+    if (event.newIndex !== event.oldIndex && typeof this.servers[event.oldIndex] !== 'undefined') {
       clearInterval(this.serverInterval)
 
       const indexBelow = event.newIndex + 1
