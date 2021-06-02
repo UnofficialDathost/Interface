@@ -99,6 +99,7 @@ export default class App extends VueMixin {
   loginLoading = false
 
   account: IAccount
+  accountInterval: ReturnType<typeof setInterval>
 
   serverTabs = [
     { name: 'Status', icon: 'thermometer' },
@@ -131,7 +132,7 @@ export default class App extends VueMixin {
       localStorage.setItem('loginDetails', JSON.stringify(this.login))
 
       // Update account details every 30 seconds in the background.
-      setInterval(async () => {
+      this.accountInterval = setInterval(async () => {
         this.account = await dathost.account()
       }, 30000)
     } catch {
@@ -141,8 +142,9 @@ export default class App extends VueMixin {
   }
 
   logout (): void {
-    this.loggedIn = false
+    clearInterval(this.accountInterval)
     localStorage.removeItem('loginDetails')
+    this.loggedIn = false
   }
 }
 </script>
