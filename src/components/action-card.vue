@@ -50,7 +50,7 @@ export default class ActionCardComp extends Vue {
   ]
 
   created (): void {
-    this.$emit(`orderBy${this.orders[0]}`)
+    this.$emit(`orderBy${this.selectedOrder}`)
   }
 
   toggleActions (): void {
