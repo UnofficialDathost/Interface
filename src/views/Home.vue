@@ -6,7 +6,8 @@
     @restartServers="restartServers"
     @cloneServers="cloneServers"
     @deleteServers="deleteServers"
-    @mangingServers="toggleMangement" />
+    @mangingServers="toggleMangement"
+    v-model="serverSearch"/>
     <div v-if="serversLoading" class="d-flex justify-content-center mb-3">
       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
     </div>
@@ -20,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'vue-property-decorator'
+import { Component, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router/types'
 import VueMixin from '@/mixins/vue'
 
@@ -38,6 +39,7 @@ import ServerCardComp from '@/components/server-card.vue'
 export default class HomeView extends VueMixin {
   servers: IServer[] = []
   clonedServers: IServer[] = []
+  serverSearch = ''
   selectedServerIds: string[] = []
   serversLoading = true
   beingManged = false
@@ -46,6 +48,24 @@ export default class HomeView extends VueMixin {
   async mounted (): Promise<void> {
     await this.getServers()
     await this.setServerInterval()
+  }
+
+  @Watch('serverSearch')
+  async serverSearchChange (): Promise<void> {
+    clearInterval(this.serverInterval)
+
+    if (this.serverSearch !== '') {
+      this.servers = this.servers.filter((server) => {
+        return this.searchHelper(this.serverSearch, server.name) || this.searchHelper(this.serverSearch, server.location) || this.searchHelper(this.serverSearch, server.game) || this.searchHelper(this.serverSearch, server.id)
+      })
+    } else {
+      await this.getServers()
+      await this.setServerInterval()
+    }
+  }
+
+  searchHelper (search: string, toSearch: string): boolean {
+    return toSearch.toLowerCase().search(search.toLowerCase()) !== -1
   }
 
   beforeRouteLeave (to: Route, from: Route, next: FunctionConstructor): void {

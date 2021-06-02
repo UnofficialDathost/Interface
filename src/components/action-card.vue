@@ -17,7 +17,7 @@
                     <!-- Start: Search Input (responsive) -->
                     <div class="float-left float-md-right mt-5 mt-md-0 search-area">
                         <b-icon class="float-left search-icon" icon="search"></b-icon>
-                        <input class="float-left float-sm-right custom-search-input" type="search" placeholder="Seach...">
+                        <input @input="$emit('input', $event.target.value)" class="float-left float-sm-right custom-search-input" type="search" placeholder="Seach...">
                     </div>
                     <!-- End: Search Input (responsive) -->
                 </div>
