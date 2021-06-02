@@ -298,6 +298,22 @@ button {
     white-space: pre-line;
 }
 
+.modal-content {
+  background-color: var(--dathost-dark);
+  border-radius: 0;
+}
+
+.modal-header {
+  padding: .75rem 1.25rem !important;
+  margin-bottom: 0 !important;
+  background-color: rgba(0,0,0,.03) !important;
+  border-bottom: 1px solid rgba(0,0,0,.125) !important;
+}
+
+.btn-warning {
+  background-color: var(--dathost-orange);
+}
+
 .console p {
     margin-bottom: 1px;
     font-size: .9em;

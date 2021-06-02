@@ -57,13 +57,23 @@ export default class ServerMixin extends VueMixin {
 
     this.server = await this.serverObj.get()
     if (this.server.server_error) {
+      let errorMessage
       if (this.server.server_error === 'gslt_expired') {
-        alert('Your server isn\'t booting because your Steam Token (GSLT) has expired.')
+        errorMessage = 'Your server isn\'t booting because your Steam Token (GSLT) has expired.'
       } else if (this.server.server_error === 'gslt_invalid') {
-        alert('Your server isn\'t booting because your Steam Token (GSLT) is invalid.')
+        errorMessage = 'Your server isn\'t booting because your Steam Token (GSLT) is invalid.'
       } else {
-        alert(this.server.server_error)
+        errorMessage = this.server.server_error
       }
+
+      this.$bvModal.msgBoxOk(errorMessage, {
+        title: 'Server error',
+        okVariant: 'warning',
+        headerClass: 'p-2 border-bottom-0',
+        footerClass: 'p-2 border-top-0',
+        centered: true
+      })
+
       this.server.on = false
       this.server.booting = false
 
