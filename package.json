@@ -17,6 +17,7 @@
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.2.0",
+    "vuedraggable": "^2.24.3",
     "websocket-ts": "^1.1.0"
   },
   "devDependencies": {

@@ -15,9 +15,11 @@
     <div v-if="serversLoading" class="d-flex justify-content-center mb-3">
       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
     </div>
-    <div v-else class="row gutter-2">
-      <ServerCardComp :ref="server.id" @serverClicked="selectServer" :selected="selectedServerIds.includes(server.id)"
-      @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="(server, index) in servers" :key="index" :server="server" />
+    <div v-else>
+      <draggable @end="serverMoved" :list="servers" class="row gutter-2">
+        <ServerCardComp :ref="server.id" @serverClicked="selectServer" :selected="selectedServerIds.includes(server.id)"
+        @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="(server, index) in servers" :key="index" :server="server" />
+      </draggable>
 
       <ServerCardComp v-for="(server, index) in clonedServers" :key="'clone-'+index" :server="server" :cloned="true" />
     </div>
@@ -27,9 +29,11 @@
 <script lang="ts">
 import { Component, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router/types'
+import draggable, { MoveEvent } from 'vuedraggable'
 import VueMixin from '@/mixins/vue'
 
 import { IServer } from 'dathost/src/interfaces/server'
+import ServerSettings from 'dathost/src/settings/server'
 
 import ActionCardComp from '@/components/action-card.vue'
 import ServerCardComp from '@/components/server-card.vue'
@@ -37,7 +41,8 @@ import ServerCardComp from '@/components/server-card.vue'
 @Component({
   components: {
     ActionCardComp,
-    ServerCardComp
+    ServerCardComp,
+    draggable
   }
 })
 export default class HomeView extends VueMixin {
@@ -126,6 +131,25 @@ export default class HomeView extends VueMixin {
 
       return bSlots - aSlots
     })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+  async serverMoved (event: any): Promise<void> {
+    const indexBelow = event.newIndex - 1
+    const indexAbove = event.newIndex + 1
+
+    let newSortOrder = 0
+    if (typeof this.servers[indexBelow] !== 'undefined') {
+      newSortOrder = this.servers[indexBelow].manual_sort_order + 0.5
+    } else if (typeof this.servers[indexAbove] !== 'undefined') {
+      newSortOrder = this.servers[indexAbove].manual_sort_order - 0.5
+    }
+
+    if (newSortOrder !== 0) {
+      await this.$dathost.server(this.servers[event.newIndex].id).update(new ServerSettings({
+        manualSortOrder: newSortOrder
+      }))
+    }
   }
 
   beforeRouteLeave (to: Route, from: Route, next: FunctionConstructor): void {
