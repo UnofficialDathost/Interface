@@ -29,7 +29,7 @@
 <script lang="ts">
 import { Component, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router/types'
-import draggable, { MoveEvent } from 'vuedraggable'
+import draggable from 'vuedraggable'
 import VueMixin from '@/mixins/vue'
 
 import { IServer } from 'dathost/src/interfaces/server'
@@ -135,25 +135,35 @@ export default class HomeView extends VueMixin {
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
   async serverMoved (event: any): Promise<void> {
-    clearInterval(this.serverInterval)
+    if (event.newIndex !== event.oldIndex) {
+      clearInterval(this.serverInterval)
 
-    const indexBelow = event.newIndex - 1
-    const indexAbove = event.newIndex + 1
+      const indexBelow = event.newIndex + 1
+      const indexAbove = event.newIndex - 1
 
-    let newSortOrder = 0
-    if (typeof this.servers[indexBelow] !== 'undefined') {
-      newSortOrder = this.servers[indexBelow].manual_sort_order + 0.5
-    } else if (typeof this.servers[indexAbove] !== 'undefined') {
-      newSortOrder = this.servers[indexAbove].manual_sort_order - 0.5
-    }
+      let newSortOrder: number
+      if (typeof this.servers[indexAbove] === 'undefined') {
+        if (typeof this.servers[indexBelow] !== 'undefined') {
+          newSortOrder = this.servers[indexBelow].manual_sort_order - 0.5
+        } else {
+          newSortOrder = this.servers[event.newIndex].manual_sort_order
+        }
+      } else {
+        if (typeof this.servers[indexBelow] !== 'undefined') {
+          newSortOrder = Math.random() * (this.servers[indexAbove].manual_sort_order - this.servers[indexBelow].manual_sort_order) + this.servers[indexBelow].manual_sort_order
+        } else {
+          newSortOrder = this.servers[indexAbove].manual_sort_order + 0.5
+        }
+      }
 
-    if (newSortOrder !== 0) {
+      this.servers[event.newIndex].manual_sort_order = newSortOrder
+
       await this.$dathost.server(this.servers[event.newIndex].id).update(new ServerSettings({
         manualSortOrder: newSortOrder
       }))
-    }
 
-    await this.setServerInterval()
+      await this.setServerInterval()
+    }
   }
 
   beforeRouteLeave (to: Route, from: Route, next: FunctionConstructor): void {
