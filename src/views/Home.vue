@@ -135,6 +135,8 @@ export default class HomeView extends VueMixin {
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
   async serverMoved (event: any): Promise<void> {
+    clearInterval(this.serverInterval)
+
     const indexBelow = event.newIndex - 1
     const indexAbove = event.newIndex + 1
 
@@ -150,6 +152,8 @@ export default class HomeView extends VueMixin {
         manualSortOrder: newSortOrder
       }))
     }
+
+    await this.setServerInterval()
   }
 
   beforeRouteLeave (to: Route, from: Route, next: FunctionConstructor): void {
