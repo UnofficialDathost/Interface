@@ -301,6 +301,7 @@ button {
 .modal-content {
   background-color: var(--dathost-dark);
   border-radius: 0;
+  white-space: pre-line;
 }
 
 .modal-header {

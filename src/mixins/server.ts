@@ -94,11 +94,21 @@ export default class ServerMixin extends VueMixin {
   }
 
   async deleteServer (): Promise<void> {
-    if (confirm(`Are you sure you want to delete this?\n\nName: ${this.server.name}\nID: ${this.server.id}`)) {
-      this.serverStatus.deleting = true
-      await this.serverObj.delete()
-      this.deleted = true
-    }
+    this.$bvModal.msgBoxConfirm(`Are you sure you want to delete this?\n\nName: ${this.server.name}\nID: ${this.server.id}`, {
+      title: 'You are about to delete a server!',
+      okTitle: 'Delete this server!',
+      okVariant: 'secondary',
+      cancelVariant: 'primary',
+      headerClass: 'p-2 border-bottom-0',
+      footerClass: 'p-2 border-top-0',
+      centered: true
+    }).then(async value => {
+      if (value) {
+        this.serverStatus.deleting = true
+        await this.serverObj.delete()
+        this.deleted = true
+      }
+    })
   }
 
   async restartServer (): Promise<void> {
