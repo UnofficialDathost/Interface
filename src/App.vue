@@ -42,7 +42,7 @@
             </div>
             <div class="card-body">
                 <template v-if="!loginLoading">
-                  <b-alert v-if="invalidLogin" show variant="warning" style="margin-bottom: 1.5rem;">Login is invalid!</b-alert>
+                  <b-alert v-if="invalidLogin" show variant="warning" style="margin-bottom: 1.5rem;">Login is invalid! If you are using a custom cors proxy, this could also be causing the error.</b-alert>
 
                   <label for="email">Email</label>
                   <input v-model="login.email" class="form-control" type="email" placeholder="..." name="email">
