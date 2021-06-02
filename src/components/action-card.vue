@@ -21,11 +21,11 @@
                     </div>
                     <button @click="toggleActions()" v-else class="btn btn-secondary" type="button"><b-icon icon="collection"></b-icon>&nbsp;Manage Servers</button>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 d-flex align-items-center justify-content-end">
                     <!-- Start: Search Input (responsive) -->
-                    <div class="float-left float-md-right mt-5 mt-md-0 search-area">
+                    <div class="search-area">
                         <b-icon class="float-left search-icon" icon="search"></b-icon>
-                        <input @input="$emit('input', $event.target.value)" class="float-left float-sm-right custom-search-input" type="search" placeholder="Seach...">
+                        <input @input="$emit('input', $event.target.value)" class="custom-search-input" type="search" placeholder="Seach...">
                     </div>
                     <!-- End: Search Input (responsive) -->
                 </div>
