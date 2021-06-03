@@ -16,7 +16,7 @@
       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
     </div>
     <div v-else>
-      <draggable @end="serverMoved" draggable=".draggable-server" :list="servers" class="row gutter-2">
+      <draggable @end="serverMoved" :force-fallback="true" ghost-class="ghost" drag-class="moved" draggable=".draggable-server" :list="servers" class="row gutter-2">
         <ServerCardComp class="draggable-server" :ref="server.id" @serverClicked="selectServer" :selected="selectedServerIds.includes(server.id)"
         @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="(server, index) in servers" :key="index" :server="server" />
 

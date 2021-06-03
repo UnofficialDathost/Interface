@@ -311,6 +311,18 @@ button {
   border-bottom: 1px solid rgba(0,0,0,.125) !important;
 }
 
+.ghost {
+  opacity: 0 !important;
+}
+
+.moved {
+  opacity: 1 !important;
+  -webkit-transform: rotate(3deg);
+  -moz-transform: rotate(3deg);
+  -o-transform: rotate(3deg);
+  transform: rotate(3deg);
+}
+
 .btn-warning {
   background-color: var(--dathost-orange);
 }
