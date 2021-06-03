@@ -235,6 +235,12 @@ export default class CreateServerView extends VueMixin {
       tickRate: 64,
       location: ''
     }
+
+    for (const game in this.games) {
+      for (const step of this.games[game].steps) {
+        step.completed = false
+      }
+    }
   }
 
   maxDiskSpaceFormatter (value: number): string {
