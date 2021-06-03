@@ -416,12 +416,15 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
 }
 
 .flag {
-    width: 100%;
+    width: 20%;
+}
+
+.location-card > .card-body, .location-card > .card-header {
+  padding: 10px;
 }
 
 .location-card {
     margin-bottom: 15px;
-    min-height: 150px;
 }
 
 thead {
