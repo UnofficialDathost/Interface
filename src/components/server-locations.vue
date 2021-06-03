@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div v-for="(location, index) in locations" :key="index" class="col-md-3">
-            <div class="card location-card" v-bind:class="{ 'game-selected': selectedLocation === location.id }" @click="selectedLocation = location.id; $emit('locationSelected', location.id)">
+            <div class="card location-card" v-bind:class="{ 'game-selected': selectedLocation === location.id }" @click="selectedLocation = location.id; $emit('locationSelected', location.id, location.pricingMultiplier)">
                 <div class="card-header">
                   <div class="row">
                       <div class="col-md-6">
@@ -16,7 +16,7 @@
                   </div>
                 </div>
                 <div class="card-body">
-                  <h6 style="margin: 0px;">{{ location.html }}</h6>
+                  <h6 style="margin: 0px;">{{ location.name }} <b-badge v-if="location.pricingMultiplier !== 1" variant="warning">Increases cost by x {{ location.pricingMultiplier }}</b-badge></h6>
                 </div>
             </div>
         </div>
@@ -32,23 +32,23 @@ import { WebsocketBuilder } from 'websocket-ts'
 @Component({ name: 'ServerLocations' })
 export default class DisclaimerComp extends VueMixin {
   locations = [
-    { html: 'Düsseldorf, Germany', id: 'dusseldorf', pingtest: 'tyrion', ping: 0 },
-    { html: 'Strasbourg, France', id: 'strasbourg', pingtest: 'luwin', ping: 0 },
-    { html: 'Bristol, UK', id: 'bristol', pingtest: 'sansa', ping: 0 },
-    { html: 'Barcelona, Spain', id: 'barcelona', pingtest: 'osha', ping: 0 },
-    { html: 'Sydney, Australia', id: 'sydney', pingtest: 'ygritte', ping: 0 },
-    { html: 'Stockholm, Sweden', id: 'stockholm', pingtest: 'jaqen', ping: 0 },
-    { html: 'Warsaw, Poland', id: 'warsaw', pingtest: 'alliser', ping: 0 },
-    { html: 'Amsterdam, Netherlands', id: 'amsterdam', pingtest: 'joffrey', ping: 0 },
-    { html: 'Moscow, Russia', id: 'moscow', pingtest: 'grey', ping: 0 },
-    { html: 'Istanbul, Turkey', id: 'istanbul', pingtest: 'pypar', ping: 0 },
-    { html: 'Singapore, Singapore', id: 'singapore', pingtest: 'umber', ping: 0 },
-    { html: 'Los Angeles, CA, USA', id: 'los_angeles', pingtest: 'cersei', ping: 0 },
-    { html: 'Dallas, TX, USA', id: 'dallas', pingtest: 'jaime', ping: 0 },
-    { html: 'Chicago, IL, USA', id: 'chicago', pingtest: 'gilly', ping: 0 },
-    { html: 'Portland, OR, USA', id: 'portland', pingtest: 'marillion', ping: 0 },
-    { html: 'New York City, NY, USA', id: 'new_york_city', pingtest: 'hodor', ping: 0 },
-    { html: 'São Paulo, Brazil', id: 'sao_paulo', pingtest: 'edmure', ping: 0 }
+    { name: 'Düsseldorf, Germany', id: 'dusseldorf', console: 'tyrion', ping: 0, pricingMultiplier: 1 },
+    { name: 'Strasbourg, France', id: 'strasbourg', console: 'luwin', ping: 0, pricingMultiplier: 1 },
+    { name: 'Bristol, UK', id: 'bristol', console: 'sansa', ping: 0, pricingMultiplier: 1 },
+    { name: 'Barcelona, Spain', id: 'barcelona', console: 'osha', ping: 0, pricingMultiplier: 1 },
+    { name: 'Sydney, Australia', id: 'sydney', console: 'ygritte', ping: 0, pricingMultiplier: 1 },
+    { name: 'Stockholm, Sweden', id: 'stockholm', console: 'jaqen', ping: 0, pricingMultiplier: 1 },
+    { name: 'Warsaw, Poland', id: 'warsaw', console: 'alliser', ping: 0, pricingMultiplier: 1 },
+    { name: 'Amsterdam, Netherlands', id: 'amsterdam', console: 'joffrey', ping: 0, pricingMultiplier: 1 },
+    { name: 'Moscow, Russia', id: 'moscow', console: 'grey', ping: 0, pricingMultiplier: 1 },
+    { name: 'Istanbul, Turkey', id: 'istanbul', console: 'pypar', ping: 0, pricingMultiplier: 1 },
+    { name: 'Singapore, Singapore', id: 'singapore', console: 'umber', ping: 0, pricingMultiplier: 1 },
+    { name: 'Los Angeles, CA, USA', id: 'los_angeles', console: 'cersei', ping: 0, pricingMultiplier: 1 },
+    { name: 'Dallas, TX, USA', id: 'dallas', console: 'jaime', ping: 0, pricingMultiplier: 1 },
+    { name: 'Chicago, IL, USA', id: 'chicago', console: 'gilly', ping: 0, pricingMultiplier: 1 },
+    { name: 'Portland, OR, USA', id: 'portland', console: 'marillion', ping: 0, pricingMultiplier: 1 },
+    { name: 'New York City, NY, USA', id: 'new_york_city', console: 'hodor', ping: 0, pricingMultiplier: 1 },
+    { name: 'São Paulo, Brazil', id: 'sao_paulo', console: 'edmure', ping: 0, pricingMultiplier: 1.75 }
   ]
 
   selectedLocation = null
@@ -56,7 +56,7 @@ export default class DisclaimerComp extends VueMixin {
   mounted (): void {
     for (const location of this.locations) {
       let startTime: Date
-      new WebsocketBuilder(`wss://${location.pingtest}.dathost.net/console-server/`
+      new WebsocketBuilder(`wss://${location.console}.dathost.net/console-server/`
       ).onOpen((i) => {
         startTime = new Date()
         i.send(JSON.stringify({ cmd: 'datPing' }))
@@ -65,10 +65,10 @@ export default class DisclaimerComp extends VueMixin {
           location.ping = new Date().getTime() - startTime.getTime()
 
           this.locations.sort((a, b) => {
-            if (b.ping === 0) {
-              return -1
+            if (a.ping !== 0 && b.ping !== 0) {
+              return a.ping - b.ping
             }
-            return a.ping - b.ping
+            return 1
           })
         }
         i.close()

@@ -4,7 +4,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-3" v-for="(game, gameCode) in games" :key="gameCode">
-                    <div class="card game-select-card" style="cursor: pointer;" @click="selectedGame = gameCode; getNeededCostData()" v-bind:class="{'game-selected': gameCode === selectedGame}">
+                    <div class="card game-select-card" style="cursor: pointer;" @click="selectedGame = gameCode; clearEverything()" v-bind:class="{'game-selected': gameCode === selectedGame}">
                         <div class="card-body d-flex d-xl-flex flex-column justify-content-center align-items-center justify-content-xl-center align-items-xl-center">
                           <img class="game-icon game-select-icon" :src="require(`@/assets/img/games/${gameCode}.svg`)">
                           <h5 style="margin-bottom: 0px;">{{ game.name }}</h5>
@@ -14,10 +14,7 @@
             </div>
         </div>
     </div>
-    <div v-if="selectedGame !== '' && costServerLoading" class="d-flex justify-content-center mb-3">
-      <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
-    </div>
-    <div v-else-if="selectedGame !== ''" class="card" style="margin-top: 10px;">
+    <div v-if="selectedGame !== ''" class="card" style="margin-top: 10px;">
         <div class="card-header">
             <!-- Start: Steps Progressbar -->
             <div class="steps-progressbar">
@@ -31,9 +28,9 @@
 
             <div class="text-center">
               <h5 style="margin: 0px;" v-b-tooltip.hover.top title="Pricing may not be accurate.">Cost:<b-icon scale=".4" icon="info-circle"></b-icon></h5>
-              <span>Hourly: {{ (maxCostPerHour * server.slots).toFixed(2) }}</span> |
-              <span>Monthly: {{ ((maxCostPerMonth * server.slots) + extraSpaceCost).toFixed(2) }}</span> |
-              <span>Annually: {{ (((maxCostPerMonth * server.slots) * 12) + extraSpaceCost).toFixed(2) }}</span>
+              <span>Hourly: {{ ((( selectedGame === 'csgo' && server.tickRate === 64 ? games[selectedGame].cost.perHourLow : games[selectedGame].cost.perHour) * server.slots) * pricingMultiplier).toFixed(2) }}</span> |
+              <span>Monthly: {{ (((( selectedGame === 'csgo' && server.tickRate === 64 ? games[selectedGame].cost.perMonthLow : games[selectedGame].cost.perMonth) * server.slots) + extraSpaceCost) * pricingMultiplier).toFixed(2) }}</span> |
+              <span>Annually: {{ ((((( selectedGame === 'csgo' && server.tickRate === 64 ? games[selectedGame].cost.perMonthLow : games[selectedGame].cost.perMonth) * server.slots) * 12) + extraSpaceCost) * pricingMultiplier).toFixed(2) }}</span>
             </div>
         </div>
 
@@ -46,11 +43,11 @@
               <b-form-spinbutton v-model="server.maxDiskSpace" :formatter-fn="maxDiskSpaceFormatter" id="max-disk" min="30" max="100"></b-form-spinbutton>
 
               <label style="margin-top:25px;" for="slots">Max slots</label>
-              <b-form-spinbutton v-model="server.slots" :formatter-fn="slotsFormatter" id="slots" min="5" max="30"></b-form-spinbutton>
+              <b-form-spinbutton v-model="server.slots" :formatter-fn="slotsFormatter" id="slots" :min="games[selectedGame].minSlots" :max="games[selectedGame].maxSlots"></b-form-spinbutton>
 
               <template v-if="selectedGame === 'csgo'">
                 <label style="margin-top:25px;" for="tickrate">Tickrate</label>
-                <b-form-spinbutton :value="3" :formatter-fn="tickRateFormatter" id="tickrate" min="0" max="3"></b-form-spinbutton>
+                <b-form-spinbutton :value="0" :formatter-fn="tickRateFormatter" id="tickrate" min="0" max="4"></b-form-spinbutton>
               </template>
 
               <button @click="server.autostop ? server.autostop = false : server.autostop = true" class="btn btn-secondary" style="margin-top:25px;">
@@ -97,28 +94,53 @@ export default class CreateServerView extends VueMixin {
         { name: 'Details', required: true, completed: false },
         { name: 'Location', required: true, completed: false }
       ],
-      costServerId: '60b8742eaf1313e53ebc3871'
+      maxSlots: 64,
+      minSlots: 5,
+      cost: {
+        perHour: 0.033,
+        perHourLow: 0.025,
+        perMonth: 0.99,
+        perMonthLow: 0.75
+      }
     },
     valheim: {
       name: 'Valheim',
       steps: [
         { name: 'Details', required: true, completed: false },
         { name: 'Location', required: true, completed: false }
-      ]
+      ],
+      maxSlots: 10,
+      minSlots: 10,
+      cost: {
+        perHour: 0.033,
+        perMonth: 0.99
+      }
     },
     teamfortress2: {
       name: 'TF2',
       steps: [
         { name: 'Details', required: true, completed: false },
         { name: 'Location', required: true, completed: false }
-      ]
+      ],
+      maxSlots: 32,
+      minSlots: 5,
+      cost: {
+        perHour: 0.025,
+        perMonth: 0.75
+      }
     },
     teamspeak3: {
       name: 'TS3',
       steps: [
         { name: 'Details', required: true, completed: false },
         { name: 'Location', required: true, completed: false }
-      ]
+      ],
+      maxSlots: 1000,
+      minSlots: 5,
+      cost: {
+        perHour: 0.01,
+        perMonth: 0.3
+      }
     }
   }
 
@@ -132,34 +154,24 @@ export default class CreateServerView extends VueMixin {
     slots: 5,
     autostop: false,
     autostopMinutes: 5,
-    tickRate: 128,
+    tickRate: 64,
     location: ''
   }
 
-  tickRates = [85, 100, 102.4, 128]
+  tickRates = [64, 85, 100, 102.4, 128]
 
-  costServerLoading = true
-  maxCostPerHour: number
-  maxCostPerMonth: number
   extraSpaceCost = 0
+  pricingMultiplier = 1
 
   @Watch('server.maxDiskSpace')
   watchMaxDiskSpace (): void {
     this.extraSpaceCost = (this.server.maxDiskSpace - 30) * 0.5
   }
 
-  setLocation (location: string): void {
+  setLocation (location: string, pricingMultiplier: number): void {
     this.server.location = location
+    this.pricingMultiplier = pricingMultiplier
     this.games[this.selectedGame].steps[this.currentStep].completed = true
-  }
-
-  async getNeededCostData (): Promise<void> {
-    this.costServerLoading = true
-    const costServer = await this.$dathost.server(this.games[this.selectedGame].costServerId).get()
-    this.costServerLoading = false
-
-    this.maxCostPerMonth = costServer.max_cost_per_month / 12
-    this.maxCostPerHour = costServer.max_cost_per_hour / 12
   }
 
   checkStep (index: number): boolean {
@@ -186,6 +198,21 @@ export default class CreateServerView extends VueMixin {
 
   stepExists (): boolean {
     return typeof this.games[this.selectedGame].steps[this.currentStep] !== 'undefined'
+  }
+
+  clearEverything (): void {
+    this.extraSpaceCost = 0
+    this.pricingMultiplier = 0
+    this.currentStep = 0
+    this.server = {
+      name: '',
+      maxDiskSpace: 30,
+      slots: 5,
+      autostop: false,
+      autostopMinutes: 5,
+      tickRate: 64,
+      location: ''
+    }
   }
 
   maxDiskSpaceFormatter (value: number): string {
