@@ -202,7 +202,7 @@ export default class CreateServerView extends VueMixin {
 
   clearEverything (): void {
     this.extraSpaceCost = 0
-    this.pricingMultiplier = 0
+    this.pricingMultiplier = 1
     this.currentStep = 0
     this.server = {
       name: '',
