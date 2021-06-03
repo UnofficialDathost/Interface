@@ -226,10 +226,17 @@ button {
     width: 40%;
 }
 
-.form-control:focus {
+.form-control.focus {
     outline: 0;
     box-shadow: none;
     border: none;
+    color: #fff;
+    background-color: var(--dathost-dark-dark) !important;
+}
+
+textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {   
+  box-shadow: 0 2.5px 1px -1px var(--dathost-orange);
+  outline: 0 none;
 }
 
 .game-select-card {
