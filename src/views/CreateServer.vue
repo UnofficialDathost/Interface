@@ -4,7 +4,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-3" v-for="(game, gameCode) in games" :key="gameCode">
-                    <div class="card game-select-card" style="cursor: pointer;" @click="selectedGame = gameCode; clearEverything()" v-bind:class="{'game-selected': gameCode === selectedGame}">
+                    <div class="card game-select-card" style="cursor: pointer;" @click="changeSelectedGame(gameCode)" v-bind:class="{'game-selected': gameCode === selectedGame}">
                         <div class="card-body d-flex d-xl-flex flex-column justify-content-center align-items-center justify-content-xl-center align-items-xl-center">
                           <img class="game-icon game-select-icon" :src="require(`@/assets/img/games/${gameCode}.svg`)">
                           <h5 style="margin-bottom: 0px;">{{ game.name }}</h5>
@@ -200,7 +200,29 @@ export default class CreateServerView extends VueMixin {
     return typeof this.games[this.selectedGame].steps[this.currentStep] !== 'undefined'
   }
 
-  clearEverything (): void {
+  changeSelectedGame (game: string): void {
+    if (this.server.name !== '') {
+      this.$bvModal.msgBoxConfirm('You have started to create a server already, changing game will clear everything.', {
+        title: 'You are about to lose your progress!',
+        okTitle: 'Lose my progress',
+        okVariant: 'secondary',
+        cancelVariant: 'primary',
+        headerClass: 'p-2 border-bottom-0',
+        footerClass: 'p-2 border-top-0',
+        centered: true
+      }).then(value => {
+        if (value) {
+          this.selectedGame = game
+          this.resetEverything()
+        }
+      })
+    } else {
+      this.selectedGame = game
+      this.resetEverything()
+    }
+  }
+
+  resetEverything (): void {
     this.extraSpaceCost = 0
     this.pricingMultiplier = 1
     this.currentStep = 0
