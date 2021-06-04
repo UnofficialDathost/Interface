@@ -1,6 +1,6 @@
 <template>
   <div v-if="!deleted" class="col-md-4">
-    <div class="card game-card" style="cursor: pointer;height: 100%;" v-bind:class="{'game-selected': selected}">
+    <div class="card game-card" style="cursor: pointer;height: 95%;" v-bind:class="{'game-selected': selected}">
         <div class="card-header" @click="$emit('serverClicked', server)">
             <div class="row">
                 <div class="col-md-6 d-xl-flex justify-content-xl-start align-items-xl-center"><img class="game-icon" :src="require(`@/assets/img/games/${server.game}.svg`)"></div>
