@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div v-for="(location, index) in locations" :key="index" class="col-md-3">
+        <div v-for="(location, index) in locations" :key="index" class="col-md-3" style="cursor: pointer;">
             <div class="card location-card" v-bind:class="{ 'game-selected': selectedLocation === location.id }" @click="selectedLocation = location.id; $emit('locationSelected', location.id, location.pricingMultiplier)">
                 <div class="card-header">
                   <div class="row">

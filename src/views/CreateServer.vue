@@ -34,10 +34,10 @@
             </div>
         </div>
 
-        <template v-if="stepExists()">
+        <template v-if="!creatingServer">
           <div v-if="games[selectedGame].steps[currentStep].name === 'Details'" class="card-body d-flex justify-content-center align-self-center flex-column w-50">
               <label for="name">Server Name</label>
-              <b-form-input @input="nameValid" v-model="server.name" id="name" placeholder="..."></b-form-input>
+              <b-form-input @input="stepValid" v-model="server.name" id="name" placeholder="..."></b-form-input>
 
               <label style="margin-top:25px;" for="max-disk">Max disk usage</label>
               <b-form-spinbutton v-model="server.maxDiskSpace" :formatter-fn="maxDiskSpaceFormatter" id="max-disk" min="30" max="100"></b-form-spinbutton>
@@ -48,6 +48,9 @@
               <template v-if="selectedGame === 'csgo'">
                 <label style="margin-top:25px;" for="tickrate">Tickrate</label>
                 <b-form-spinbutton :value="0" :formatter-fn="tickRateFormatter" id="tickrate" min="0" max="4"></b-form-spinbutton>
+
+                <label style="margin-top:25px;" for="rcon">Rcon</label>
+                <b-form-input @input="stepValid" v-model="server.rcon" id="rcon" placeholder="..."></b-form-input>
               </template>
 
               <button @click="server.autostop ? server.autostop = false : server.autostop = true" class="btn btn-secondary" style="margin-top:25px;">
@@ -63,16 +66,20 @@
           </div>
 
           <div class="card-footer">
-            <button v-if="checkStep(currentStep)" @click="currentStep += 1" class="btn btn-primary btn-block" type="button">Next&nbsp;<b-icon icon="arrow-right"></b-icon></button>
-            <button v-else class="btn btn-primary btn-block" disabled type="button">Next&nbsp;<b-icon icon="arrow-right"></b-icon></button>
+            <template v-if="!nextStepExist()">
+              <button v-if="checkStep(currentStep)" @click="createServer(); currentStep += 1" class="btn btn-primary btn-block" type="button">Create Server&nbsp;<b-icon icon="plus"></b-icon></button>
+              <button v-else disabled class="btn btn-primary btn-block" type="button">Create Server&nbsp;<b-icon icon="plus"></b-icon></button>
+            </template>
+            <template v-else>
+              <button v-if="checkStep(currentStep)" @click="currentStep += 1" class="btn btn-primary btn-block" type="button">Next&nbsp;<b-icon icon="arrow-right"></b-icon></button>
+              <button v-else class="btn btn-primary btn-block" disabled type="button">Next&nbsp;<b-icon icon="arrow-right"></b-icon></button>
+            </template>
           </div>
         </template>
-        <template v-else>
-          <div class="card-body"></div>
-          <div class="card-footer">
-            <button class="btn btn-primary btn-block" type="button">Create Server&nbsp;<b-icon icon="plus"></b-icon></button>
-          </div>
-        </template>
+        <div v-else class="card-body text-center">
+          <b-spinner style="width: 8rem; height: 8rem; margin: 25px 0;" label="Loading..."></b-spinner>
+          <h4>Creating Server...</h4>
+        </div>
     </div>
   </div>
 </template>
@@ -81,6 +88,8 @@
 import { Component, Watch } from 'vue-property-decorator'
 import VueMixin from '@/mixins/vue'
 import ServerLocations from '@/components/server-locations.vue'
+
+import ServerSettings from 'dathost/src/settings/server'
 
 @Component({
   components: { ServerLocations }
@@ -155,17 +164,52 @@ export default class CreateServerView extends VueMixin {
     autostop: false,
     autostopMinutes: 5,
     tickRate: 64,
-    location: ''
+    location: '',
+    rcon: ''
   }
 
   tickRates = [64, 85, 100, 102.4, 128]
+  creatingServer = false
 
   extraSpaceCost = 0
   pricingMultiplier = 1
 
+  async createServer (): Promise<void> {
+    this.creatingServer = true
+
+    const settings = new ServerSettings({
+      name: this.server.name,
+      maxDiskUsageGb: this.server.maxDiskSpace,
+      autostop: this.server.autostop,
+      autostopMinutes: this.server.autostopMinutes,
+      location: this.server.location
+    })
+
+    if (this.selectedGame === 'csgo') {
+      settings.csgo({
+        tickrate: this.server.tickRate,
+        rconPassword: this.server.rcon
+      })
+    } else if (this.selectedGame === 'valheim') {
+      settings.valheim()
+    } else if (this.selectedGame === 'teamfortress2') {
+      settings.tf2()
+    } else {
+      settings.teamspeak()
+    }
+
+    const server = await this.$dathost.createServer(settings)
+
+    this.$router.push({ name: 'Server', params: { serverId: server[0].id, tab: 'status' } })
+  }
+
   @Watch('server.maxDiskSpace')
   watchMaxDiskSpace (): void {
     this.extraSpaceCost = (this.server.maxDiskSpace - 30) * 0.5
+  }
+
+  nextStepExist (): boolean {
+    return typeof this.games[this.selectedGame].steps[this.currentStep + 1] !== 'undefined'
   }
 
   setLocation (location: string, pricingMultiplier: number): void {
@@ -188,16 +232,12 @@ export default class CreateServerView extends VueMixin {
     }
   }
 
-  nameValid (): void {
-    if (this.server.name) {
+  stepValid (): void {
+    if ((this.server.name && this.selectedGame !== 'csgo') || (this.selectedGame === 'csgo' && this.server.name && this.server.rcon)) {
       this.games[this.selectedGame].steps[this.currentStep].completed = true
     } else {
       this.games[this.selectedGame].steps[this.currentStep].completed = false
     }
-  }
-
-  stepExists (): boolean {
-    return typeof this.games[this.selectedGame].steps[this.currentStep] !== 'undefined'
   }
 
   changeSelectedGame (game: string): void {
@@ -225,6 +265,7 @@ export default class CreateServerView extends VueMixin {
   resetEverything (): void {
     this.extraSpaceCost = 0
     this.pricingMultiplier = 1
+    this.creatingServer = false
     this.currentStep = 0
     this.server = {
       name: '',
@@ -233,7 +274,8 @@ export default class CreateServerView extends VueMixin {
       autostop: false,
       autostopMinutes: 5,
       tickRate: 64,
-      location: ''
+      location: '',
+      rcon: ''
     }
 
     for (const game in this.games) {
