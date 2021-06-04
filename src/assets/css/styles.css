@@ -180,7 +180,7 @@ button {
 }
 
 .game-selected {
-    border: 2.5px solid rgb(255,161,75);
+    outline: 2px solid rgb(255,161,75);
 }
 
 .card {
