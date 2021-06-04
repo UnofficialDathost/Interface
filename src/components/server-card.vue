@@ -27,7 +27,7 @@
                     </p>
                 </div>
                 <div class="col-md-6 col-xl-4 d-xl-flex justify-content-xl-end">
-                    <p><b-icon icon="lightning"></b-icon>&nbsp;{{ server.month_credits }} / {{ server.max_cost_per_month }}</p>
+                    <p><b-icon icon="lightning"></b-icon>&nbsp;{{ server.month_credits.toFixed(2) }} / {{ server.max_cost_per_month.toFixed(2) }}</p>
                 </div>
             </div>
             <div class="btn-group" role="group">
