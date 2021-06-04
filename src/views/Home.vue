@@ -11,7 +11,7 @@
     @orderByCost="orderByCost"
     @orderByName="orderByName"
     @orderBySlots="orderBySlots"
-    @filterByNone="filterByNone"
+    @filterByNothing="filterByNothing"
     @filterByServerbooting="filterByServerBooting"
     @filterByServeron="filterByServerOn"
     @filterByServeroff="filterByServerOff"
@@ -147,7 +147,7 @@ export default class HomeView extends VueMixin {
     })
   }
 
-  filterByNone (): void {
+  filterByNothing (): void {
     this.filterFunc = null
     this.serversDisplay = this.servers
   }

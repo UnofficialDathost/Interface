@@ -59,9 +59,9 @@ export default class ActionCardComp extends Vue {
     'Slots'
   ]
 
-  selectedFilter = 'None'
+  selectedFilter = 'Nothing'
   filters: string[] = [
-    'None',
+    'Nothing',
     'Server booting',
     'Server on',
     'Server off',
