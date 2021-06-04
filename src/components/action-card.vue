@@ -3,16 +3,25 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-8">
-                    <b-dropdown class="m-md-2">
+                    <b-dropdown style="margin-right:10px;">
                       <template #button-content>
-                        Order by: <strong>{{ selectedOrder }}</strong>
+                        Order by <strong>{{ selectedOrder }}</strong>
                       </template>
                       <div v-for="(order, index) in orders" :key="index">
                         <b-dropdown-item @click="changeOrder(order)" v-if="order !== selectedOrder">{{ order }}</b-dropdown-item>
                       </div>
                     </b-dropdown>
+
+                    <b-dropdown style="margin-right:10px;">
+                      <template #button-content>
+                        Filter by <strong>{{ selectedFilter }}</strong>
+                      </template>
+                      <div v-for="(filter, index) in filters" :key="index">
+                        <b-dropdown-item @click="changeFilter(filter)" v-if="filter !== selectedFilter">{{ filter }}</b-dropdown-item>
+                      </div>
+                    </b-dropdown>
                     <div v-if="bulkActions" class="btn-group" role="group">
-                        <button @click="toggleActions()" class="btn btn-secondary" style="margin-right: 20px;" type="button"><b-icon icon="collection"></b-icon>&nbsp;Stop managing</button>
+                        <button @click="toggleActions()" class="btn btn-secondary" style="margin-right: 10px;" type="button"><b-icon icon="collection"></b-icon>&nbsp;Stop managing</button>
                         <button class="btn btn-primary" @click="$emit('startServers')" type="button"><b-icon icon="play-circle"></b-icon>&nbsp;Start</button>
                         <button class="btn btn-secondary" @click="$emit('stopServers')" type="button"><b-icon icon="stop-circle"></b-icon>&nbsp;Stop</button>
                         <button class="btn btn-secondary" @click="$emit('restartServers')" type="button"><b-icon icon="arrow-repeat"></b-icon>&nbsp;Restart</button>
@@ -41,12 +50,24 @@ import Component from 'vue-class-component'
 @Component({ name: 'ActionCard' })
 export default class ActionCardComp extends Vue {
   bulkActions = false
+
   selectedOrder = 'Priority'
   orders: string[] = [
     'Priority',
     'Cost',
     'Name',
     'Slots'
+  ]
+
+  selectedFilter = 'None'
+  filters: string[] = [
+    'None',
+    'Server booting',
+    'Server on',
+    'Server off',
+    'Autostop on',
+    'Autostop off',
+    'Players online'
   ]
 
   created (): void {
@@ -61,6 +82,11 @@ export default class ActionCardComp extends Vue {
   changeOrder (order: string): void {
     this.selectedOrder = order
     this.$emit(`orderBy${order}`)
+  }
+
+  changeFilter (filter: string): void {
+    this.selectedFilter = filter
+    this.$emit(`filterBy${filter.replace(' ', '')}`)
   }
 }
 </script>

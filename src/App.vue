@@ -1,19 +1,20 @@
 <template>
   <div id="app">
     <div v-if="loggedIn" class="row no-gutters">
+        <InterfaceSettingsComp />
         <div class="col-md-4 col-xl-2 text-center left-nav">
             <div class="nav-branding" style="padding-top:1em;">
               <router-link :to="{ name: 'Home' }"><img src="@/assets/img/logo.svg"></router-link>
               <p style="margin-top: 8px;margin-bottom: 0px;">Unofficial interface created by&nbsp;<a href="https://github.com/WardPearce" target="_blank">Ward Pearce</a></p>
             </div>
             <div class="nav-branding">
-                <h6>Credits:&nbsp;<span style="color: var(--dathost-orange);">{{ account.credits }}</span></h6>
-                <h6 style="margin-bottom: 0px;">This will last&nbsp;<span style="color: var(--dathost-orange);">{{ account.time_left }}</span></h6>
+                <h6>Credits:&nbsp;<span style="color: var(--dathost-orange);">{{ $dathostAccount.credits }}</span></h6>
+                <h6 style="margin-bottom: 0px;">This will last&nbsp;<span style="color: var(--dathost-orange);">{{ $dathostAccount.time_left }}</span></h6>
             </div>
             <div class="text-left nav-footer">
                 <b-dropdown id="dropdown-dropright" text="Account" block size="lg" dropright variant="primary">
                     <b-dropdown-item href="https://dathost.net/control-panel/add-credits" target="_blank"><b-icon icon="credit-card"></b-icon> Add credits</b-dropdown-item>
-                    <b-dropdown-item href="#"><b-icon icon="tv"></b-icon> Interface</b-dropdown-item>
+                    <b-dropdown-item v-b-modal.interface-settings><b-icon icon="tv"></b-icon> Interface</b-dropdown-item>
                     <b-dropdown-item @click="logout()" href="#" style="background: var(--red);"><b-icon icon="arrow-bar-right"></b-icon> Logout</b-dropdown-item>
                 </b-dropdown>
                 <div class="disclaimer">
@@ -75,15 +76,16 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 import Dathost from 'dathost'
-import { IAccount } from 'dathost/src/interfaces/account'
 
 import DisclaimerComp from '@/components/disclaimer.vue'
+import InterfaceSettingsComp from '@/components/interface-settings.vue'
 
 import VueMixin from '@/mixins/vue'
 
 @Component({
   components: {
-    DisclaimerComp
+    DisclaimerComp,
+    InterfaceSettingsComp
   }
 })
 export default class App extends VueMixin {
@@ -98,7 +100,6 @@ export default class App extends VueMixin {
   invalidLogin = false
   loginLoading = false
 
-  account: IAccount
   accountInterval: ReturnType<typeof setInterval>
 
   serverTabs = [
@@ -124,7 +125,7 @@ export default class App extends VueMixin {
     const dathost = new Dathost(this.login.email, this.login.password, `${this.login.proxy}/dathost.net/api/0.1/`)
     this.loginLoading = true
     try {
-      this.account = await dathost.account()
+      Vue.prototype.$dathostAccount = await dathost.account()
       this.invalidLogin = false
       this.loggedIn = true
 
@@ -133,7 +134,7 @@ export default class App extends VueMixin {
 
       // Update account details every 30 seconds in the background.
       this.accountInterval = setInterval(async () => {
-        this.account = await dathost.account()
+        Vue.prototype.$dathostAccount = await dathost.account()
       }, 30000)
     } catch {
       this.invalidLogin = true
