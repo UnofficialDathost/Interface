@@ -1,5 +1,5 @@
 <template>
-  <b-modal size="xl" id="interface-settings" title="Interface Settings">
+  <b-modal size="xl" id="interface-settings" ok-only title="Interface Settings">
     <div class="card">
       <div class="card-body">
         <div class="text-center">
