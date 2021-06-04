@@ -24,7 +24,7 @@ body {
 
 .left-nav {
     background: var(--dathost-dark);
-    height: 100vh;
+    min-height: 100vh;
     padding: 0 2em;
     box-shadow: 2px 0px 0px rgb(255 255 255 / 15%);
 }
