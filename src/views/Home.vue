@@ -78,10 +78,11 @@ export default class HomeView extends VueMixin {
     clearInterval(this.serverInterval)
 
     if (this.serverSearch !== '') {
-      this.serversDisplay = this.servers.filter(server => {
+      this.serversDisplay = this.serversDisplay.filter((server) => {
         return this.searchHelper(this.serverSearch, server.name) || this.searchHelper(this.serverSearch, server.location
         ) || this.searchHelper(this.serverSearch, server.game) || this.searchHelper(this.serverSearch, server.id)
       })
+      this.servers = this.serversDisplay
     } else {
       await this.getServers()
       await this.setServerInterval()
