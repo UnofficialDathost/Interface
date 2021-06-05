@@ -56,9 +56,9 @@ export default class ServerConsoleComp extends VueMixin {
     const serverRegion = this.server.ip.match(this.serverRegionRegExp)
     if (serverRegion !== null) {
       this.ws = new WebsocketBuilder(`wss://${serverRegion[0]}.dathost.net/console-server/`
-      ).onOpen(async (i) => {
+      ).onOpen(async i => {
         await this.sendWsAuth(i)
-      }).onRetry(async (i) => {
+      }).onRetry(async i => {
         await this.sendWsAuth(i)
       }).onMessage((i, ev) => {
         this.consoleLines += (JSON.parse(ev.data)).args.data

@@ -86,7 +86,7 @@ export default class ActionCardComp extends Vue {
 
   changeFilter (filter: string): void {
     this.selectedFilter = filter
-    this.$emit(`filterBy${filter.replace(' ', '')}`)
+    this.$emit(`filterBy${filter.replaceAll(' ', '')}`)
   }
 }
 </script>
