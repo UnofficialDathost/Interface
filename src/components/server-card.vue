@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-md-6 d-xl-flex justify-content-xl-start align-items-xl-center"><img class="game-icon" :src="require(`@/assets/img/games/${server.game}.svg`)"></div>
                 <div class="col-md-6 d-xl-flex justify-content-xl-end align-items-xl-center">
-                    <h6 class="game-name">&nbsp;{{ server.name }}</h6>
+                    <h6 class="game-name">&nbsp;{{ server.name.substring(0, 19) }}<template v-if="server.name.length > 19">...</template></h6>
                 </div>
             </div>
         </div>
