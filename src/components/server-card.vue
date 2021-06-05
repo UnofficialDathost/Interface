@@ -19,7 +19,7 @@
           <div @click.self="$emit('serverClicked', server)" class="card-body d-flex d-xl-flex flex-column justify-content-center justify-content-xl-center" style="padding-bottom: 0px;">
               <div class="row" @click="$emit('serverClicked', server)">
                   <div class="col-md-6 col-xl-4 d-xl-flex justify-content-xl-start">
-                      <p class="text-capitalize"><b-icon icon="compass"></b-icon>&nbsp;{{ server.location }}&nbsp;</p>
+                      <p class="text-capitalize"><b-icon icon="compass"></b-icon>&nbsp;{{ server.location.replace('_', ' ') }}&nbsp;</p>
                   </div>
                   <div class="col-md-6 col-xl-4 d-xl-flex justify-content-xl-center">
                       <p>

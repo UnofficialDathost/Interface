@@ -16,7 +16,7 @@
     @filterByServeron="filterByServerOn"
     @filterByServeroff="filterByServerOff"
     @filterByAutostopon="filterByAutostopOn"
-    @filterbyAutostopoff="filterByAutostopOff"
+    @filterByAutostopoff="filterByAutostopOff"
     @filterByPlayersonline="filterByPlayersOnline"
     v-model="serverSearch"/>
     <div v-if="serversLoading" class="d-flex justify-content-center mb-3">
