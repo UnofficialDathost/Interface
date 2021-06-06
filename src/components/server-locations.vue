@@ -15,8 +15,9 @@
                       </div>
                   </div>
                 </div>
-                <div class="card-body">
-                  <h6 style="margin: 0px;">{{ location.name }} <b-badge v-if="location.pricingMultiplier !== 1" variant="warning">Increases cost by x {{ location.pricingMultiplier }}</b-badge></h6>
+                <div class="card-body d-flex justify-content-between">
+                  <h6 style="margin: 0px;">{{ location.name }}</h6>
+                  <b-badge v-if="location.pricingMultiplier !== 1" variant="warning">Increases cost</b-badge>
                 </div>
             </div>
         </div>
