@@ -28,9 +28,9 @@
       </template>
       <draggable v-else @end="serverMoved" :delay=".3" :force-fallback="true" ghost-class="ghost" drag-class="moved" draggable=".draggable-server" :list="serversDisplay" class="row gutter-2">
         <ServerCardComp class="draggable-server" :ref="server.id" @serverClicked="selectServer" :selected="selectedServerIds.includes(server.id)"
-         @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="(server, index) in serversDisplay" :key="index" :server="server" />
+         @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="server in serversDisplay" :key="server.id" :serverData="server" />
 
-        <ServerCardComp v-for="(server, index) in clonedServers" :key="'clone-'+index" :server="server" :cloned="true" />
+        <ServerCardComp v-for="(server, index) in clonedServers" :key="'clone-'+index" :serverData="server" :cloned="true" />
       </draggable>
     </div>
   </div>
