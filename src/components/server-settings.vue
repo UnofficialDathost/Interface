@@ -4,8 +4,8 @@
         <ServerLocationsComp v-if="selectedTab === 'location'" @locationSelected="setLocation" :currentRegion="server.location" />
       </div>
       <div class="col-md-4 col-xl-3">
-          <div class="card">
-              <div class="card-body" style="padding: 0px;">
+          <div class="card" style="height: 100%;">
+              <div class="card-body" style="padding: 0px;background-color: var(--dathost-dark-dark);">
                 <span v-for="tab in tabs" :key="tab" @click="selectedTab = tab" v-bind:class="{ 'active-right': selectedTab === tab }" style="cursor: pointer;" class="text-capitalize d-flex d-xl-flex align-items-center align-items-xl-center side-option side-option-large">&nbsp;{{ tab }}</span>
               </div>
           </div>
