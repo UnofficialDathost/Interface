@@ -1,7 +1,7 @@
 <template>
   <div class="row">
       <div class="col-md-8 col-xl-9">
-        <ServerLocationsComp :currentRegion="server.location" />
+        <ServerLocationsComp v-if="selectedTab === 'location'" @locationSelected="setLocation" :currentRegion="currentRegion" />
       </div>
       <div class="col-md-4 col-xl-3">
           <div class="card">
@@ -20,6 +20,8 @@ import { Component, Prop } from 'vue-property-decorator'
 import ServerLocationsComp from '@/components/server-locations.vue'
 
 import { IServer } from 'dathost/src/interfaces/server'
+import ServerSettings from 'dathost/src/settings/server'
+import Server from 'dathost/src/server'
 
 @Component({
   name: 'ServerSettings',
@@ -28,6 +30,9 @@ import { IServer } from 'dathost/src/interfaces/server'
 export default class ServerSettingsComp extends VueMixin {
   @Prop({ type: Object })
   server: IServer
+
+  @Prop({ type: Object })
+  serverObj: Server
 
   selectedTab = 'location'
   tabs = [
@@ -38,5 +43,16 @@ export default class ServerSettingsComp extends VueMixin {
     'password',
     'domain'
   ]
+
+  currentRegion = ''
+
+  mounted (): void {
+    this.currentRegion = this.server.location
+  }
+
+  async setLocation (location: string): Promise<void> {
+    this.currentRegion = location
+    await this.serverObj.update(new ServerSettings({ location: location }))
+  }
 }
 </script>
