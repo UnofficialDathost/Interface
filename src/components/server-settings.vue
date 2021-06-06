@@ -52,6 +52,11 @@ export default class ServerSettingsComp extends VueMixin {
 
   async setLocation (location: string): Promise<void> {
     this.currentRegion = location
+    this.$bvToast.toast(`Setting location to ${location.replaceAll('_', ' ')}`, {
+      title: 'Changing region',
+      noCloseButton: true,
+      toaster: 'b-toaster-bottom-right'
+    })
     await this.serverObj.update(new ServerSettings({ location: location }))
   }
 }
