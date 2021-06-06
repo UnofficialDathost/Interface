@@ -43,6 +43,7 @@
         </div>
         <div class="card-body">
           <ServerConsoleComp :server="server" :serverObj="serverObj" v-if="$route.params.tab === 'console'" />
+          <ServerSettingsComp :server="server" :serverObj="serverObj" v-else-if="$route.params.tab === 'settings'" />
         </div>
         <div class="card-footer">
             <div class="row">
@@ -72,10 +73,12 @@ import { mixins } from 'vue-class-component'
 import VueMixin from '@/mixins/vue'
 import ServerMixin from '@/mixins/server'
 import ServerConsoleComp from '@/components/server-console.vue'
+import ServerSettingsComp from '@/components/server-settings.vue'
 
 @Component({
   components: {
-    ServerConsoleComp
+    ServerConsoleComp,
+    ServerSettingsComp
   }
 })
 export default class ServerView extends mixins(VueMixin, ServerMixin) {

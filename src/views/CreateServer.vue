@@ -62,7 +62,7 @@
               </template>
           </div>
           <div v-else-if="games[selectedGame].steps[currentStep].name === 'Location'" class="card-body">
-            <ServerLocations @locationSelected="setLocation" />
+            <ServerLocationsComp @locationSelected="setLocation" />
           </div>
 
           <div class="card-footer">
@@ -87,12 +87,12 @@
 <script lang="ts">
 import { Component, Watch } from 'vue-property-decorator'
 import VueMixin from '@/mixins/vue'
-import ServerLocations from '@/components/server-locations.vue'
+import ServerLocationsComp from '@/components/server-locations.vue'
 
 import ServerSettings from 'dathost/src/settings/server'
 
 @Component({
-  components: { ServerLocations }
+  components: { ServerLocationsComp }
 })
 export default class CreateServerView extends VueMixin {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

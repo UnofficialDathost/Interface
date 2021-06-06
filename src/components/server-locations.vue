@@ -1,16 +1,16 @@
 <template>
     <div class="row">
         <div v-for="(location, index) in locations" :key="index" class="col-md-3" style="cursor: pointer;">
-            <div class="card location-card" v-bind:class="{ 'game-selected': selectedLocation === location.id }" @click="selectedLocation = location.id; $emit('locationSelected', location.id, location.pricingMultiplier)">
+            <div class="card location-card" v-bind:class="{ 'game-selected': selectedLocation === location.id || (currentRegion === location.id && !selectedLocation) }" @click="selectedLocation = location.id; $emit('locationSelected', location.id, location.pricingMultiplier)">
                 <div class="card-header">
                   <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-md-8">
                           <p v-if="location.ping !== 0" style="margin: 0px;">{{ location.ping }} ms ping</p>
                           <template v-else>
-                            <b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner> Calculating ping
+                            <p style="margin: 0px;"><b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner> Fetching ping</p>
                           </template>
                       </div>
-                      <div class="col-md-6 d-flex justify-content-end">
+                      <div class="col-md-4 d-flex justify-content-end">
                         <img class="flag" :src="`https://cdn.dathost.net/assets/img/flags/${location.id}.gif`">
                       </div>
                   </div>
@@ -25,12 +25,15 @@
 
 <script lang="ts">
 import VueMixin from '@/mixins/vue'
-import Component from 'vue-class-component'
+import { Component, Prop } from 'vue-property-decorator'
 
 import { WebsocketBuilder } from 'websocket-ts'
 
 @Component({ name: 'ServerLocations' })
-export default class DisclaimerComp extends VueMixin {
+export default class ServerLocationsComp extends VueMixin {
+  @Prop({ type: String, default: '' })
+  currentRegion: string
+
   locations = [
     { name: 'Düsseldorf, Germany', id: 'dusseldorf', console: 'tyrion', ping: 0, pricingMultiplier: 1 },
     { name: 'Strasbourg, France', id: 'strasbourg', console: 'luwin', ping: 0, pricingMultiplier: 1 },
@@ -65,10 +68,15 @@ export default class DisclaimerComp extends VueMixin {
           location.ping = new Date().getTime() - startTime.getTime()
 
           this.locations.sort((a, b) => {
-            if (a.ping !== 0 && b.ping !== 0) {
-              return a.ping - b.ping
+            if (a.ping !== 0) {
+              if (b.ping !== 0) {
+                return a.ping - b.ping
+              } else {
+                return -1
+              }
+            } else {
+              return 1
             }
-            return 1
           })
         }
         i.close()
