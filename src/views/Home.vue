@@ -284,7 +284,7 @@ export default class HomeView extends VueMixin {
     this.serversLoading = false
   }
 
-  addServer (server: IServer): void {
+  async addServer (server: IServer): Promise<void> {
     for (const clonedServer of this.clonedServers) {
       if (clonedServer.name === server.name) {
         this.clonedServers.splice(this.clonedServers.indexOf(clonedServer), 1)
@@ -292,10 +292,14 @@ export default class HomeView extends VueMixin {
       }
     }
 
+    clearInterval(this.serverInterval)
+
     // Just incase the server interval updates during the cloning process.
     if (!this.serversDisplay.includes(server)) {
       this.serversDisplay.push(server)
     }
+
+    await this.setServerInterval()
   }
 
   toggleMangement (beingManged: boolean): void {
