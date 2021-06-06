@@ -51,22 +51,32 @@ export default class ServerConsoleComp extends VueMixin {
   ws: Websocket
 
   async mounted (): Promise<void> {
-    this.consoleLoading = true
+    if (this.server.ip) {
+      this.consoleLoading = true
 
-    const serverRegion = this.server.ip.match(this.serverRegionRegExp)
-    if (serverRegion !== null) {
-      this.ws = new WebsocketBuilder(`wss://${serverRegion[0]}.dathost.net/console-server/`
-      ).onOpen(async i => {
-        await this.sendWsAuth(i)
-      }).onRetry(async i => {
-        await this.sendWsAuth(i)
-      }).onMessage((i, ev) => {
-        this.consoleLines += (JSON.parse(ev.data)).args.data
-        this.consoleLoading = false
-      }).withBackoff(new LinearBackoff(0, 1000, 8000)).build()
+      const serverRegion = this.server.ip.match(this.serverRegionRegExp)
+      if (serverRegion !== null) {
+        this.ws = new WebsocketBuilder(`wss://${serverRegion[0]}.dathost.net/console-server/`
+        ).onOpen(async i => {
+          await this.sendWsAuth(i)
+        }).onRetry(async i => {
+          await this.sendWsAuth(i)
+        }).onMessage((i, ev) => {
+          this.consoleLines += (JSON.parse(ev.data)).args.data
+          this.consoleLoading = false
+        }).withBackoff(new LinearBackoff(0, 1000, 8000)).build()
+      }
+
+      this.toggleAutoScroll(true)
+    } else {
+      this.$bvModal.msgBoxOk('You must start the server to be assigned an IP!', {
+        title: 'Console Error',
+        okVariant: 'warning',
+        headerClass: 'p-2 border-bottom-0',
+        footerClass: 'p-2 border-top-0',
+        centered: true
+      })
     }
-
-    this.toggleAutoScroll(true)
   }
 
   async sendWsAuth (i: Websocket): Promise<void> {
