@@ -96,7 +96,7 @@ export default class HomeView extends VueMixin {
   orderByPriority (): void {
     this.orderFunc = this.orderByPriority
 
-    this.serversDisplay = this.servers.sort((a, b) => {
+    this.serversDisplay.sort((a, b) => {
       return a.manual_sort_order - b.manual_sort_order
     })
   }
@@ -104,7 +104,7 @@ export default class HomeView extends VueMixin {
   orderByCost (): void {
     this.orderFunc = this.orderByCost
 
-    this.serversDisplay = this.servers.sort((a, b) => {
+    this.serversDisplay.sort((a, b) => {
       return b.max_cost_per_month - a.max_cost_per_month
     })
   }
@@ -112,7 +112,7 @@ export default class HomeView extends VueMixin {
   orderByName (): void {
     this.orderFunc = this.orderByName
 
-    this.serversDisplay = this.servers.sort((a, b) => {
+    this.serversDisplay.sort((a, b) => {
       return a.name < b.name ? -1 : 1
     })
   }
@@ -120,7 +120,7 @@ export default class HomeView extends VueMixin {
   orderBySlots (): void {
     this.orderFunc = this.orderBySlots
 
-    this.serversDisplay = this.servers.sort((a, b) => {
+    this.serversDisplay.sort((a, b) => {
       let aSlots: number
       let bSlots: number
       if (a.game === 'csgo') {
