@@ -26,7 +26,7 @@
       <template v-if="serversDisplay.length === 0">
         <h3 class="text-center" style="margin-top:25px;">No result...</h3>
       </template>
-      <draggable v-else @end="serverMoved" :delay=".3" :force-fallback="true" ghost-class="ghost" drag-class="moved" draggable=".draggable-server" :list="serversDisplay" class="row gutter-2">
+      <draggable v-else @end="serverMoved" :delay=".5" :force-fallback="true" ghost-class="ghost" drag-class="moved" draggable=".draggable-server" :list="serversDisplay" class="row gutter-2">
         <ServerCardComp class="draggable-server" :ref="server.id" @serverClicked="selectServer" :selected="selectedServerIds.includes(server.id)"
          @serverAdded="addServer" @serverCloned="addCloneDecoy" v-for="server in serversDisplay" :key="server.id" :serverData="server" />
 
