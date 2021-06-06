@@ -291,7 +291,11 @@ export default class HomeView extends VueMixin {
         break
       }
     }
-    this.serversDisplay.push(server)
+
+    // Just incase the server interval updates during the cloning process.
+    if (!this.serversDisplay.includes(server)) {
+      this.serversDisplay.push(server)
+    }
   }
 
   toggleMangement (beingManged: boolean): void {

@@ -10,7 +10,7 @@
             </div>
         </div>
         <div v-if="cloned" class="card-body">
-          <h6 class="text-center">Cloning serverData</h6>
+          <h6 class="text-center">Cloning server</h6>
           <div class="d-flex justify-content-center mb-3">
             <b-spinner label="Loading..."></b-spinner>
           </div>
@@ -62,7 +62,7 @@
           </div>
         </template>
         <div v-else class="card-body">
-          <h6 class="text-center">Deleting serverData</h6>
+          <h6 class="text-center">Deleting server</h6>
           <div class="d-flex justify-content-center mb-3">
             <b-spinner label="Loading..."></b-spinner>
           </div>

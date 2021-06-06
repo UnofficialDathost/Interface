@@ -192,6 +192,10 @@ button {
   transition: 0.3s all fadeIn;
 }
 
+.toast-header-competed {
+  background-color: #35c44d !important;
+}
+
 .toast-header {
   background-color: var(--dathost-orange);
   color: #fff;

@@ -1,7 +1,7 @@
 <template>
   <div class="row">
       <div class="col-md-8 col-xl-9">
-        <ServerLocationsComp v-if="selectedTab === 'location'" @locationSelected="setLocation" :currentRegion="currentRegion" />
+        <ServerLocationsComp v-if="selectedTab === 'location'" @locationSelected="setLocation" :currentRegion="server.location" />
       </div>
       <div class="col-md-4 col-xl-3">
           <div class="card">
@@ -44,20 +44,23 @@ export default class ServerSettingsComp extends VueMixin {
     'domain'
   ]
 
-  currentRegion = ''
-
-  mounted (): void {
-    this.currentRegion = this.server.location
-  }
-
   async setLocation (location: string): Promise<void> {
-    this.currentRegion = location
+    this.server.location = location
+
     this.$bvToast.toast(`Setting location to ${location.replaceAll('_', ' ')}`, {
-      title: 'Changing region',
       noCloseButton: true,
+      title: '',
       toaster: 'b-toaster-bottom-right'
     })
+
     await this.serverObj.update(new ServerSettings({ location: location }))
+
+    this.$bvToast.toast('Region changed', {
+      noCloseButton: true,
+      title: '',
+      headerClass: 'toast-header-competed',
+      toaster: 'b-toaster-bottom-right'
+    })
   }
 }
 </script>

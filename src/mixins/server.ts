@@ -105,8 +105,27 @@ export default class ServerMixin extends VueMixin {
     }).then(async value => {
       if (value) {
         this.serverStatus.deleting = true
+
+        this.$bvToast.toast(`Deleting ${this.server.name}`, {
+          noCloseButton: true,
+          title: '',
+          toaster: 'b-toaster-bottom-right'
+        })
+
         await this.serverObj.delete()
+
+        this.$bvToast.toast(`${this.server.name} Deleted`, {
+          noCloseButton: true,
+          title: '',
+          headerClass: 'toast-header-competed',
+          toaster: 'b-toaster-bottom-right'
+        })
+
         this.deleted = true
+
+        if (this.$route.name !== 'Home') {
+          this.$router.push({ name: 'Home' })
+        }
       }
     })
   }
@@ -122,7 +141,22 @@ export default class ServerMixin extends VueMixin {
 
   async cloneServer (): Promise<void> {
     this.$emit('serverCloned', this.server)
+
+    this.$bvToast.toast(`Cloning ${this.server.name}`, {
+      noCloseButton: true,
+      title: '',
+      toaster: 'b-toaster-bottom-right'
+    })
+
     const clonedServer = await this.serverObj.duplicate()
+
+    this.$bvToast.toast(`${this.server.name} Cloned`, {
+      noCloseButton: true,
+      title: '',
+      headerClass: 'toast-header-competed',
+      toaster: 'b-toaster-bottom-right'
+    })
+
     this.$emit('serverAdded', clonedServer[0])
   }
 }
