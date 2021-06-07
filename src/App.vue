@@ -82,6 +82,8 @@ import InterfaceSettingsComp from '@/components/interface-settings.vue'
 
 import VueMixin from '@/mixins/vue'
 
+import Steam from '@/helper/steam'
+
 @Component({
   components: {
     DisclaimerComp,
@@ -127,7 +129,6 @@ export default class App extends VueMixin {
     try {
       Vue.prototype.$dathostAccount = await dathost.account()
       this.invalidLogin = false
-      this.loggedIn = true
 
       Vue.prototype.$dathost = dathost
       localStorage.setItem('loginDetails', JSON.stringify(this.login))
@@ -136,6 +137,12 @@ export default class App extends VueMixin {
       this.accountInterval = setInterval(async () => {
         Vue.prototype.$dathostAccount = await dathost.account()
       }, 30000)
+
+      if (this.login.steam) {
+        Vue.prototype.$steam = new Steam(this.login.proxy, this.login.steam)
+      }
+
+      this.loggedIn = true
     } catch {
       this.invalidLogin = true
     }
