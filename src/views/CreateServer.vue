@@ -61,6 +61,21 @@
                 <b-form-spinbutton v-model="server.autostopMinutes" :formatter-fn="autoStopFormatter" id="autostop" min="1" max="1000"></b-form-spinbutton>
               </template>
           </div>
+
+          <div v-else-if="games[selectedGame].steps[currentStep].name === 'GSLT Token'" class="card-body d-flex justify-content-center align-self-center flex-column w-50">
+              <label for="gslt">GSLT Token</label>
+              <div class="d-flex">
+                <b-form-input @input="games[selectedGame].steps[currentStep].completed = true" v-model="server.gameToken" id="gslt" placeholder="..."></b-form-input>
+                <button v-if="$steam" @click="generateGsltToken()" class="btn btn-primary" style="width: 30%;" type="button">
+                  <template v-if="creatingToken">
+                    <span><b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner> Generating</span>
+                  </template>
+                  <template v-else>Generate</template>
+                </button>
+              </div>
+              <a style="margin-bottom:0px;margin-top:10px;" href="https://steamcommunity.com/dev/managegameservers" target="_blank" rel="noopener noreferrer">Server Account Management</a>
+          </div>
+
           <div v-else-if="games[selectedGame].steps[currentStep].name === 'Location'" class="card-body">
             <ServerLocationsComp @locationSelected="setLocation" />
           </div>
@@ -101,6 +116,7 @@ export default class CreateServerView extends VueMixin {
       name: 'CS: GO',
       steps: [
         { name: 'Details', required: true, completed: false },
+        { name: 'GSLT Token', required: true, completed: false },
         { name: 'Location', required: true, completed: false }
       ],
       maxSlots: 64,
@@ -165,11 +181,13 @@ export default class CreateServerView extends VueMixin {
     autostopMinutes: 5,
     tickRate: 64,
     location: '',
-    rcon: ''
+    rcon: '',
+    gameToken: ''
   }
 
   tickRates = [64, 85, 100, 102.4, 128]
   creatingServer = false
+  creatingToken = false
 
   extraSpaceCost = 0
   pricingMultiplier = 1
@@ -188,7 +206,8 @@ export default class CreateServerView extends VueMixin {
     if (this.selectedGame === 'csgo') {
       settings.csgo({
         tickrate: this.server.tickRate,
-        rconPassword: this.server.rcon
+        rconPassword: this.server.rcon,
+        gameToken: this.server.gameToken
       })
     } else if (this.selectedGame === 'valheim') {
       settings.valheim()
@@ -214,6 +233,30 @@ export default class CreateServerView extends VueMixin {
     })
 
     this.$router.push({ name: 'Server', params: { serverId: server[0].id, tab: 'status' } })
+  }
+
+  async generateGsltToken (): Promise<void> {
+    if (this.$steam) {
+      this.creatingToken = true
+
+      this.$bvToast.toast(`Creating GSLT token for ${this.server.name}`, {
+        noCloseButton: true,
+        title: '',
+        toaster: 'b-toaster-bottom-right'
+      })
+
+      this.server.gameToken = (await this.$steam.generateGsltToken(730, `${this.server.name}, by dathost`)).token
+
+      this.$bvToast.toast('GSLT token created', {
+        noCloseButton: true,
+        title: '',
+        headerClass: 'toast-header-competed',
+        toaster: 'b-toaster-bottom-right'
+      })
+
+      this.creatingToken = false
+      this.games[this.selectedGame].steps[this.currentStep].completed = true
+    }
   }
 
   @Watch('server.maxDiskSpace')
@@ -288,7 +331,8 @@ export default class CreateServerView extends VueMixin {
       autostopMinutes: 5,
       tickRate: 64,
       location: '',
-      rcon: ''
+      rcon: '',
+      gameToken: ''
     }
 
     for (const game in this.games) {

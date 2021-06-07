@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { IGlst } from '@/helper/interfaces'
+import { IGslt } from '@/helper/interfaces'
 
 export default class Steam {
   apiKey: string
@@ -21,11 +21,11 @@ export default class Steam {
     return `${this.corsProxy}/api.steampowered.com/${route}/?${params}`
   }
 
-  async generateGlstToken (appId: number, memo: string): Promise<IGlst> {
+  async generateGsltToken (appId: number, memo: string): Promise<IGslt> {
     return await axios.post(this.formatUrl('IGameServersService/CreateAccount/v1', { appid: appId, memo: memo })).then(resp => {
-      return <IGlst> { token: resp.data.response.login_token, id: resp.data.response.steamid }
+      return <IGslt> { token: resp.data.response.login_token, id: resp.data.response.steamid }
     }).catch(() => {
-      throw Error('Unable to generate GLST Token')
+      throw Error('Unable to generate GSLT Token')
     })
   }
 }
