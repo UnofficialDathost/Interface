@@ -57,9 +57,7 @@ export default class ServerLocationsComp extends VueMixin {
 
   selectedLocation = null
 
-  async mounted (): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
+  mounted (): void {
     for (const location of this.locations) {
       let startTime: Date
       new WebsocketBuilder(`wss://${location.console}.dathost.net/console-server/`
