@@ -198,7 +198,20 @@ export default class CreateServerView extends VueMixin {
       settings.teamspeak()
     }
 
+    this.$bvToast.toast(`Creating ${this.server.name}`, {
+      noCloseButton: true,
+      title: '',
+      toaster: 'b-toaster-bottom-right'
+    })
+
     const server = await this.$dathost.createServer(settings)
+
+    this.$bvToast.toast(`${this.server.name} Created`, {
+      noCloseButton: true,
+      title: '',
+      headerClass: 'toast-header-competed',
+      toaster: 'b-toaster-bottom-right'
+    })
 
     this.$router.push({ name: 'Server', params: { serverId: server[0].id, tab: 'status' } })
   }
