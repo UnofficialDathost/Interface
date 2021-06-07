@@ -206,8 +206,7 @@ export default class HomeView extends VueMixin {
     })
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
-  async serverMoved (event: any): Promise<void> {
+  async serverMoved (event: { newIndex: number, oldIndex: number }): Promise<void> {
     if (event.newIndex !== event.oldIndex && typeof this.serversDisplay[event.oldIndex] !== 'undefined') {
       clearInterval(this.serverInterval)
 
