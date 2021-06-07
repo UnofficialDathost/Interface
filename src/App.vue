@@ -55,7 +55,10 @@
                   <input v-model="login.steam" class="form-control" type="password" name="steam" placeholder="...">
 
                   <label for="proxy" style="margin-top: .5rem;">CORS Proxy</label>
-                  <input v-model="login.proxy" class="form-control" type="text" name="proxy" placeholder="...">
+                  <div class="d-flex">
+                    <input v-model="login.proxy" @input="proxyChanged()" class="form-control" type="text" name="proxy" placeholder="...">
+                    <button v-if="login.proxy !== defaultProxy" @click="login.proxy = defaultProxy" class="btn btn-primary" style="width: 30%;" type="button">Reset</button>
+                  </div>
 
                   <button @click="checkLogin()" class="btn btn-primary btn-block" style="margin-top: 1.5rem;"><b-icon icon="box-arrow-in-right"></b-icon>&nbsp;Login</button>
                 </template>
@@ -95,8 +98,10 @@ export default class App extends VueMixin {
     email: '',
     password: '',
     steam: '',
-    proxy: 'https://cors-anywhere.wardpearce.com'
+    proxy: ''
   }
+
+  defaultProxy = 'https://cors-anywhere.wardpearce.com'
 
   loggedIn = false
   invalidLogin = false
@@ -120,6 +125,8 @@ export default class App extends VueMixin {
     if (loginDetails !== null) {
       this.login = JSON.parse(loginDetails)
       await this.checkLogin()
+    } else {
+      this.login.proxy = this.defaultProxy
     }
   }
 
@@ -156,6 +163,11 @@ export default class App extends VueMixin {
   logout (): void {
     clearInterval(this.accountInterval)
     localStorage.removeItem('loginDetails')
+
+    this.login.email = ''
+    this.login.password = ''
+    this.login.steam = ''
+
     this.loggedIn = false
   }
 }

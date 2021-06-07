@@ -37,23 +37,23 @@ export default class InterfaceSettingsComp extends VueMixin {
   setSteamToken (): void {
     if (this.steamApiKey !== '') {
       Vue.prototype.$steam = new Steam(this.$corsProxy, this.steamApiKey)
-
-      const loginDetails = localStorage.getItem('loginDetails')
-      if (loginDetails != null) {
-        const currentDetails = JSON.parse(loginDetails)
-        currentDetails.steam = this.steamApiKey
-        localStorage.setItem('loginDetails', JSON.stringify(currentDetails))
-      }
-
-      this.$bvToast.toast('GSLT Token Updated', {
-        noCloseButton: true,
-        title: '',
-        headerClass: 'toast-header-competed',
-        toaster: 'b-toaster-bottom-right'
-      })
     } else {
       Vue.prototype.$steam = undefined
     }
+
+    const loginDetails = localStorage.getItem('loginDetails')
+    if (loginDetails != null) {
+      const currentDetails = JSON.parse(loginDetails)
+      currentDetails.steam = this.steamApiKey
+      localStorage.setItem('loginDetails', JSON.stringify(currentDetails))
+    }
+
+    this.$bvToast.toast('GSLT Token Updated', {
+      noCloseButton: true,
+      title: '',
+      headerClass: 'toast-header-competed',
+      toaster: 'b-toaster-bottom-right'
+    })
   }
 }
 </script>
