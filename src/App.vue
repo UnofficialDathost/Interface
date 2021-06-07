@@ -8,8 +8,8 @@
               <p style="margin-top: 8px;margin-bottom: 0px;">Unofficial interface created by&nbsp;<a href="https://github.com/WardPearce" target="_blank">Ward Pearce</a></p>
             </div>
             <div class="nav-branding">
-                <h6>Credits:&nbsp;<span style="color: var(--dathost-orange);">{{ $dathostAccount.credits }}</span></h6>
-                <h6 style="margin-bottom: 0px;">This will last&nbsp;<span style="color: var(--dathost-orange);">{{ $dathostAccount.time_left }}</span></h6>
+                <h6>Credits:&nbsp;<span style="color: var(--dathost-orange);">{{ accountDisplay.credits }}</span></h6>
+                <h6 style="margin-bottom: 0px;">This will last&nbsp;<span style="color: var(--dathost-orange);">{{ accountDisplay.timeLeft }}</span></h6>
             </div>
             <div class="text-left nav-footer">
                 <b-dropdown id="dropdown-dropright" text="Account" block size="lg" dropright variant="primary">
@@ -108,6 +108,10 @@ export default class App extends VueMixin {
   loginLoading = false
 
   accountInterval: ReturnType<typeof setInterval>
+  accountDisplay = {
+    credits: 0,
+    timeLeft: ''
+  }
 
   serverTabs = [
     { name: 'Status', icon: 'thermometer' },
@@ -134,7 +138,12 @@ export default class App extends VueMixin {
     const dathost = new Dathost(this.login.email, this.login.password, `${this.login.proxy}/dathost.net/api/0.1/`)
     this.loginLoading = true
     try {
-      Vue.prototype.$dathostAccount = await dathost.account()
+      const account = await dathost.account()
+
+      Vue.prototype.$dathostAccount = account
+      this.accountDisplay.credits = account.credits
+      this.accountDisplay.timeLeft = account.time_left
+
       this.invalidLogin = false
 
       Vue.prototype.$dathost = dathost
@@ -142,7 +151,11 @@ export default class App extends VueMixin {
 
       // Update account details every 30 seconds in the background.
       this.accountInterval = setInterval(async () => {
-        Vue.prototype.$dathostAccount = await dathost.account()
+        const account = await dathost.account()
+
+        Vue.prototype.$dathostAccount = account
+        this.accountDisplay.credits = account.credits
+        this.accountDisplay.timeLeft = account.time_left
       }, 30000)
 
       if (this.login.steam !== '') {
