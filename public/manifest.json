@@ -71,6 +71,11 @@
       "sizes": "640x480",
       "type": "image/png",
       "purpose": "maskable"
+    },
+    {
+      "src": "./img/icons/splash.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
     }
   ]
 }
