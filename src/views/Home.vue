@@ -211,6 +211,23 @@ export default class HomeView extends VueMixin {
     if (event.newIndex !== event.oldIndex && typeof this.serversDisplay[event.oldIndex] !== 'undefined') {
       clearInterval(this.serverInterval)
 
+      // For some reason draggable gives us the wrong index randomly.
+      // sometimes the index is one off, this only occurs when a item is moved to the very list item.
+      let serverIndex: number
+      if (typeof this.serversDisplay[event.newIndex] === 'undefined') {
+        serverIndex = event.newIndex - 1
+      } else {
+        serverIndex = event.newIndex
+      }
+
+      const serverName = this.serversDisplay[serverIndex].name.length > 19 ? this.serversDisplay[serverIndex].name.substring(0, 19) + '...' : this.serversDisplay[serverIndex].name
+
+      this.$bvToast.toast(`Updating ${serverName}'s priority`, {
+        noCloseButton: true,
+        title: '',
+        toaster: 'b-toaster-bottom-right'
+      })
+
       const indexBelow = event.newIndex + 1
       const indexAbove = event.newIndex - 1
 
@@ -229,20 +246,18 @@ export default class HomeView extends VueMixin {
         }
       }
 
-      // For some reason draggable gives us the wrong index randomly.
-      // sometimes the index is one off, this only occurs when a item is moved to the very list item.
-      let serverIndex: number
-      if (typeof this.serversDisplay[event.newIndex] === 'undefined') {
-        serverIndex = event.newIndex - 1
-      } else {
-        serverIndex = event.newIndex
-      }
-
       this.serversDisplay[serverIndex].manual_sort_order = newSortOrder
 
       await this.$dathost.server(this.serversDisplay[serverIndex].id).update(new ServerSettings({
         manualSortOrder: newSortOrder
       }))
+
+      this.$bvToast.toast(`${serverName}'s priority updated`, {
+        noCloseButton: true,
+        title: '',
+        headerClass: 'toast-header-competed',
+        toaster: 'b-toaster-bottom-right'
+      })
 
       await this.setServerInterval()
     }
