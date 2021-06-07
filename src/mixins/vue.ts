@@ -9,4 +9,5 @@ export default class VueMixin extends Vue {
   $dathost: Dathost
   $dathostAccount: IAccount
   $steam?: Steam
+  $corsProxy: string
 }

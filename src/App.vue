@@ -52,7 +52,7 @@
                   <input v-model="login.password" class="form-control" type="password" name="password" placeholder="...">
 
                   <label for="steam" style="margin-top: .5rem;" v-b-tooltip.hover.right title="Provides automation using the steam API if provided.">Steam API Key (optional) <b-icon scale=".7" icon="info-circle"></b-icon></label>
-                  <input v-model="login.steam" class="form-control" type="text" name="steam" placeholder="...">
+                  <input v-model="login.steam" class="form-control" type="password" name="steam" placeholder="...">
 
                   <label for="proxy" style="margin-top: .5rem;">CORS Proxy</label>
                   <input v-model="login.proxy" class="form-control" type="text" name="proxy" placeholder="...">
@@ -140,7 +140,11 @@ export default class App extends VueMixin {
 
       if (this.login.steam !== '') {
         Vue.prototype.$steam = new Steam(this.login.proxy, this.login.steam)
+      } else {
+        Vue.prototype.$steam = undefined
       }
+
+      Vue.prototype.$corsProxy = this.login.proxy
 
       this.loggedIn = true
     } catch {
