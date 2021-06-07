@@ -138,7 +138,7 @@ export default class App extends VueMixin {
         Vue.prototype.$dathostAccount = await dathost.account()
       }, 30000)
 
-      if (this.login.steam) {
+      if (this.login.steam !== '') {
         Vue.prototype.$steam = new Steam(this.login.proxy, this.login.steam)
       }
 
