@@ -11,6 +11,16 @@
         <span>Interface created by <a href="https://github.com/WardPearce" target="_blank">Ward Pearce</a></span>
       </div>
     </div>
+    <h5 style="margin-top: .5rem;">Statistics</h5>
+    <p style="margin:0px">Total Servers: <b>{{ stats.totalServers }}</b></p>
+    <p style="margin:0px">Total players online: <b>{{ stats.totalPlayersOnline }}</b></p>
+    <button style="margin-top: 10px;" @click="getStats()" class="btn btn-secondary" type="button">
+      <template v-if="!statsLoading">Get stats</template>
+      <template v-else>
+        <b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner>&nbsp;Getting stats
+      </template>
+    </button>
+
     <h5 style="margin-top: .5rem;">Settings</h5>
     <label for="steam" v-b-tooltip.hover.right title="Provides automation using the steam API if provided.">Steam API Key (optional) <b-icon scale=".7" icon="info-circle"></b-icon></label>
     <input @input="setSteamToken()" v-model="steamApiKey" class="form-control" type="password" name="steam" placeholder="...">
@@ -28,10 +38,29 @@ import Steam from '@/helper/steam'
 export default class InterfaceSettingsComp extends VueMixin {
   steamApiKey = ''
 
+  stats = {
+    totalPlayersOnline: 0,
+    totalServers: 0
+  }
+
+  statsLoading = false
+
   created (): void {
     if (this.$steam) {
       this.steamApiKey = this.$steam.apiKey
     }
+  }
+
+  async getStats (): Promise<void> {
+    this.statsLoading = true
+
+    this.stats.totalServers = 0
+    this.stats.totalPlayersOnline = 0
+    for await (const server of this.$dathost.servers()) {
+      this.stats.totalServers++
+      this.stats.totalPlayersOnline += server[0].players_online
+    }
+    this.statsLoading = false
   }
 
   setSteamToken (): void {
