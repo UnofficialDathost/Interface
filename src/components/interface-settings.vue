@@ -12,8 +12,8 @@
       </div>
     </div>
     <h5 style="margin-top: .5rem;">Statistics</h5>
-    <p style="margin:0px">Total Servers: <b>{{ stats.totalServers }}</b></p>
-    <p style="margin:0px">Total players online: <b>{{ stats.totalPlayersOnline }}</b></p>
+    <p style="margin:0px">Total Servers: <b v-if="!statsLoading">{{ stats.totalServers }}</b><b-spinner v-else label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner></p>
+    <p style="margin:0px">Total players online: <b v-if="!statsLoading">{{ stats.totalPlayersOnline }}</b><b-spinner v-else label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner></p>
     <button style="margin-top: 10px;" @click="getStats()" class="btn btn-secondary" type="button">
       <template v-if="!statsLoading">Get stats</template>
       <template v-else>
