@@ -403,8 +403,12 @@ export default class HomeView extends VueMixin {
     clearInterval(this.serverInterval)
     await Promise.all(
       this.selectedServerIds.map(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (serverId) => { (this.$refs[serverId] as any)[0].deleteServer() }
+        (serverId) => {
+          if (serverId in this.$refs) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (this.$refs[serverId] as any)[0].deleteServer()
+          }
+        }
       )
     ).then(async () => { await this.setServerInterval() })
     this.selectedServerIds = []
