@@ -227,15 +227,15 @@ export default class HomeView extends VueMixin {
         toaster: 'b-toaster-bottom-right'
       })
 
-      const indexBelow = event.newIndex + 1
-      const indexAbove = event.newIndex - 1
+      const indexBelow = serverIndex + 1
+      const indexAbove = serverIndex - 1
 
       let newSortOrder: number
       if (typeof this.serversDisplay[indexAbove] === 'undefined') {
         if (typeof this.serversDisplay[indexBelow] !== 'undefined') {
           newSortOrder = this.serversDisplay[indexBelow].manual_sort_order - 0.5
         } else {
-          newSortOrder = this.serversDisplay[event.newIndex].manual_sort_order
+          newSortOrder = this.serversDisplay[serverIndex].manual_sort_order
         }
       } else {
         if (typeof this.serversDisplay[indexBelow] !== 'undefined') {
