@@ -443,6 +443,18 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
     text-decoration: none;
 }
 
+.treeIcon {
+  margin-right: 5px;
+}
+
+.vtl-node-main:hover {
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+
+.vtl-icon:hover {
+  color: var(--dathost-orange-dark) !important;
+}
+
 .flag {
   width: 30px;
 }
