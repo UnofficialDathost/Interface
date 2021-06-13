@@ -7,6 +7,18 @@
       <template v-slot:leafNodeIcon>
         <b-icon class="treeIcon" icon="file-earmark-code"></b-icon>
       </template>
+      <template v-slot:editNodeIcon>
+        <b-icon class="treeIcon" icon="pencil-square"></b-icon>
+      </template>
+      <template v-slot:delNodeIcon>
+        <b-icon class="treeIcon" icon="trash"></b-icon>
+      </template>
+      <template v-slot:addLeafNodeIcon>
+        <b-icon class="treeIcon" icon="file-earmark-plus"></b-icon>
+      </template>
+      <template v-slot:addTreeNodeIcon>
+        <b-icon class="treeIcon" icon="folder-plus"></b-icon>
+      </template>
     </vue-tree-list>
   </div>
   <div v-else class="d-flex justify-content-center mb-3">
