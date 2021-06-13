@@ -19,6 +19,10 @@
       "chai",
       "node"
     ],
+    "typeRoots": [
+      "src/typings",
+      "node_modules/@types"
+    ],
     "paths": {
       "@/*": [
         "src/*"
@@ -36,7 +40,8 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx",
+    "src/vuejs-tree.d.ts"
   ],
   "exclude": [
     "node_modules"
