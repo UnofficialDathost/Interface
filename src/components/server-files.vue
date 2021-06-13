@@ -1,6 +1,10 @@
 <template>
   <div>
     <div v-if="treeLoaded">
+      <div class="d-flex justify-content-end">
+        <b-button v-if="fileContents !== ''" size="sm" style="margin-bottom:5px;" v-b-modal.editor-fullscreen><b-icon icon="arrows-fullscreen"></b-icon> Fullscreen</b-button>
+        <b-button v-else size="sm" style="margin-bottom:5px;" disabled><b-icon icon="arrows-fullscreen"></b-icon> Fullscreen</b-button>
+      </div>
       <div class="row">
         <div class="col-4" style="overflow-y:scroll;overflow-x:hidden;max-height:60vh;">
           <vue-tree-list :model="tree" @click="nodeClicked" v-bind:default-expanded="false" default-tree-node-name="new folder" default-leaf-node-name="new file">
@@ -28,7 +32,12 @@
           <div v-if="fileDownloading || fileContents === ''" class="editor d-flex justify-content-center mb-3">
             <b-spinner v-if="fileDownloading" style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
           </div>
-          <PrismEditor v-else class="editor" v-model="fileContents" :highlight="() => highlighter" :line-numbers="true" />
+          <div v-else>
+            <b-modal :hide-footer="true" id="editor-fullscreen">
+              <PrismEditor class="editor" style="max-height: 80vh;" v-model="fileContents" :highlight="() => highlighter" :line-numbers="true" />
+            </b-modal>
+            <PrismEditor class="editor" v-model="fileContents" :highlight="() => highlighter" :line-numbers="true" />
+          </div>
         </div>
       </div>
     </div>
