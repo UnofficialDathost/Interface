@@ -322,12 +322,11 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
 }
 
 .editor {
-  background-color:#0d1117;
-  padding-top:15px;
-  overflow-y:auto;
-  overflow-x:auto;
-  min-height:60vh;
-  max-height:60vh;
+  background-color: #0d1117;
+  padding-top: 15px;
+  overflow: auto;
+  min-height: 60vh;
+  max-height: 60vh;
 }
 
 .console {
