@@ -321,6 +321,15 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
     color: #fff;
 }
 
+.editor {
+  background-color:#0d1117;
+  padding-top:15px;
+  overflow-y:auto;
+  overflow-x:auto;
+  min-height:60vh;
+  max-height:60vh;
+}
+
 .console {
     background-color: #000;
     height: 60vh;

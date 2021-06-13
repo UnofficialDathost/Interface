@@ -1,28 +1,40 @@
 <template>
-  <div v-if="treeLoaded" style="height: 60vh; overflow-y: scroll;">
-    <vue-tree-list :model="tree" v-bind:default-expanded="false" default-tree-node-name="new folder" default-leaf-node-name="new file">
-      <template v-slot:treeNodeIcon="slotProps">
-        <b-icon class="treeIcon" :icon="!slotProps.expanded ? 'folder-fill' : 'folder2-open'"></b-icon>
-      </template>
-      <template v-slot:leafNodeIcon>
-        <b-icon class="treeIcon" icon="file-earmark-code"></b-icon>
-      </template>
-      <template v-slot:editNodeIcon>
-        <b-icon class="treeIcon" icon="pencil-square"></b-icon>
-      </template>
-      <template v-slot:delNodeIcon>
-        <b-icon class="treeIcon" icon="trash"></b-icon>
-      </template>
-      <template v-slot:addLeafNodeIcon>
-        <b-icon class="treeIcon" icon="file-earmark-plus"></b-icon>
-      </template>
-      <template v-slot:addTreeNodeIcon>
-        <b-icon class="treeIcon" icon="folder-plus"></b-icon>
-      </template>
-    </vue-tree-list>
-  </div>
-  <div v-else class="d-flex justify-content-center mb-3">
-    <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
+  <div>
+    <div v-if="treeLoaded">
+      <div class="row">
+        <div class="col-4" style="overflow-y:scroll;overflow-x:hidden;max-height:60vh;">
+          <vue-tree-list :model="tree" @click="nodeClicked" v-bind:default-expanded="false" default-tree-node-name="new folder" default-leaf-node-name="new file">
+            <template v-slot:treeNodeIcon="slotProps">
+              <b-icon class="treeIcon" :icon="!slotProps.expanded ? 'folder-fill' : 'folder2-open'"></b-icon>
+            </template>
+            <template v-slot:leafNodeIcon>
+              <b-icon class="treeIcon" icon="file-earmark-code"></b-icon>
+            </template>
+            <template v-slot:editNodeIcon>
+              <b-icon class="treeIcon" icon="pencil-square"></b-icon>
+            </template>
+            <template v-slot:delNodeIcon>
+              <b-icon class="treeIcon" icon="trash"></b-icon>
+            </template>
+            <template v-slot:addLeafNodeIcon>
+              <b-icon class="treeIcon" icon="file-earmark-plus"></b-icon>
+            </template>
+            <template v-slot:addTreeNodeIcon>
+              <b-icon class="treeIcon" icon="folder-plus"></b-icon>
+            </template>
+          </vue-tree-list>
+        </div>
+        <div class="col-8">
+          <div v-if="fileDownloading || fileContents === ''" class="editor d-flex justify-content-center mb-3">
+            <b-spinner v-if="fileDownloading" style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
+          </div>
+          <PrismEditor v-else class="editor" v-model="fileContents" :highlight="() => highlighter" :line-numbers="true" />
+        </div>
+      </div>
+    </div>
+    <div v-else class="d-flex justify-content-center mb-3">
+      <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
+    </div>
   </div>
 </template>
 
@@ -32,13 +44,20 @@ import { Component, Prop } from 'vue-property-decorator'
 
 import { VueTreeList, Tree, TreeNode } from 'vue-tree-list'
 
+import { PrismEditor } from 'vue-prism-editor'
+import { highlight, languages } from 'prismjs'
+
+import 'vue-prism-editor/dist/prismeditor.min.css'
+import 'prismjs/themes/prism-okaidia.css'
+
 import Server from 'dathost/src/server'
 import { IFile } from 'dathost/src/interfaces/file'
 
 @Component({
   name: 'ServerFile',
   components: {
-    VueTreeList
+    VueTreeList,
+    PrismEditor
   }
 })
 export default class ServerFileComp extends VueMixin {
@@ -48,6 +67,9 @@ export default class ServerFileComp extends VueMixin {
   treeLoaded = false
   tree: ReturnType<typeof Tree>
 
+  highlighter = highlight('', languages.html, 'plain')
+  fileContents = ''
+  fileDownloading = false
   fileRegex = new RegExp(/^.*\.[^\\]+$/)
 
   async mounted (): Promise<void> {
@@ -63,24 +85,51 @@ export default class ServerFileComp extends VueMixin {
     this.treeLoaded = true
   }
 
-  subTreeAdd (file: IFile, tree = this.tree): void {
-    const dirs = file.path.split(/(?<=\/)/).filter(n => n)
+  async nodeClicked (tree: ReturnType<typeof Tree>): Promise<void> {
+    if (!tree.isLeaf) {
+      tree.toggle()
+    } else {
+      this.fileDownloading = true
+
+      const file = await this.serverObj.file(tree.id).download(true) as unknown as string
+
+      const fileType = tree.id.split('.').pop()
+      if (fileType === 'sp') {
+        this.highlighter = highlight(file, languages.clike, 'clike')
+      } else if (fileType === 'html') {
+        this.highlighter = highlight(file, languages.html, 'html')
+      } else {
+        this.highlighter = highlight(file, languages.markup, 'markup')
+      }
+
+      this.fileContents = file
+      this.fileDownloading = false
+    }
+  }
+
+  subTreeAdd (file: IFile, tree = this.tree, dir?: string): void {
+    let pathToFormat: string
+    if (typeof dir !== 'undefined') {
+      pathToFormat = dir
+    } else {
+      pathToFormat = file.path
+    }
+
+    const dirs = pathToFormat.split(/(?<=\/)/).filter(n => n)
 
     if (dirs.length === 0 || dirs.length === 1) {
-      const isFile = this.fileRegex.test(file.path)
+      const isFile = this.fileRegex.test(pathToFormat)
       tree.addChildren(new TreeNode({
-        name: file.path,
+        name: pathToFormat,
         id: file.path,
         isLeaf: isFile,
-        editNodeDisabled: !isFile,
         addLeafNodeDisabled: isFile,
         addTreeNodeDisabled: isFile
       }))
     } else {
       for (const treeChild of tree.children) {
-        if (!this.fileRegex.test(treeChild.id) && dirs.indexOf(treeChild.id) !== -1) {
-          file.path = file.path.replace(treeChild.id, '')
-          this.subTreeAdd(file, treeChild)
+        if (!this.fileRegex.test(treeChild.name) && dirs.indexOf(treeChild.name) !== -1) {
+          this.subTreeAdd(file, treeChild, pathToFormat.replace(treeChild.name, ''))
           break
         }
       }
