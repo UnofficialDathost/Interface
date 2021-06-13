@@ -98,6 +98,8 @@ export default class ServerFileComp extends VueMixin {
         this.highlighter = highlight(file, languages.clike, 'clike')
       } else if (fileType === 'html') {
         this.highlighter = highlight(file, languages.html, 'html')
+      } else if (fileType === 'json') {
+        this.highlighter = highlight(file, languages.json, 'json')
       } else {
         this.highlighter = highlight(file, languages.markup, 'markup')
       }
