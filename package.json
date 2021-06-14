@@ -11,6 +11,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "bootstrap-vue": "^2.21.2",
+    "clone": "^1.0.4",
     "core-js": "^3.6.5",
     "dathost": "^0.0.5",
     "prismjs": "^1.23.0",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
+    "@types/clone": "^2.1.0",
     "@types/mocha": "^5.2.4",
     "@types/node": "^15.6.0",
     "@types/prismjs": "^1.16.5",

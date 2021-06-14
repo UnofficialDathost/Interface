@@ -1,13 +1,17 @@
 <template>
   <div>
     <div v-if="treeLoaded">
-      <div class="d-flex justify-content-end">
-        <b-button v-if="fileContents !== ''" size="sm" style="margin-bottom:5px;" v-b-modal.editor-fullscreen><b-icon icon="arrows-fullscreen"></b-icon> Fullscreen</b-button>
-        <b-button v-else size="sm" style="margin-bottom:5px;" disabled><b-icon icon="arrows-fullscreen"></b-icon> Fullscreen</b-button>
+      <div class="d-flex justify-content-between" style="margin-bottom:5px;">
+        <div class="search-area">
+            <b-icon class="float-left search-icon" icon="search"></b-icon>
+            <input @input="searchNodes($event.target.value)" class="custom-search-input" type="search" placeholder="Seach...">
+        </div>
+        <b-button v-if="fileContents !== ''" size="sm" v-b-modal.editor-fullscreen><b-icon icon="arrows-fullscreen"></b-icon> Fullscreen</b-button>
+        <b-button v-else size="sm" disabled><b-icon icon="arrows-fullscreen"></b-icon> Fullscreen</b-button>
       </div>
       <div class="row">
         <div class="col-4" style="overflow-y:scroll;overflow-x:hidden;max-height:60vh;">
-          <vue-tree-list :model="tree" @click="nodeClicked" v-bind:default-expanded="false" default-tree-node-name="new folder" default-leaf-node-name="new file">
+          <vue-tree-list v-if="displayTree" :model="tree" @click="nodeClicked" v-bind:default-expanded="false" default-tree-node-name="new folder" default-leaf-node-name="new file">
             <template v-slot:treeNodeIcon="slotProps">
               <b-icon class="treeIcon" :icon="!slotProps.expanded ? 'folder-fill' : 'folder2-open'"></b-icon>
             </template>
@@ -27,6 +31,9 @@
               <b-icon class="treeIcon" icon="folder-plus"></b-icon>
             </template>
           </vue-tree-list>
+          <div v-else class="d-flex justify-content-center mb-3">
+            <b-spinner style="width: 3rem; height: 3rem; margin-top: 10px;" label="Loading..."></b-spinner>
+          </div>
         </div>
         <div class="col-8">
           <div v-if="fileDownloading || fileContents === ''" class="editor d-flex justify-content-center mb-3">
@@ -61,6 +68,7 @@ import 'prismjs/themes/prism-okaidia.css'
 
 import Server from 'dathost/src/server'
 import { IFile } from 'dathost/src/interfaces/file'
+import clone from 'clone'
 
 @Component({
   name: 'ServerFile',
@@ -75,6 +83,10 @@ export default class ServerFileComp extends VueMixin {
 
   treeLoaded = false
   tree: ReturnType<typeof Tree>
+  treeBackup: ReturnType<typeof Tree>
+
+  // Needed to force reload tree when searching.
+  displayTree = true
 
   highlighter = highlight('', languages.html, 'plain')
   fileContents = ''
@@ -90,6 +102,9 @@ export default class ServerFileComp extends VueMixin {
     }
 
     this.sortByNodeThenAlhpa()
+
+    // Clone tree object.
+    this.treeBackup = clone(this.tree)
 
     this.treeLoaded = true
   }
@@ -116,6 +131,31 @@ export default class ServerFileComp extends VueMixin {
       this.fileContents = file
       this.fileDownloading = false
     }
+  }
+
+  async searchNodes (search: string): Promise<void> {
+    this.displayTree = false
+
+    this.tree = clone(this.treeBackup)
+    if (search !== '') {
+      await this.childSearch(search.toLowerCase(), this.tree)
+    }
+
+    this.displayTree = true
+  }
+
+  async childSearch (search: string, tree: ReturnType<typeof Tree>): Promise<void> {
+    if (tree.children == null) {
+      return
+    }
+
+    for (const child of tree.children) {
+      await this.childSearch(search, child)
+    }
+
+    tree.children = tree.children.filter((child: { name: string }) => {
+      return child.name.toLowerCase().search(search) !== -1
+    })
   }
 
   subTreeAdd (file: IFile, tree = this.tree, dir?: string): void {
