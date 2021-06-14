@@ -18,8 +18,8 @@
           <h5 v-else class="text-center" style="margin-top: 15px;">No result...</h5>
         </div>
         <div class="col-8">
-          <div v-if="fileDownloading || fileContents === ''" class="editor d-flex justify-content-center mb-3">
-            <b-spinner v-if="fileDownloading" style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
+          <div v-if="fileDownloading || fileContents === ''" class="d-flex justify-content-center mb-3 CodeMirror" style="background-color:var(--dathost-dark-dark);">
+            <b-spinner v-if="fileDownloading" style="width: 6rem; height: 6rem; margin-top: 25px;color:#adafae;" label="Loading..."></b-spinner>
           </div>
           <div v-else>
             <b-modal :hide-footer="true" id="editor-fullscreen">
