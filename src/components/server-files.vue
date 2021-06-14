@@ -11,7 +11,7 @@
       </div>
       <div class="row">
         <div class="col-4" style="overflow-y:scroll;overflow-x:hidden;max-height:60vh;">
-          <div v-if="displayTree && tree.children.length > 0">
+          <div v-if="displayTree && tree.children != null && tree.children.length > 0">
             <vue-tree-list :model="tree" @click="nodeClicked" v-bind:default-expanded="false" default-tree-node-name="new folder" default-leaf-node-name="new file">
             </vue-tree-list>
           </div>
@@ -68,6 +68,7 @@ export default class ServerFileComp extends VueMixin {
   treeLoaded = false
   tree: ReturnType<typeof Tree>
   treeBackup: ReturnType<typeof Tree>
+  dirs: string[] = []
 
   inputDebounce: ReturnType<typeof debounce>
 
@@ -84,6 +85,7 @@ export default class ServerFileComp extends VueMixin {
     this.tree = new Tree([])
 
     for await (const file of this.serverObj.files()) {
+      this.dirs.push(file[0].path)
       this.subTreeAdd(file[0])
     }
 
@@ -124,26 +126,27 @@ export default class ServerFileComp extends VueMixin {
   async searchNodes (search: string): Promise<void> {
     this.displayTree = false
 
-    this.tree = clone(this.treeBackup)
     if (search !== '') {
-      await this.childSearch(search.toLowerCase(), this.tree)
+      const searchLower = search.toLowerCase()
+
+      this.tree = new Tree([])
+      for (const dir of this.dirs) {
+        if (dir.toLowerCase().search(searchLower) !== -1) {
+          const isFile = this.fileRegex.test(dir)
+          this.tree.addChildren(new TreeNode({
+            name: dir.replace(/^.*[\\/]/, ''),
+            id: dir,
+            isLeaf: isFile,
+            addLeafNodeDisabled: isFile,
+            addTreeNodeDisabled: isFile
+          }))
+        }
+      }
+    } else {
+      this.tree = clone(this.treeBackup)
     }
 
     this.displayTree = true
-  }
-
-  async childSearch (search: string, tree: ReturnType<typeof Tree>): Promise<void> {
-    if (tree.children == null) {
-      return
-    }
-
-    for (const child of tree.children) {
-      await this.childSearch(search, child)
-    }
-
-    tree.children = tree.children.filter((child: { name: string }) => {
-      return child.name.toLowerCase().search(search) !== -1
-    })
   }
 
   subTreeAdd (file: IFile, tree = this.tree, dir?: string): void {
