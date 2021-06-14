@@ -42,6 +42,16 @@
     <div v-else class="d-flex justify-content-center mb-3">
       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
     </div>
+
+    <h5 style="margin-top:25px;">FTP Details</h5>
+    <p style="margin:0;">Host: <strong v-if="server.ip">{{ server.ip }}</strong><span v-else>Start server to get IP.</span></p>
+    <p style="margin:0;">Port: <strong>21</strong></p>
+    <p style="margin:0;">Username: <strong>{{ server.id }}</strong></p>
+    <p style="margin-bottom:5px;">Password: <strong>{{ ftpPassword }}</strong></p>
+    <b-button v-if="!ftpPasswordLoading" @click="regenerateFtp()" variant="primary" size="sm">Regenerate Password</b-button>
+    <b-button v-else disabled variant="primary" size="sm">
+      <b-spinner label="Spinning" style="width: 1.3em; height: 1.3em;"></b-spinner> Regenerating Password
+    </b-button>
   </div>
 </template>
 
@@ -59,6 +69,7 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/clike/clike'
 
 import Server from 'dathost/src/server'
+import { IServer } from 'dathost/src/interfaces/server'
 import { IFile } from 'dathost/src/interfaces/file'
 
 @Component({
@@ -70,12 +81,18 @@ import { IFile } from 'dathost/src/interfaces/file'
 })
 export default class ServerFileComp extends VueMixin {
   @Prop({ type: Object })
+  server: IServer
+
+  @Prop({ type: Object })
   serverObj: Server
 
   treeLoaded = false
   tree: ReturnType<typeof Tree>
   treeBackup: ReturnType<typeof Tree>
   dirs: string[] = []
+
+  ftpPassword: string
+  ftpPasswordLoading = false
 
   inputDebounce: ReturnType<typeof debounce>
 
@@ -136,7 +153,16 @@ export default class ServerFileComp extends VueMixin {
       this.setTheme('lesser-dark')
     }
 
+    this.ftpPassword = this.server.ftp_password
+
     this.treeLoaded = true
+  }
+
+  async regenerateFtp (): Promise<void> {
+    this.ftpPasswordLoading = true
+    await this.serverObj.regenerateFtpPassword()
+    this.ftpPassword = (await this.serverObj.get()).ftp_password
+    this.ftpPasswordLoading = false
   }
 
   setTheme (theme: string): void {

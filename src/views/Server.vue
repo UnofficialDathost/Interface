@@ -44,7 +44,7 @@
         <div class="card-body">
           <ServerConsoleComp :server="server" :serverObj="serverObj" v-if="$route.params.tab === 'console'" />
           <ServerSettingsComp :server="server" :serverObj="serverObj" v-else-if="$route.params.tab === 'settings'" />
-          <ServerFileComp :serverObj="serverObj" v-else-if="$route.params.tab === 'files'" />
+          <ServerFileComp :server="server" :serverObj="serverObj" v-else-if="$route.params.tab === 'files'" />
         </div>
         <div class="card-footer">
             <div class="row">
