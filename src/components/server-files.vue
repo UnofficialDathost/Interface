@@ -91,6 +91,9 @@ export default class ServerFileComp extends VueMixin {
   }
 
   themes = [
+    'lesser-dark',
+    'erlang-dark',
+    '3024-night',
     'ambiance',
     'ayu-dark',
     'dracula',
@@ -130,7 +133,7 @@ export default class ServerFileComp extends VueMixin {
     if (editorTheme) {
       this.setTheme(editorTheme)
     } else {
-      this.setTheme('night')
+      this.setTheme('lesser-dark')
     }
 
     this.treeLoaded = true
