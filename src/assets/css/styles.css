@@ -332,7 +332,6 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
 #editor-fullscreen .modal-dialog {
   width: 90%;
   max-width: none;
-  height: 100%;
 }
 
 #editor-fullscreen .modal-content {
