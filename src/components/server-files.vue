@@ -4,36 +4,18 @@
       <div class="d-flex justify-content-between" style="margin-bottom:5px;">
         <div class="search-area">
             <b-icon class="float-left search-icon" icon="search"></b-icon>
-            <input @input="searchNodes($event.target.value)" class="custom-search-input" type="search" placeholder="Seach...">
+            <input @input="inputDebounce($event.target.value)" class="custom-search-input" type="search" placeholder="Seach...">
         </div>
         <b-button v-if="fileContents !== ''" size="sm" v-b-modal.editor-fullscreen><b-icon icon="arrows-fullscreen"></b-icon> Fullscreen</b-button>
         <b-button v-else size="sm" disabled><b-icon icon="arrows-fullscreen"></b-icon> Fullscreen</b-button>
       </div>
       <div class="row">
         <div class="col-4" style="overflow-y:scroll;overflow-x:hidden;max-height:60vh;">
-          <vue-tree-list v-if="displayTree" :model="tree" @click="nodeClicked" v-bind:default-expanded="false" default-tree-node-name="new folder" default-leaf-node-name="new file">
-            <template v-slot:treeNodeIcon="slotProps">
-              <b-icon class="treeIcon" :icon="!slotProps.expanded ? 'folder-fill' : 'folder2-open'"></b-icon>
-            </template>
-            <template v-slot:leafNodeIcon>
-              <b-icon class="treeIcon" icon="file-earmark-code"></b-icon>
-            </template>
-            <template v-slot:editNodeIcon>
-              <b-icon class="treeIcon" icon="pencil-square"></b-icon>
-            </template>
-            <template v-slot:delNodeIcon>
-              <b-icon class="treeIcon" icon="trash"></b-icon>
-            </template>
-            <template v-slot:addLeafNodeIcon>
-              <b-icon class="treeIcon" icon="file-earmark-plus"></b-icon>
-            </template>
-            <template v-slot:addTreeNodeIcon>
-              <b-icon class="treeIcon" icon="folder-plus"></b-icon>
-            </template>
-          </vue-tree-list>
-          <div v-else class="d-flex justify-content-center mb-3">
-            <b-spinner style="width: 3rem; height: 3rem; margin-top: 10px;" label="Loading..."></b-spinner>
+          <div v-if="displayTree && tree.children.length > 0">
+            <vue-tree-list :model="tree" @click="nodeClicked" v-bind:default-expanded="false" default-tree-node-name="new folder" default-leaf-node-name="new file">
+            </vue-tree-list>
           </div>
+          <h5 v-else class="text-center" style="margin-top: 15px;">No result...</h5>
         </div>
         <div class="col-8">
           <div v-if="fileDownloading || fileContents === ''" class="editor d-flex justify-content-center mb-3">
@@ -63,12 +45,14 @@ import { VueTreeList, Tree, TreeNode } from 'vue-tree-list'
 import { PrismEditor } from 'vue-prism-editor'
 import { highlight, languages } from 'prismjs'
 
+import clone from 'clone'
+import { debounce } from 'debounce'
+
 import 'vue-prism-editor/dist/prismeditor.min.css'
 import 'prismjs/themes/prism-okaidia.css'
 
 import Server from 'dathost/src/server'
 import { IFile } from 'dathost/src/interfaces/file'
-import clone from 'clone'
 
 @Component({
   name: 'ServerFile',
@@ -84,6 +68,8 @@ export default class ServerFileComp extends VueMixin {
   treeLoaded = false
   tree: ReturnType<typeof Tree>
   treeBackup: ReturnType<typeof Tree>
+
+  inputDebounce: ReturnType<typeof debounce>
 
   // Needed to force reload tree when searching.
   displayTree = true
@@ -105,6 +91,8 @@ export default class ServerFileComp extends VueMixin {
 
     // Clone tree object.
     this.treeBackup = clone(this.tree)
+
+    this.inputDebounce = debounce(this.searchNodes, 500)
 
     this.treeLoaded = true
   }
