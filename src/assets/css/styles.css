@@ -345,12 +345,8 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
   overflow-y: auto;
 }
 
-.editor {
-  background-color: #0d1117;
-  padding-top: 15px;
-  overflow: auto;
+.CodeMirror {
   min-height: 60vh;
-  max-height: 60vh;
 }
 
 .console {

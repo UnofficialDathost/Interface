@@ -23,9 +23,18 @@
           </div>
           <div v-else>
             <b-modal :hide-footer="true" id="editor-fullscreen">
-              <PrismEditor class="editor" style="max-height: 80vh;" v-model="fileContents" :highlight="() => highlighter" :line-numbers="true" />
+              <codemirror :options="editorOptions" v-model="fileContents" />
             </b-modal>
-            <PrismEditor class="editor" v-model="fileContents" :highlight="() => highlighter" :line-numbers="true" />
+            <codemirror :options="editorOptions" v-model="fileContents" />
+
+            <b-dropdown size="sm">
+              <template #button-content>
+                Theme: <strong class="text-capitalize">{{ editorOptions.theme.replaceAll('-', ' ') }}</strong>
+              </template>
+              <template v-for="theme in themes">
+                <b-dropdown-item v-if="theme !== editorOptions.theme" @click="setTheme(theme)" :key="theme" class="text-capitalize">{{ theme.replaceAll('-', ' ') }}</b-dropdown-item>
+              </template>
+            </b-dropdown>
           </div>
         </div>
       </div>
@@ -42,14 +51,12 @@ import { Component, Prop } from 'vue-property-decorator'
 
 import { VueTreeList, Tree, TreeNode } from 'vue-tree-list'
 
-import { PrismEditor } from 'vue-prism-editor'
-import { highlight, languages } from 'prismjs'
-
 import clone from 'clone'
 import { debounce } from 'debounce'
 
-import 'vue-prism-editor/dist/prismeditor.min.css'
-import 'prismjs/themes/prism-okaidia.css'
+import { codemirror } from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/mode/clike/clike'
 
 import Server from 'dathost/src/server'
 import { IFile } from 'dathost/src/interfaces/file'
@@ -58,7 +65,7 @@ import { IFile } from 'dathost/src/interfaces/file'
   name: 'ServerFile',
   components: {
     VueTreeList,
-    PrismEditor
+    codemirror
   }
 })
 export default class ServerFileComp extends VueMixin {
@@ -75,7 +82,30 @@ export default class ServerFileComp extends VueMixin {
   // Needed to force reload tree when searching.
   displayTree = true
 
-  highlighter = highlight('', languages.html, 'plain')
+  editorOptions = {
+    lineNumbers: true,
+    line: true,
+    collapseIdentical: false,
+    theme: '',
+    mode: ''
+  }
+
+  themes = [
+    'ambiance',
+    'ayu-dark',
+    'dracula',
+    'material-darker',
+    'material-ocean',
+    'neat',
+    'neo',
+    'night',
+    'solarized',
+    'the-matrix',
+    'tomorrow-night-bright',
+    'xq-dark',
+    'xq-light'
+  ]
+
   fileContents = ''
   fileDownloading = false
   fileRegex = new RegExp(/^.*\.[^\\]+$/)
@@ -96,7 +126,22 @@ export default class ServerFileComp extends VueMixin {
 
     this.inputDebounce = debounce(this.searchNodes, 500)
 
+    const editorTheme = localStorage.getItem('editorTheme')
+    if (editorTheme) {
+      this.setTheme(editorTheme)
+    } else {
+      this.setTheme('night')
+    }
+
     this.treeLoaded = true
+  }
+
+  setTheme (theme: string): void {
+    // eslint-disable-next-line no-unused-expressions
+    import(`@/assets/css/themes/${theme}.css`)
+
+    this.editorOptions.theme = theme
+    localStorage.setItem('editorTheme', theme)
   }
 
   async nodeClicked (tree: ReturnType<typeof Tree>): Promise<void> {
@@ -104,21 +149,15 @@ export default class ServerFileComp extends VueMixin {
       tree.toggle()
     } else {
       this.fileDownloading = true
+      this.fileContents = await this.serverObj.file(tree.id).download(true) as unknown as string
 
-      const file = await this.serverObj.file(tree.id).download(true) as unknown as string
-
-      const fileType = tree.id.split('.').pop()
+      const fileType = tree.name.split('.').pop()
       if (fileType === 'sp') {
-        this.highlighter = highlight(file, languages.clike, 'clike')
-      } else if (fileType === 'html') {
-        this.highlighter = highlight(file, languages.html, 'html')
-      } else if (fileType === 'json') {
-        this.highlighter = highlight(file, languages.json, 'json')
+        this.editorOptions.mode = 'clike'
       } else {
-        this.highlighter = highlight(file, languages.markup, 'markup')
+        this.editorOptions.mode = ''
       }
 
-      this.fileContents = file
       this.fileDownloading = false
     }
   }
