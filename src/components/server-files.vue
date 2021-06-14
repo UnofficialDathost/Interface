@@ -201,13 +201,15 @@ export default class ServerFileComp extends VueMixin {
       for (const dir of this.dirs) {
         if (dir.toLowerCase().search(searchLower) !== -1) {
           const isFile = this.fileRegex.test(dir)
-          this.tree.addChildren(new TreeNode({
-            name: dir.replace(/^.*[\\/]/, ''),
-            id: dir,
-            isLeaf: isFile,
-            addLeafNodeDisabled: isFile,
-            addTreeNodeDisabled: isFile
-          }))
+          if (isFile) {
+            this.tree.addChildren(new TreeNode({
+              name: dir.replace(/^.*[\\/]/, ''),
+              id: dir,
+              isLeaf: true,
+              addLeafNodeDisabled: true,
+              addTreeNodeDisabled: true
+            }))
+          }
         }
       }
     } else {
