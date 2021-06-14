@@ -43,7 +43,7 @@
       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
     </div>
 
-    <h5 style="margin-top:25px;">FTP Details</h5>
+    <h5 style="margin-top:10px;margin-bottom:5px;">FTP Details</h5>
     <p style="margin:0;">Host: <strong v-if="server.ip">{{ server.ip }}</strong><span v-else>Start server to get IP.</span></p>
     <p style="margin:0;">Port: <strong>21</strong></p>
     <p style="margin:0;">Username: <strong>{{ server.id }}</strong></p>
