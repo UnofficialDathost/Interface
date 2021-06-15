@@ -321,6 +321,10 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
     color: #fff;
 }
 
+.downloading-title {
+  font-size: 1em;
+}
+
 #editor-fullscreen {
   overflow-y: hidden !important;
 }

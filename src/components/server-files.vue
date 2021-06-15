@@ -24,17 +24,25 @@
           <div v-else>
             <b-modal :hide-footer="true" id="editor-fullscreen">
               <codemirror :options="editorOptions" v-model="fileContents" />
+              <div class="d-flex justify-content-end mb-3">
+                <b-button v-if="!ogContents" variant="primary"><b-icon icon="stickies"></b-icon> Save</b-button>
+                <b-button v-else disabled variant="primary"><b-icon icon="stickies"></b-icon> Save</b-button>
+              </div>
             </b-modal>
             <codemirror :options="editorOptions" v-model="fileContents" />
 
-            <b-dropdown size="sm">
-              <template #button-content>
-                Theme: <strong class="text-capitalize">{{ editorOptions.theme.replaceAll('-', ' ') }}</strong>
-              </template>
-              <template v-for="theme in themes">
-                <b-dropdown-item v-if="theme !== editorOptions.theme" @click="setTheme(theme)" :key="theme" class="text-capitalize">{{ theme.replaceAll('-', ' ') }}</b-dropdown-item>
-              </template>
-            </b-dropdown>
+            <div class="d-flex justify-content-between" style="margin-top:5px;">
+              <b-dropdown size="sm">
+                <template #button-content>
+                  Theme: <strong class="text-capitalize">{{ editorOptions.theme.replaceAll('-', ' ') }}</strong>
+                </template>
+                <template v-for="theme in themes">
+                  <b-dropdown-item v-if="theme !== editorOptions.theme" @click="setTheme(theme)" :key="theme" class="text-capitalize">{{ theme.replaceAll('-', ' ') }}</b-dropdown-item>
+                </template>
+              </b-dropdown>
+              <b-button v-if="!ogContents" style="width: 20%;" variant="primary" size="sm"><b-icon icon="stickies"></b-icon> Save</b-button>
+              <b-button v-else disabled style="width: 20%;" variant="primary" size="sm"><b-icon icon="stickies"></b-icon> Save</b-button>
+            </div>
           </div>
         </div>
       </div>
@@ -52,17 +60,25 @@
     <b-button v-else disabled variant="primary" size="sm">
       <b-spinner label="Spinning" style="width: 1.3em; height: 1.3em;"></b-spinner> Regenerating Password
     </b-button>
+
+    <b-modal id="downloading" title-class="downloading-title" :title="fileDownloadingName" hide-footer centered size="lg">
+      <div class="text-center">
+        <b-spinner label="Spinning" style="width: 4em; height: 4em;margin-bottom:10px;"></b-spinner>
+        <h5>Downloading...</h5>
+      </div>
+    </b-modal>
   </div>
 </template>
 
 <script lang="ts">
 import VueMixin from '@/mixins/vue'
-import { Component, Prop } from 'vue-property-decorator'
+import { Component, Prop, Watch } from 'vue-property-decorator'
 
 import { VueTreeList, Tree, TreeNode } from 'vue-tree-list'
 
 import clone from 'clone'
 import { debounce } from 'debounce'
+import download from 'downloadjs'
 
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
@@ -89,9 +105,9 @@ export default class ServerFileComp extends VueMixin {
   treeLoaded = false
   tree: ReturnType<typeof Tree>
   treeBackup: ReturnType<typeof Tree>
-  dirs: string[] = []
+  dirs: { path: string, size: number }[] = []
 
-  ftpPassword: string
+  ftpPassword = ''
   ftpPasswordLoading = false
 
   inputDebounce: ReturnType<typeof debounce>
@@ -127,15 +143,23 @@ export default class ServerFileComp extends VueMixin {
   ]
 
   fileContents = ''
+  ogFileContent = ''
+  ogContents = true
   fileDownloading = false
+  fileDownloadingName = ''
   fileRegex = new RegExp(/^.*\.[^\\]+$/)
 
   async mounted (): Promise<void> {
+    this.ftpPassword = this.server.ftp_password
+
     this.treeLoaded = false
     this.tree = new Tree([])
 
-    for await (const file of this.serverObj.files()) {
-      this.dirs.push(file[0].path)
+    for await (const file of this.serverObj.files({ fileSizes: true })) {
+      this.dirs.push({
+        path: file[0].path,
+        size: file[0].size ? parseInt(file[0].size) : 0
+      })
       this.subTreeAdd(file[0])
     }
 
@@ -152,8 +176,6 @@ export default class ServerFileComp extends VueMixin {
     } else {
       this.setTheme('lesser-dark')
     }
-
-    this.ftpPassword = this.server.ftp_password
 
     this.treeLoaded = true
   }
@@ -173,21 +195,61 @@ export default class ServerFileComp extends VueMixin {
     localStorage.setItem('editorTheme', theme)
   }
 
+  @Watch('fileContents')
+  watchContents (): void {
+    this.ogContents = this.fileContents === this.ogFileContent
+  }
+
   async nodeClicked (tree: ReturnType<typeof Tree>): Promise<void> {
     if (!tree.isLeaf) {
       tree.toggle()
     } else {
-      this.fileDownloading = true
-      this.fileContents = await this.serverObj.file(tree.id).download(true) as unknown as string
+      const file = this.serverObj.file(tree.id)
+      if (tree.size <= 100000) {
+        this.fileDownloading = true
 
-      const fileType = tree.name.split('.').pop()
-      if (fileType === 'sp') {
-        this.editorOptions.mode = 'clike'
+        this.fileContents = await file.download(true) as string
+        this.ogFileContent = this.fileContents
+
+        const fileType = tree.name.split('.').pop()
+        if (fileType === 'sp') {
+          this.editorOptions.mode = 'clike'
+        } else {
+          this.editorOptions.mode = ''
+        }
+
+        this.fileDownloading = false
       } else {
-        this.editorOptions.mode = ''
-      }
+        this.$bvModal.msgBoxConfirm(`Are you sure you want download ${tree.name}`, {
+          title: 'Download',
+          okTitle: 'Download',
+          headerClass: 'p-2 border-bottom-0',
+          footerClass: 'p-2 border-top-0',
+          centered: true
+        }).then(async value => {
+          if (value) {
+            this.fileDownloadingName = tree.name
 
-      this.fileDownloading = false
+            this.$bvModal.show('downloading')
+            this.$bvToast.toast(`Downloading ${tree.name}`, {
+              noCloseButton: true,
+              title: '',
+              toaster: 'b-toaster-bottom-right'
+            })
+
+            const buffer = await file.download() as Blob
+            download(buffer, tree.name, buffer.type)
+
+            this.$bvModal.hide('downloading')
+            this.$bvToast.toast(`${tree.name} Downloaded`, {
+              noCloseButton: true,
+              title: '',
+              headerClass: 'toast-header-competed',
+              toaster: 'b-toaster-bottom-right'
+            })
+          }
+        })
+      }
     }
   }
 
@@ -199,12 +261,13 @@ export default class ServerFileComp extends VueMixin {
 
       this.tree = new Tree([])
       for (const dir of this.dirs) {
-        if (dir.toLowerCase().search(searchLower) !== -1) {
-          const isFile = this.fileRegex.test(dir)
+        if (dir.path.toLowerCase().search(searchLower) !== -1) {
+          const isFile = this.fileRegex.test(dir.path)
           if (isFile) {
             this.tree.addChildren(new TreeNode({
-              name: dir.replace(/^.*[\\/]/, ''),
-              id: dir,
+              name: dir.path.replace(/^.*[\\/]/, ''),
+              id: dir.path,
+              size: dir.size,
               isLeaf: true,
               addLeafNodeDisabled: true,
               addTreeNodeDisabled: true
@@ -235,6 +298,7 @@ export default class ServerFileComp extends VueMixin {
         name: pathToFormat,
         id: file.path,
         isLeaf: isFile,
+        size: file.size ? file.size : 0,
         addLeafNodeDisabled: isFile,
         addTreeNodeDisabled: isFile
       }))
