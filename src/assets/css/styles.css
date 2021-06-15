@@ -545,6 +545,10 @@ input[type="search"]::-webkit-search-cancel-button {
   outline: 1px solid var(--dathost-orange-dark);
 }
 
+.CodeMirror-scrollbar-filler {
+  background-color: var(--dathost-orange) !important;
+}
+
 @media screen and (max-width: 800px) {
     .card.login {
         width: 100%;
