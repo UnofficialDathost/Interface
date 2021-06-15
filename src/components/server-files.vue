@@ -53,16 +53,19 @@
       <b-spinner style="width: 6rem; height: 6rem; margin-top: 25px;" label="Loading..."></b-spinner>
     </div>
 
-    <h5 style="margin-top:10px;margin-bottom:5px;">FTP Details</h5>
-    <p style="margin:0;">Host: <strong v-if="server.ip">{{ server.ip }}</strong><span v-else>Start server to get IP.</span></p>
-    <p style="margin:0;">Port: <strong>21</strong></p>
-    <p style="margin:0;">Username: <strong>{{ server.id }}</strong></p>
-    <p style="margin-bottom:5px;">Password: <strong>{{ ftpPassword }}</strong></p>
-    <b-button v-if="!ftpPasswordLoading" @click="regenerateFtp()" variant="primary" size="sm">Regenerate Password</b-button>
-    <b-button v-else disabled variant="primary" size="sm">
-      <b-spinner label="Spinning" style="width: 1.3em; height: 1.3em;"></b-spinner> Regenerating Password
-    </b-button>
-
+    <div>
+      <h5 style="margin-top:10px;margin-bottom:5px;">FTP Details</h5>
+      <p @click="copyToClipboard(server.ip)" v-b-tooltip.hover.left title="Copy to clipboard" style="margin:0;cursor: pointer;">
+        Host: <strong v-if="server.ip">{{ server.ip }}</strong><span v-else>Start server to get IP.</span>
+      </p>
+      <p @click="copyToClipboard('21')" v-b-tooltip.hover.left title="Copy to clipboard" style="margin:0;cursor: pointer;">Port: <strong>21</strong></p>
+      <p @click="copyToClipboard(server.id)" v-b-tooltip.hover.left title="Copy to clipboard" style="margin:0;cursor: pointer;">Username: <strong>{{ server.id }}</strong></p>
+      <p @click="copyToClipboard(ftpPassword)" v-b-tooltip.hover.left title="Copy to clipboard" style="margin-bottom:5px;cursor: pointer;">Password: <strong>{{ ftpPassword }}</strong></p>
+      <b-button v-if="!ftpPasswordLoading" @click="regenerateFtp()" variant="primary" size="sm">Regenerate Password</b-button>
+      <b-button v-else disabled variant="primary" size="sm">
+        <b-spinner label="Spinning" style="width: 1.3em; height: 1.3em;"></b-spinner> Regenerating Password
+      </b-button>
+    </div>
     <b-modal id="downloading" title-class="downloading-title" :title="fileDownloadingName" hide-footer centered size="lg">
       <div class="text-center">
         <b-spinner label="Spinning" style="width: 4em; height: 4em;margin-bottom:10px;"></b-spinner>

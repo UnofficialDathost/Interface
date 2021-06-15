@@ -10,4 +10,8 @@ export default class VueMixin extends Vue {
   $dathostAccount: IAccount
   $steam?: Steam
   $corsProxy: string
+
+  async copyToClipboard (txt: string): Promise<void> {
+    await navigator.clipboard.writeText(txt)
+  }
 }

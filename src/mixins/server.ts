@@ -43,10 +43,6 @@ export default class ServerMixin extends VueMixin {
     }
   }
 
-  async copyToClipboard (txt: string): Promise<void> {
-    await navigator.clipboard.writeText(txt)
-  }
-
   async startServer (): Promise<void> {
     this.serverStatus.startingUp = true
 
