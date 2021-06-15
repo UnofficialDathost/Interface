@@ -6,8 +6,10 @@
             <b-icon class="float-left search-icon" icon="search"></b-icon>
             <input @input="inputDebounce($event.target.value)" class="custom-search-input" type="search" placeholder="Seach...">
         </div>
-        <b-button v-if="fileContents !== ''" size="sm" v-b-modal.editor-fullscreen><b-icon icon="arrows-fullscreen"></b-icon> Fullscreen</b-button>
-        <b-button v-else size="sm" disabled><b-icon icon="arrows-fullscreen"></b-icon> Fullscreen</b-button>
+        <div v-if="fileContents !== ''">
+          <b-button size="sm" @click="downloadFile(fileContents, fileDownloadingName)"><b-icon icon="download"></b-icon> Download</b-button>
+          <b-button size="sm" v-b-modal.editor-fullscreen style="margin-left: 5px;"><b-icon icon="arrows-fullscreen"></b-icon> Fullscreen</b-button>
+        </div>
       </div>
       <div class="row">
         <div class="col-4" style="overflow-y:scroll;overflow-x:hidden;max-height:60vh;">
@@ -205,6 +207,8 @@ export default class ServerFileComp extends VueMixin {
       tree.toggle()
     } else {
       const file = this.serverObj.file(tree.id)
+      this.fileDownloadingName = tree.name
+
       if (tree.size <= 100000) {
         this.fileDownloading = true
 
@@ -228,8 +232,6 @@ export default class ServerFileComp extends VueMixin {
           centered: true
         }).then(async value => {
           if (value) {
-            this.fileDownloadingName = tree.name
-
             this.$bvModal.show('downloading')
             this.$bvToast.toast(`Downloading ${tree.name}`, {
               noCloseButton: true,
@@ -238,19 +240,24 @@ export default class ServerFileComp extends VueMixin {
             })
 
             const buffer = await file.download() as Blob
-            download(buffer, tree.name, buffer.type)
+            this.downloadFile(buffer, tree.name, buffer.type)
 
             this.$bvModal.hide('downloading')
-            this.$bvToast.toast(`${tree.name} Downloaded`, {
-              noCloseButton: true,
-              title: '',
-              headerClass: 'toast-header-competed',
-              toaster: 'b-toaster-bottom-right'
-            })
           }
         })
       }
     }
+  }
+
+  downloadFile (data: string | Blob, name: string, type = 'text/plain'): void {
+    download(data, name, type)
+
+    this.$bvToast.toast(`${name} Downloaded`, {
+      noCloseButton: true,
+      title: '',
+      headerClass: 'toast-header-competed',
+      toaster: 'b-toaster-bottom-right'
+    })
   }
 
   async searchNodes (search: string): Promise<void> {
