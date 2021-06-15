@@ -153,6 +153,14 @@ export default class ServerFileComp extends VueMixin {
   fileDownloading = false
   fileDownloadingName = ''
   fileRegex = new RegExp(/^.*\.[^\\]+$/)
+  // File ext that should only be downloaded
+  // no matter the size.
+  downloadOnly = [
+    'smx',
+    'dem',
+    'so',
+    'dll'
+  ]
 
   async mounted (): Promise<void> {
     this.ftpPassword = this.server.ftp_password
@@ -210,15 +218,15 @@ export default class ServerFileComp extends VueMixin {
       tree.toggle()
     } else {
       const file = this.serverObj.file(tree.id)
+      const fileType = tree.name.split('.').pop()
       this.fileDownloadingName = tree.name
 
-      if (tree.size <= 100000) {
+      if (tree.size <= 100000 && this.downloadOnly.indexOf(fileType) === -1) {
         this.fileDownloading = true
 
         this.fileContents = await file.download(true) as string
         this.ogFileContent = this.fileContents
 
-        const fileType = tree.name.split('.').pop()
         if (fileType === 'sp') {
           this.editorOptions.mode = 'clike'
         } else {
