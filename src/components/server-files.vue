@@ -68,8 +68,13 @@
     </div>
     <b-modal id="downloading" title-class="downloading-title" :title="fileDownloadingName" hide-footer centered size="lg">
       <div class="text-center">
-        <b-spinner label="Spinning" style="width: 4em; height: 4em;margin-bottom:10px;"></b-spinner>
         <h5>Downloading...</h5>
+        <div class="row">
+          <div class="col-sm-1">{{ downloadProgress }}%</div>
+          <div class="col-sm-10">
+            <b-progress height="20px" :max="100" variant="warning" :value="downloadProgress"></b-progress>
+          </div>
+        </div>
       </div>
     </b-modal>
   </div>
@@ -150,6 +155,7 @@ export default class ServerFileComp extends VueMixin {
   fileContents = ''
   ogFileContent = ''
   ogContents = true
+  downloadProgress = 0
   fileDownloading = false
   fileDownloadingName = ''
   fileRegex = new RegExp(/^.*\.[^\\]+$/)
@@ -243,6 +249,8 @@ export default class ServerFileComp extends VueMixin {
           centered: true
         }).then(async value => {
           if (value) {
+            this.downloadProgress = 0
+
             this.$bvModal.show('downloading')
             this.$bvToast.toast(`Downloading ${tree.name}`, {
               noCloseButton: true,
@@ -250,13 +258,21 @@ export default class ServerFileComp extends VueMixin {
               toaster: 'b-toaster-bottom-right'
             })
 
-            const buffer = await file.download() as Blob
+            const buffer = await file.download(false, { onDownloadProgress: (progress) => this.updateDownloadProgress(progress, tree.size) }) as Blob
             this.downloadFile(buffer, tree.name, buffer.type)
 
             this.$bvModal.hide('downloading')
           }
         })
       }
+    }
+  }
+
+  updateDownloadProgress (progress: { loaded: number }, totalLength: number): void {
+    if (progress.loaded !== 0) {
+      this.downloadProgress = Math.floor(
+        progress.loaded / totalLength * 100
+      )
     }
   }
 
