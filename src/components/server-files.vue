@@ -19,7 +19,7 @@
           <vue-tree-list v-if="tree.children != null && tree.children.length > 0" :model="tree" @click="nodeClicked" v-bind:default-expanded="false" default-tree-node-name="new folder" default-leaf-node-name="new file">
             <template v-slot:leafNameDisplay="node">
               <span v-if="!node.model.isLeaf">{{ node.model.name }}</span>
-              <span v-else v-b-tooltip.hover :title="node.model.size >= 1000000 ? `${(node.model.size * 0.000001).toFixed(2)} MB` : `${(node.model.size * 0.0009765625).toFixed(2)} KB`">
+              <span v-else v-b-tooltip.hover.right :title="node.model.size >= 1000000 ? `${(node.model.size * 0.000001).toFixed(2)} MB` : `${(node.model.size * 0.0009765625).toFixed(2)} KB`">
                 {{ node.model.name }}
               </span>
             </template>
