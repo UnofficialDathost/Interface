@@ -189,7 +189,9 @@ export default class ServerFileComp extends VueMixin {
     'smx',
     'dem',
     'so',
-    'dll'
+    'dll',
+    'exe',
+    'sh'
   ]
 
   async mounted (): Promise<void> {
