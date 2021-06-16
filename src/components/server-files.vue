@@ -43,8 +43,11 @@
             <b-modal :hide-footer="true" id="editor-fullscreen">
               <codemirror :options="editorOptions" v-model="fileContents" />
               <div class="d-flex justify-content-end mb-3">
-                <b-button v-if="!ogContents" variant="primary"><b-icon icon="stickies"></b-icon> Save</b-button>
+              <template v-if="!fileUploading">
+                <b-button v-if="!ogContents" @click="saveFileChanges()" variant="primary"><b-icon icon="stickies"></b-icon> Save</b-button>
                 <b-button v-else disabled variant="primary"><b-icon icon="stickies"></b-icon> Save</b-button>
+              </template>
+              <b-button v-else disabled variant="primary"><b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner> Saving</b-button>
               </div>
             </b-modal>
             <codemirror :options="editorOptions" v-model="fileContents" />
