@@ -85,11 +85,11 @@
     <b-modal id="downloading" title-class="downloading-title" :title="fileDownloadingName" hide-footer centered size="lg">
       <div class="text-center">
         <h5>Downloading...</h5>
-        <div class="row">
-          <div class="col-sm-1">{{ downloadProgress }}%</div>
-          <div class="col-sm-10">
+        <div class="row" style="margin:0px">
+          <div class="col-10">
             <b-progress height="20px" :max="100" variant="warning" :value="downloadProgress"></b-progress>
           </div>
+          <div class="col">{{ downloadProgress }}%</div>
         </div>
       </div>
     </b-modal>
