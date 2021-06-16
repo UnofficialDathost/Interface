@@ -7,7 +7,9 @@
             <input @input="inputDebounce($event.target.value)" class="custom-search-input" type="search" placeholder="Seach...">
         </div>
         <div v-if="!fileDownloading">
-          <b-button size="sm" @click="downloadFile(fileContents, fileDownloadingName)"><b-icon icon="download"></b-icon> Download</b-button>
+          <b-button v-if="fileContents !== ''" size="sm" @click="downloadFile(fileContents, fileDownloadingName)"><b-icon icon="download"></b-icon> Download</b-button>
+          <b-button v-else size="sm" disabled><b-icon icon="download"></b-icon> Download</b-button>
+
           <b-button size="sm" v-b-modal.editor-fullscreen style="margin-left: 5px;"><b-icon icon="arrows-fullscreen"></b-icon> Fullscreen</b-button>
         </div>
       </div>
