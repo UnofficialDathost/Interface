@@ -55,8 +55,11 @@
                   <b-dropdown-item v-if="theme !== editorOptions.theme" @click="setTheme(theme)" :key="theme" class="text-capitalize">{{ theme.replaceAll('-', ' ') }}</b-dropdown-item>
                 </template>
               </b-dropdown>
-              <b-button v-if="!ogContents" @click="saveFileChanges()" style="width: 20%;" variant="primary" size="sm"><b-icon icon="stickies"></b-icon> Save</b-button>
-              <b-button v-else disabled style="width: 20%;" variant="primary" size="sm"><b-icon icon="stickies"></b-icon> Save</b-button>
+              <template v-if="!fileUploading">
+                <b-button v-if="!ogContents" @click="saveFileChanges()" style="width: 20%;" variant="primary" size="sm"><b-icon icon="stickies"></b-icon> Save</b-button>
+                <b-button v-else disabled style="width: 20%;" variant="primary" size="sm"><b-icon icon="stickies"></b-icon> Save</b-button>
+              </template>
+              <b-button v-else disabled style="width: 20%;" variant="primary" size="sm"><b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner> Saving</b-button>
             </div>
           </div>
         </div>
@@ -169,6 +172,7 @@ export default class ServerFileComp extends VueMixin {
   ogFileContent = ''
   ogContents = true
   downloadProgress = 0
+  fileUploading = false
   fileDownloading = false
   fileDownloadPath = ''
   fileDownloadingName = ''
@@ -247,9 +251,24 @@ export default class ServerFileComp extends VueMixin {
   }
 
   async saveFileChanges (): Promise<void> {
+    this.fileUploading = true
+    this.$bvToast.toast(`Saving ${this.fileDownloadingName}`, {
+      noCloseButton: true,
+      title: '',
+      toaster: 'b-toaster-bottom-right'
+    })
+
     await this.serverObj.file(this.fileDownloadPath).upload(new Blob([this.fileContents], { type: 'text/plain' }))
+    this.fileUploading = false
     this.ogFileContent = this.fileContents
     this.ogContents = true
+
+    this.$bvToast.toast(`${this.fileDownloadingName} saved`, {
+      noCloseButton: true,
+      title: '',
+      headerClass: 'toast-header-competed',
+      toaster: 'b-toaster-bottom-right'
+    })
   }
 
   async nodeClicked (tree: ReturnType<typeof Tree>): Promise<void> {
