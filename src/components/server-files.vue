@@ -17,6 +17,12 @@
       <div class="col-4" style="overflow-y:scroll;overflow-x:hidden;max-height:60vh;">
         <div v-if="treeLoaded">
           <vue-tree-list v-if="tree.children != null && tree.children.length > 0" :model="tree" @click="nodeClicked" v-bind:default-expanded="false" default-tree-node-name="new folder" default-leaf-node-name="new file">
+            <template v-slot:leafNameDisplay="node">
+              <span v-if="!node.model.isLeaf">{{ node.model.name }}</span>
+              <span v-else v-b-tooltip.hover :title="node.model.size >= 1000000 ? `${(node.model.size * 0.000001).toFixed(2)} MB` : `${(node.model.size * 0.0009765625).toFixed(2)} KB`">
+                {{ node.model.name }}
+              </span>
+            </template>
             <template v-slot:treeNodeIcon="node">
               <span v-if="!node.expanded" class="node-icon">
                 <svg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="folder fill" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi-folder-fill mx-auto b-icon bi" data-darkreader-inline-fill="" style="--darkreader-inline-fill:currentColor;"><g data-v-41be6633=""><path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3zm-8.322.12C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139z"></path></g></svg>
