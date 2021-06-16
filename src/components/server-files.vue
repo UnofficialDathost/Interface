@@ -16,7 +16,7 @@
     <div class="row">
       <div class="col-4" style="overflow-y:scroll;overflow-x:hidden;max-height:60vh;">
         <div v-if="treeLoaded">
-          <vue-tree-list v-if="tree.children != null && tree.children.length > 0" :model="tree" @click="nodeClicked" v-bind:default-expanded="false" default-tree-node-name="new folder" default-leaf-node-name="new file">
+          <vue-tree-list v-if="tree.children != null && tree.children.length > 0" :key="treeKey" :model="tree" @click="nodeClicked" @delete-node="deleteNode" v-bind:default-expanded="false" default-tree-node-name="new folder" default-leaf-node-name="new file">
             <template v-slot:leafNameDisplay="node">
               <span v-if="!node.model.isLeaf">{{ node.model.name }}</span>
               <span v-else v-b-tooltip.hover :title="node.model.size >= 1000000 ? `${(node.model.size * 0.000001).toFixed(2)} MB` : `${(node.model.size * 0.0009765625).toFixed(2)} KB`">
@@ -142,6 +142,7 @@ export default class ServerFileComp extends VueMixin {
 
   treeLoaded = false
   tree: ReturnType<typeof Tree>
+  treeKey = 0
   treeBackup: ReturnType<typeof Tree>
   dirs: { path: string, size: number }[] = []
 
@@ -287,7 +288,7 @@ export default class ServerFileComp extends VueMixin {
       tree.toggle()
     } else {
       if (!this.ogContents) {
-        this.$bvModal.msgBoxConfirm(`Are you sure you want to lose changes made to ${tree.name}`, {
+        this.$bvModal.msgBoxConfirm(`Are you sure you want to lose changes made to ${tree.name}?`, {
           title: 'Changes are about to be lost!',
           okTitle: 'Lose my changes',
           okVariant: 'secondary',
@@ -304,6 +305,38 @@ export default class ServerFileComp extends VueMixin {
         await this.downloadNode(tree)
       }
     }
+  }
+
+  async deleteNode (tree: ReturnType<typeof Tree>): Promise<void> {
+    this.$bvModal.msgBoxConfirm(`Are you sure you want to delete ${tree.name}?`, {
+      title: 'You are about to delete a file!',
+      okTitle: 'Delete this file',
+      okVariant: 'secondary',
+      cancelVariant: 'primary',
+      headerClass: 'p-2 border-bottom-0',
+      footerClass: 'p-2 border-top-0',
+      centered: true
+    }).then(async value => {
+      if (value) {
+        this.$bvToast.toast(`Deleting ${tree.name}`, {
+          noCloseButton: true,
+          title: '',
+          toaster: 'b-toaster-bottom-right'
+        })
+
+        tree.remove()
+        this.treeKey += 1
+
+        await this.serverObj.file(tree.id).delete()
+
+        this.$bvToast.toast(`${tree.name} deleted!`, {
+          noCloseButton: true,
+          title: '',
+          headerClass: 'toast-header-competed',
+          toaster: 'b-toaster-bottom-right'
+        })
+      }
+    })
   }
 
   async downloadNode (tree: ReturnType<typeof Tree>): Promise<void> {
@@ -391,7 +424,8 @@ export default class ServerFileComp extends VueMixin {
               size: dir.size,
               isLeaf: true,
               addLeafNodeDisabled: true,
-              addTreeNodeDisabled: true
+              addTreeNodeDisabled: true,
+              editNodeDisabled: true
             }))
           }
         }
@@ -421,7 +455,8 @@ export default class ServerFileComp extends VueMixin {
         isLeaf: isFile,
         size: file.size ? file.size : 0,
         addLeafNodeDisabled: isFile,
-        addTreeNodeDisabled: isFile
+        addTreeNodeDisabled: isFile,
+        editNodeDisabled: true
       }))
     } else {
       for (const treeChild of tree.children) {
