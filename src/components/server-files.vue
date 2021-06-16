@@ -216,7 +216,20 @@ export default class ServerFileComp extends VueMixin {
 
   @Watch('fileContents')
   watchContents (): void {
-    this.ogContents = this.fileContents === this.ogFileContent
+    let i = 0
+    let j = 0
+    let result = ''
+
+    while (j < this.ogFileContent.length) {
+      if (this.fileContents[i] !== this.ogFileContent[j] || i === this.fileContents.length) {
+        result += this.ogFileContent[j]
+      } else {
+        i++
+      }
+      j++
+    }
+
+    this.ogContents = result.trim() === ''
   }
 
   async nodeClicked (tree: ReturnType<typeof Tree>): Promise<void> {
