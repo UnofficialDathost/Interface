@@ -6,7 +6,7 @@
             <b-icon class="float-left search-icon" icon="search"></b-icon>
             <input @input="inputDebounce($event.target.value)" class="custom-search-input" type="search" placeholder="Seach...">
         </div>
-        <div v-if="fileContents !== ''">
+        <div v-if="!fileDownloading">
           <b-button size="sm" @click="downloadFile(fileContents, fileDownloadingName)"><b-icon icon="download"></b-icon> Download</b-button>
           <b-button size="sm" v-b-modal.editor-fullscreen style="margin-left: 5px;"><b-icon icon="arrows-fullscreen"></b-icon> Fullscreen</b-button>
         </div>
@@ -36,7 +36,7 @@
           <h5 v-else class="text-center" style="margin-top: 15px;">No result...</h5>
         </div>
         <div class="col-8">
-          <div v-if="fileDownloading || fileContents === ''" class="d-flex justify-content-center mb-3 CodeMirror" style="background-color:var(--dathost-dark-dark);">
+          <div v-if="fileDownloading" class="d-flex justify-content-center mb-3 CodeMirror" style="background-color:var(--dathost-dark-dark);">
             <b-spinner v-if="fileDownloading" style="width: 6rem; height: 6rem; margin-top: 25px;color:#adafae;" label="Loading..."></b-spinner>
           </div>
           <div v-else>
@@ -316,9 +316,6 @@ export default class ServerFileComp extends VueMixin {
       this.fileDownloading = true
 
       this.fileContents = await file.download(true) as string
-      if (this.fileContents === '') {
-        this.fileContents = ' '
-      }
       this.ogFileContent = this.fileContents
 
       if (fileType === 'sp') {
