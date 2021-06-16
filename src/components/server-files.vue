@@ -55,7 +55,7 @@
                   <b-dropdown-item v-if="theme !== editorOptions.theme" @click="setTheme(theme)" :key="theme" class="text-capitalize">{{ theme.replaceAll('-', ' ') }}</b-dropdown-item>
                 </template>
               </b-dropdown>
-              <b-button v-if="!ogContents" style="width: 20%;" variant="primary" size="sm"><b-icon icon="stickies"></b-icon> Save</b-button>
+              <b-button v-if="!ogContents" @click="saveFileChanges()" style="width: 20%;" variant="primary" size="sm"><b-icon icon="stickies"></b-icon> Save</b-button>
               <b-button v-else disabled style="width: 20%;" variant="primary" size="sm"><b-icon icon="stickies"></b-icon> Save</b-button>
             </div>
           </div>
@@ -170,6 +170,7 @@ export default class ServerFileComp extends VueMixin {
   ogContents = true
   downloadProgress = 0
   fileDownloading = false
+  fileDownloadPath = ''
   fileDownloadingName = ''
   fileRegex = new RegExp(/^.*\.[^\\]+$/)
   // File ext that should only be downloaded
@@ -233,9 +234,9 @@ export default class ServerFileComp extends VueMixin {
     let j = 0
     let result = ''
 
-    while (j < this.ogFileContent.length) {
-      if (this.fileContents[i] !== this.ogFileContent[j] || i === this.fileContents.length) {
-        result += this.ogFileContent[j]
+    while (j < this.fileContents.length) {
+      if (this.ogFileContent[i] !== this.fileContents[j] || i === this.ogFileContent.length) {
+        result += this.fileContents[j]
       } else {
         i++
       }
@@ -245,52 +246,85 @@ export default class ServerFileComp extends VueMixin {
     this.ogContents = result.trim() === ''
   }
 
+  async saveFileChanges (): Promise<void> {
+    await this.serverObj.file(this.fileDownloadPath).upload(new Blob([this.fileContents], { type: 'text/plain' }))
+    this.ogFileContent = this.fileContents
+    this.ogContents = true
+  }
+
   async nodeClicked (tree: ReturnType<typeof Tree>): Promise<void> {
     if (!tree.isLeaf) {
       tree.toggle()
     } else {
-      const file = this.serverObj.file(tree.id)
-      const fileType = tree.name.split('.').pop()
-      this.fileDownloadingName = tree.name
-
-      if (tree.size <= 100000 && this.downloadOnly.indexOf(fileType) === -1) {
-        this.fileDownloading = true
-
-        this.fileContents = await file.download(true) as string
-        this.ogFileContent = this.fileContents
-
-        if (fileType === 'sp') {
-          this.editorOptions.mode = 'clike'
-        } else {
-          this.editorOptions.mode = ''
-        }
-
-        this.fileDownloading = false
-      } else {
-        this.$bvModal.msgBoxConfirm(`Are you sure you want download ${tree.name}`, {
-          title: 'Download',
-          okTitle: 'Download',
+      if (!this.ogContents) {
+        this.$bvModal.msgBoxConfirm(`Are you sure you want to lose changes made to ${tree.name}`, {
+          title: 'Changes are about to be lost!',
+          okTitle: 'Lose my changes',
+          okVariant: 'secondary',
+          cancelVariant: 'primary',
           headerClass: 'p-2 border-bottom-0',
           footerClass: 'p-2 border-top-0',
           centered: true
         }).then(async value => {
           if (value) {
-            this.downloadProgress = 0
-
-            this.$bvModal.show('downloading')
-            this.$bvToast.toast(`Downloading ${tree.name}`, {
-              noCloseButton: true,
-              title: '',
-              toaster: 'b-toaster-bottom-right'
-            })
-
-            const buffer = await file.download(false, { onDownloadProgress: (progress) => this.updateDownloadProgress(progress, tree.size) }) as Blob
-            this.downloadFile(buffer, tree.name, buffer.type)
-
-            this.$bvModal.hide('downloading')
+            await this.downloadNode(tree)
           }
         })
+      } else {
+        await this.downloadNode(tree)
       }
+    }
+  }
+
+  async downloadNode (tree: ReturnType<typeof Tree>): Promise<void> {
+    const file = this.serverObj.file(tree.id)
+    const fileType = tree.name.split('.').pop()
+
+    this.fileDownloadingName = tree.name
+    this.fileDownloadPath = tree.id
+    this.fileContents = ''
+    this.ogFileContent = ''
+
+    if (tree.size <= 100000 && this.downloadOnly.indexOf(fileType) === -1) {
+      this.fileDownloading = true
+
+      this.fileContents = await file.download(true) as string
+      if (this.fileContents === '') {
+        this.fileContents = ' '
+      }
+      this.ogFileContent = this.fileContents
+
+      if (fileType === 'sp') {
+        this.editorOptions.mode = 'clike'
+      } else {
+        this.editorOptions.mode = ''
+      }
+
+      this.fileDownloading = false
+    } else {
+      this.$bvModal.msgBoxConfirm(`Are you sure you want download ${tree.name}`, {
+        title: 'Download',
+        okTitle: 'Download',
+        headerClass: 'p-2 border-bottom-0',
+        footerClass: 'p-2 border-top-0',
+        centered: true
+      }).then(async value => {
+        if (value) {
+          this.downloadProgress = 0
+
+          this.$bvModal.show('downloading')
+          this.$bvToast.toast(`Downloading ${tree.name}`, {
+            noCloseButton: true,
+            title: '',
+            toaster: 'b-toaster-bottom-right'
+          })
+
+          const buffer = await file.download(false, { onDownloadProgress: (progress) => this.updateDownloadProgress(progress, tree.size) }) as Blob
+          this.downloadFile(buffer, tree.name, buffer.type)
+
+          this.$bvModal.hide('downloading')
+        }
+      })
     }
   }
 

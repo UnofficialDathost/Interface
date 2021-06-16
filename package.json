@@ -14,7 +14,7 @@
     "clone": "^1.0.4",
     "codemirror": "^5.61.1",
     "core-js": "^3.6.5",
-    "dathost": "^0.0.9",
+    "dathost": "^0.0.10",
     "debounce": "^1.2.1",
     "downloadjs": "^1.4.7",
     "prismjs": "^1.23.0",

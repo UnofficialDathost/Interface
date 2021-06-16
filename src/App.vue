@@ -135,7 +135,12 @@ export default class App extends VueMixin {
   }
 
   async checkLogin (): Promise<void> {
-    const dathost = new Dathost(this.login.email, this.login.password, `${this.login.proxy}/dathost.net/api/0.1/`)
+    const dathost = new Dathost(
+      this.login.email,
+      this.login.password,
+      `${this.login.proxy}/dathost.net/api/0.1/`,
+      `${this.login.proxy}/upload.dathost.net/api/0.1/`
+    )
     this.loginLoading = true
     try {
       const account = await dathost.account()
