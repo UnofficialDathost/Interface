@@ -124,6 +124,10 @@ button {
     border-radius: 0;
 }
 
+.node-icon {
+  margin-right: 5px;
+}
+
 .content {
     padding-top: 10px;
 }
