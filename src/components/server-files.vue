@@ -16,7 +16,7 @@
     <div class="row">
       <div class="col-4" style="overflow-y:scroll;overflow-x:hidden;max-height:60vh;">
         <div v-if="treeLoaded">
-          <vue-tree-list v-if="tree.children != null && tree.children.length > 0" :key="treeKey" :model="tree" @click="nodeClicked" @delete-node="deleteNode" v-bind:default-expanded="false" default-tree-node-name="new folder" default-leaf-node-name="new file">
+          <vue-tree-list v-if="tree.children != null && tree.children.length > 0" :key="treeKey" :model="tree" @click="nodeClicked" @delete-node="deleteNode" v-bind:default-expanded="false">
             <template v-slot:leafNameDisplay="node">
               <span v-if="!node.model.isLeaf">{{ node.model.name.replace('/', '') }}</span>
               <span v-else v-b-tooltip.hover :title="node.model.size >= 1000000 ? `${(node.model.size * 0.000001).toFixed(2)} MB` : `${(node.model.size * 0.0009765625).toFixed(2)} KB`">
@@ -195,7 +195,11 @@ export default class ServerFileComp extends VueMixin {
     'so',
     'dll',
     'exe',
-    'sh'
+    'sh',
+    'vdf',
+    'mp3',
+    'mp4',
+    'wav'
   ]
 
   async mounted (): Promise<void> {
@@ -308,9 +312,10 @@ export default class ServerFileComp extends VueMixin {
   }
 
   async deleteNode (tree: ReturnType<typeof Tree>): Promise<void> {
+    const nodeType = tree.isLeaf ? 'file' : 'folder & all its contents'
     this.$bvModal.msgBoxConfirm(`Are you sure you want to delete ${tree.name}?`, {
-      title: 'You are about to delete a file!',
-      okTitle: 'Delete this file',
+      title: `You are about to delete a ${nodeType}!`,
+      okTitle: `Delete this ${nodeType}`,
       okVariant: 'secondary',
       cancelVariant: 'primary',
       headerClass: 'p-2 border-bottom-0',
@@ -448,14 +453,13 @@ export default class ServerFileComp extends VueMixin {
     const dirs = pathToFormat.split(/(?<=\/)/).filter(n => n)
 
     if (dirs.length === 0 || dirs.length === 1) {
-      const isFile = this.fileRegex.test(pathToFormat)
       tree.addChildren(new TreeNode({
         name: pathToFormat,
         id: file.path,
-        isLeaf: isFile,
+        isLeaf: this.fileRegex.test(pathToFormat),
         size: file.size ? file.size : 0,
-        addLeafNodeDisabled: isFile,
-        addTreeNodeDisabled: isFile,
+        addLeafNodeDisabled: true,
+        addTreeNodeDisabled: true,
         editNodeDisabled: true
       }))
     } else {
