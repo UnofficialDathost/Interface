@@ -16,7 +16,7 @@
     <div class="row">
       <div class="col-4" style="overflow-y:scroll;overflow-x:hidden;max-height:60vh;">
         <div v-if="treeLoaded">
-          <vue-tree-list v-if="tree.children != null && tree.children.length > 0" :key="treeKey" :model="tree" @click="nodeClicked" @delete-node="deleteNode" v-bind:default-expanded="false">
+          <vue-tree-list v-if="tree.children != null && tree.children.length > 0" :key="treeKey" :model="tree" @click="nodeClicked" @delete-node="deleteNode" @drop="moveNode" v-bind:default-expanded="false">
             <template v-slot:leafNameDisplay="node">
               <span v-if="!node.model.isLeaf">{{ node.model.name.replace('/', '') }}</span>
               <span v-else v-b-tooltip.hover :title="node.model.size >= 1000000 ? `${(node.model.size * 0.000001).toFixed(2)} MB` : `${(node.model.size * 0.0009765625).toFixed(2)} KB`">
@@ -344,7 +344,11 @@ export default class ServerFileComp extends VueMixin {
     })
   }
 
-  async downloadNode (tree: ReturnType<typeof Tree>): Promise<void> {
+  async moveNode (params: { node: ReturnType<typeof TreeNode>, src: ReturnType<typeof TreeNode>, target: ReturnType<typeof TreeNode> }): Promise<void> {
+    console.log(params)
+  }
+
+  async downloadNode (tree: ReturnType<typeof TreeNode>): Promise<void> {
     const file = this.serverObj.file(tree.id)
     const fileType = tree.name.split('.').pop()
 
