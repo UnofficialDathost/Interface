@@ -16,7 +16,7 @@
     <div class="row">
       <div class="col-4" style="overflow-y:scroll;overflow-x:hidden;max-height:60vh;">
         <div v-if="treeLoaded">
-          <vue-tree-list v-if="tree.children != null && tree.children.length > 0" :key="treeKey" :model="tree" @click="nodeClicked" @delete-node="deleteNode" @drop="moveNode" v-bind:default-expanded="false">
+          <vue-tree-list v-if="tree.children != null && tree.children.length > 0" :key="treeKey" :model="tree" @click="nodeClicked" @add-node="addNode" @delete-node="deleteNode" @drop="moveNode" v-bind:default-expanded="false">
             <template v-slot:leafNameDisplay="node">
               <span v-if="!node.model.isLeaf">{{ node.model.name.replace('/', '') }}</span>
               <span v-else v-b-tooltip.hover :title="node.model.size >= 1000000 ? `${(node.model.size * 0.000001).toFixed(2)} MB` : `${(node.model.size * 0.0009765625).toFixed(2)} KB`">
@@ -103,6 +103,38 @@
           </div>
           <div class="col">{{ downloadProgress }}%</div>
         </div>
+      </div>
+    </b-modal>
+    <b-modal id="upload-select" hide-footer hide-header centered size="lg">
+      <div v-if="!uploadType">
+        <b-card-group deck>
+          <b-card @click="uploadType = 'file'" class="text-center upload-type" style="cursor: pointer;background-color: var(--dathost-dark-dark);">
+            <div class="mb-2" style="font-size: 4em;">
+              <b-icon icon="file"></b-icon>
+            </div>
+            <h5 style="margin-bottom:0px;">Create new file</h5>
+          </b-card>
+          <b-card @click="uploadType = 'files'" class="text-center upload-type" style="cursor: pointer;background-color: var(--dathost-dark-dark);">
+            <div class="mb-2" style="font-size: 4em;">
+              <b-icon icon="cloud-upload"></b-icon>
+            </div>
+            <h5 style="margin-bottom:0px;">Upload file(s)</h5>
+          </b-card>
+        </b-card-group>
+      </div>
+      <div v-else>
+        <div v-if="uploadType === 'file'">
+          <b-form-input placeholder="File name (e.g. server.cfg)" v-model="newFileName"></b-form-input>
+          <codemirror :options="editorOptions" v-model="newFileContents" />
+          <div class="d-flex justify-content-end">
+            <template v-if="!newFileUploading">
+              <b-button v-if="newFileName !== ''" @click="uploadNodeFile()" style="width:40%;" variant="primary" size="sm"><b-icon icon="stickies"></b-icon> Upload</b-button>
+              <b-button v-else disabled style="width:40%;" variant="primary" size="sm"><b-icon icon="stickies"></b-icon> Upload</b-button>
+            </template>
+            <b-button v-else disabled style="width: 40%;" variant="primary" size="sm"><b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner> Uploading</b-button>
+          </div>
+        </div>
+        <div v-else></div>
       </div>
     </b-modal>
   </div>
@@ -201,6 +233,12 @@ export default class ServerFileComp extends VueMixin {
     'mp4',
     'wav'
   ]
+
+  uploadType = ''
+  newFileContents = ''
+  newFileName = ''
+  newFileUploading = false
+  newFileParent: ReturnType<typeof Tree>
 
   async mounted (): Promise<void> {
     this.ftpPassword = this.server.ftp_password
@@ -309,6 +347,46 @@ export default class ServerFileComp extends VueMixin {
         await this.downloadNode(tree)
       }
     }
+  }
+
+  addNode (tree: ReturnType<typeof Tree>): void {
+    this.newFileParent = tree
+    this.uploadType = ''
+    this.newFileContents = ''
+    this.newFileName = ''
+    this.newFileUploading = false
+
+    // Remove dummy file this lib creates.
+    tree.remove()
+    this.$bvModal.show('upload-select')
+  }
+
+  async uploadNodeFile (): Promise<void> {
+    this.newFileUploading = true
+
+    const serverFilePath = `${this.newFileParent.parent.id}${this.newFileName}`
+    const fileBlob = new Blob([this.newFileContents])
+    const fileName = this.newFileName.replace(/^.*[\\/]/, '')
+
+    this.$bvToast.toast(`Uploading ${fileName}`, {
+      noCloseButton: true,
+      title: '',
+      toaster: 'b-toaster-bottom-right'
+    })
+
+    await this.serverObj.file(
+      serverFilePath
+    ).upload(fileBlob)
+
+    this.$bvToast.toast(`${fileName} uploaded!`, {
+      noCloseButton: true,
+      title: '',
+      headerClass: 'toast-header-competed',
+      toaster: 'b-toaster-bottom-right'
+    })
+
+    this.newFileUploading = false
+    this.$bvModal.hide('upload-select')
   }
 
   async deleteNode (tree: ReturnType<typeof Tree>): Promise<void> {
@@ -455,14 +533,15 @@ export default class ServerFileComp extends VueMixin {
     }
 
     const dirs = pathToFormat.split(/(?<=\/)/).filter(n => n)
+    const isFile = this.fileRegex.test(pathToFormat)
 
     if (dirs.length === 0 || dirs.length === 1) {
       tree.addChildren(new TreeNode({
         name: pathToFormat,
         id: file.path,
-        isLeaf: this.fileRegex.test(pathToFormat),
+        isLeaf: isFile,
         size: file.size ? file.size : 0,
-        addLeafNodeDisabled: true,
+        addLeafNodeDisabled: isFile,
         addTreeNodeDisabled: true,
         editNodeDisabled: true
       }))

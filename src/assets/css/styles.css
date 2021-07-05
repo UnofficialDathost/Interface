@@ -193,6 +193,11 @@ button {
   transition: 0.3s all fadeIn;
 }
 
+.upload-type:hover {
+  outline: 1px solid var(--dathost-orange);
+  transition: 0.3s all fadeIn;
+}
+
 .toast {
   border-radius: 0;
 }
