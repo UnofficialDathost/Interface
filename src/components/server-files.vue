@@ -252,7 +252,9 @@ export default class ServerFileComp extends VueMixin {
     'vdf',
     'mp3',
     'mp4',
-    'wav'
+    'wav',
+    'png',
+    'jpg'
   ]
 
   uploadType = ''
