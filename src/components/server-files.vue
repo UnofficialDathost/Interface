@@ -134,7 +134,10 @@
             <b-button v-else disabled style="width: 40%;" variant="primary" size="sm"><b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner> Uploading</b-button>
           </div>
         </div>
-        <div v-else></div>
+        <div v-else>
+          <file-pond ref="pond" :instant-upload="false" :server="{}" :onupdatefiles="zipUploadedContents" :onremovefile="removeFromZip" :allow-multiple="true" max-total-file-size="500MB"></file-pond>
+          <b-button block @click="uploadAndUnzip()" variant="primary" size="sm"><b-icon icon="cloud-upload"></b-icon> Upload file(s)</b-button>
+        </div>
       </div>
     </b-modal>
   </div>
@@ -154,15 +157,25 @@ import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/clike/clike'
 
+import vueFilePond from 'vue-filepond'
+import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
+import FilePondPluginFileEncode from 'filepond-plugin-file-encode'
+import 'filepond/dist/filepond.min.css'
+
+import JSZip from 'jszip'
+
 import Server from 'dathost/src/server'
 import { IServer } from 'dathost/src/interfaces/server'
 import { IFile } from 'dathost/src/interfaces/file'
+
+const FilePond = vueFilePond(FilePondPluginFileValidateSize, FilePondPluginFileEncode)
 
 @Component({
   name: 'ServerFile',
   components: {
     VueTreeList,
-    codemirror
+    codemirror,
+    FilePond
   }
 })
 export default class ServerFileComp extends VueMixin {
@@ -239,6 +252,8 @@ export default class ServerFileComp extends VueMixin {
   newFileName = ''
   newFileUploading = false
   newFileParent: ReturnType<typeof Tree>
+
+  zipContents: JSZip
 
   async mounted (): Promise<void> {
     this.ftpPassword = this.server.ftp_password
@@ -350,6 +365,7 @@ export default class ServerFileComp extends VueMixin {
   }
 
   addNode (tree: ReturnType<typeof Tree>): void {
+    this.zipContents = new JSZip()
     this.newFileParent = tree.parent
     this.uploadType = ''
     this.newFileContents = ''
@@ -359,6 +375,73 @@ export default class ServerFileComp extends VueMixin {
     // Remove dummy file this lib creates.
     tree.remove()
     this.$bvModal.show('upload-select')
+  }
+
+  zipUploadedContents (files: unknown[]): void {
+    // Needs to be notated correctly!
+    for (const file of files) {
+      if (!this.zipContents.file(file.filename)) {
+        const data = file.getFileEncodeBase64String()
+        if (data) {
+          this.zipContents.file(file.filename, data, { base64: true })
+        }
+      }
+    }
+  }
+
+  // eslint-disable-next-line handle-callback-err
+  removeFromZip (error: unknown, file: unknown): void {
+    // Needs to be notated correctly!
+    const zipFile = this.zipContents.file(file.filename)
+    if (zipFile && zipFile.name) {
+      this.zipContents.remove(zipFile.name)
+    }
+  }
+
+  async uploadAndUnzip (): Promise<void> {
+    this.zipContents.generateAsync({ type: 'blob' }).then(async data => {
+      const zipFile = this.serverObj.file(`temp-${this.newFileParent.id}${Math.random().toString(36).slice(-8)}.zip`)
+
+      this.$bvToast.toast('Uploading compressed files', {
+        noCloseButton: true,
+        title: '',
+        toaster: 'b-toaster-bottom-right'
+      })
+      await zipFile.upload(data)
+
+      this.$bvToast.toast('Unzipping compressed files', {
+        noCloseButton: true,
+        title: '',
+        toaster: 'b-toaster-bottom-right'
+      })
+      await zipFile.unzip(this.newFileParent.id)
+
+      this.zipContents.forEach((relativePath, file) => {
+        this.newFileParent.addChildren(new TreeNode({
+          name: file.name,
+          id: `${this.newFileParent.id}${file.name}`,
+          size: data.size,
+          isLeaf: true,
+          addLeafNodeDisabled: true,
+          addTreeNodeDisabled: true,
+          editNodeDisabled: true
+        }))
+      })
+
+      this.treeKey += 1
+
+      this.$bvToast.toast('Files uploaded!', {
+        noCloseButton: true,
+        title: '',
+        headerClass: 'toast-header-competed',
+        toaster: 'b-toaster-bottom-right'
+      })
+
+      this.$bvModal.hide('upload-select')
+
+      // Delete temp zip file
+      await zipFile.delete()
+    })
   }
 
   async uploadNodeFile (): Promise<void> {

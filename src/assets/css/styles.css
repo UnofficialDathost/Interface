@@ -500,6 +500,26 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
   font-size: 1.2em;
 }
 
+.filepond--credits {
+  display: none;
+}
+
+.filepond--drop-label {
+  background-color: var(--dathost-dark-dark);
+}
+
+.filepond--drop-label {
+  color: #fff !important;
+}
+
+.filepond--file-wrapper {
+  background-color: var(--dathost-orange-dark);
+}
+
+.filepond--panel-root {
+  background-color: var(--dathost-dark-dark) !important;
+}
+
 .flag {
   width: 30px;
 }
