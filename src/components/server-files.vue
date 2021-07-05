@@ -350,7 +350,7 @@ export default class ServerFileComp extends VueMixin {
   }
 
   addNode (tree: ReturnType<typeof Tree>): void {
-    this.newFileParent = tree
+    this.newFileParent = tree.parent
     this.uploadType = ''
     this.newFileContents = ''
     this.newFileName = ''
@@ -364,7 +364,7 @@ export default class ServerFileComp extends VueMixin {
   async uploadNodeFile (): Promise<void> {
     this.newFileUploading = true
 
-    const serverFilePath = `${this.newFileParent.parent.id}${this.newFileName}`
+    const serverFilePath = `${this.newFileParent.id}${this.newFileName}`
     const fileBlob = new Blob([this.newFileContents])
     const fileName = this.newFileName.replace(/^.*[\\/]/, '')
 
@@ -378,15 +378,27 @@ export default class ServerFileComp extends VueMixin {
       serverFilePath
     ).upload(fileBlob)
 
+    this.newFileParent.addChildren(new TreeNode({
+      name: fileName,
+      id: serverFilePath,
+      size: fileBlob.size,
+      isLeaf: true,
+      addLeafNodeDisabled: true,
+      addTreeNodeDisabled: true,
+      editNodeDisabled: true
+    }))
+
+    this.treeKey += 1
+
+    this.$bvModal.hide('upload-select')
+    this.newFileUploading = false
+
     this.$bvToast.toast(`${fileName} uploaded!`, {
       noCloseButton: true,
       title: '',
       headerClass: 'toast-header-competed',
       toaster: 'b-toaster-bottom-right'
     })
-
-    this.newFileUploading = false
-    this.$bvModal.hide('upload-select')
   }
 
   async deleteNode (tree: ReturnType<typeof Tree>): Promise<void> {

@@ -495,6 +495,11 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
   color: var(--dathost-orange-dark) !important;
 }
 
+.vtl-operation .vtl-icon {
+  margin-right: 5px;
+  font-size: 1.2em;
+}
+
 .flag {
   width: 30px;
 }
