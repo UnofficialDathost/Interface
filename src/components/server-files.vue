@@ -135,8 +135,16 @@
           </div>
         </div>
         <div v-else>
-          <file-pond ref="pond" :instant-upload="false" :server="{}" :onupdatefiles="zipUploadedContents" :onremovefile="removeFromZip" :allow-multiple="true" max-total-file-size="500MB"></file-pond>
-          <b-button block @click="uploadAndUnzip()" variant="primary" size="sm"><b-icon icon="cloud-upload"></b-icon> Upload file(s)</b-button>
+          <div v-if="!newFileUploading">
+            <file-pond :instant-upload="false" :server="{}" :onupdatefiles="zipUploadedContents" :onremovefile="removeFromZip" :allow-multiple="true" max-total-file-size="500MB"></file-pond>
+            <b-button block @click="uploadAndUnzip()" variant="primary" size="sm"><b-icon icon="cloud-upload"></b-icon> Upload file(s)</b-button>
+          </div>
+          <div v-else>
+            <div class="d-flex justify-content-center mb-3">
+              <b-spinner style="width: 3rem; height: 3rem;" label="Loading..."></b-spinner>
+            </div>
+            <b-button disabled block variant="primary" size="sm"><b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner> Uploading</b-button>
+          </div>
         </div>
       </div>
     </b-modal>
@@ -399,6 +407,8 @@ export default class ServerFileComp extends VueMixin {
   }
 
   async uploadAndUnzip (): Promise<void> {
+    this.newFileUploading = true
+
     this.zipContents.generateAsync({ type: 'blob' }).then(async data => {
       const zipFile = this.serverObj.file(`temp-${this.newFileParent.id}${Math.random().toString(36).slice(-8)}.zip`)
 
@@ -474,7 +484,6 @@ export default class ServerFileComp extends VueMixin {
     this.treeKey += 1
 
     this.$bvModal.hide('upload-select')
-    this.newFileUploading = false
 
     this.$bvToast.toast(`${fileName} uploaded!`, {
       noCloseButton: true,
