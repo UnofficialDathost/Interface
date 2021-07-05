@@ -45,6 +45,13 @@
           <ServerConsoleComp :server="server" :serverObj="serverObj" v-if="$route.params.tab === 'console'" />
           <ServerSettingsComp :server="server" :serverObj="serverObj" v-else-if="$route.params.tab === 'settings'" />
           <ServerFileComp :server="server" :serverObj="serverObj" v-else-if="$route.params.tab === 'files'" />
+          <div v-else class="text-center">
+            <div class="mb-2" style="font-size: 10em;">
+              <b-icon icon="emoji-wink"></b-icon>
+            </div>
+            <h3>Page not completed yet.</h3>
+            <h5>Sorry for any inconvenience!</h5>
+          </div>
         </div>
         <div class="card-footer">
             <div class="row">
