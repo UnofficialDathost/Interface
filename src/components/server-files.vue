@@ -423,7 +423,7 @@ export default class ServerFileComp extends VueMixin {
     this.fileUploadingMsg = 'Getting compressed data...'
 
     this.zipContents.generateAsync({ type: 'blob' }).then(async data => {
-      const zipFile = this.serverObj.file(`temp-${this.newFileParent.id}${Math.random().toString(36).slice(-8)}.zip`)
+      const zipFile = this.serverObj.file(`${this.newFileParent.id}${Math.random().toString(36).slice(-8)}.zip`)
 
       this.$bvToast.toast('Uploading compressed files', {
         noCloseButton: true,
