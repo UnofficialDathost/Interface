@@ -110,7 +110,7 @@
         <b-card-group deck>
           <b-card @click="uploadType = 'file'" class="text-center upload-type" style="cursor: pointer;background-color: var(--dathost-dark-dark);">
             <div class="mb-2" style="font-size: 4em;">
-              <b-icon icon="file"></b-icon>
+              <b-icon icon="file-earmark-plus"></b-icon>
             </div>
             <h5 style="margin-bottom:0px;">Create new file</h5>
           </b-card>
@@ -139,11 +139,13 @@
             <file-pond :instant-upload="false" :server="{}" :onupdatefiles="zipUploadedContents" :onremovefile="removeFromZip" :allow-multiple="true" max-total-file-size="500MB"></file-pond>
             <b-button block @click="uploadAndUnzip()" variant="primary" size="sm"><b-icon icon="cloud-upload"></b-icon> Upload file(s)</b-button>
           </div>
-          <div v-else>
+          <div v-else class="text-center">
             <div class="d-flex justify-content-center mb-3">
-              <b-spinner style="width: 3rem; height: 3rem;" label="Loading..."></b-spinner>
+              <b-spinner style="width: 5rem; height: 5rem;" label="Loading..."></b-spinner>
             </div>
-            <b-button disabled block variant="primary" size="sm"><b-spinner label="Spinning" style="width: 1.4em; height: 1.4em;"></b-spinner> Uploading</b-button>
+            <transition name="slide-fade">
+              <h4>{{ fileUploadingMsg }}</h4>
+            </transition>
           </div>
         </div>
       </div>
@@ -254,7 +256,11 @@ export default class ServerFileComp extends VueMixin {
     'mp4',
     'wav',
     'png',
-    'jpg'
+    'jpg',
+    'gif',
+    'jpeg',
+    'bin',
+    'zip'
   ]
 
   uploadType = ''
@@ -264,6 +270,7 @@ export default class ServerFileComp extends VueMixin {
   newFileParent: ReturnType<typeof Tree>
 
   zipContents: JSZip
+  fileUploadingMsg = ''
 
   async mounted (): Promise<void> {
     this.ftpPassword = this.server.ftp_password
@@ -410,6 +417,7 @@ export default class ServerFileComp extends VueMixin {
 
   async uploadAndUnzip (): Promise<void> {
     this.newFileUploading = true
+    this.fileUploadingMsg = 'Getting compressed data...'
 
     this.zipContents.generateAsync({ type: 'blob' }).then(async data => {
       const zipFile = this.serverObj.file(`temp-${this.newFileParent.id}${Math.random().toString(36).slice(-8)}.zip`)
@@ -419,6 +427,7 @@ export default class ServerFileComp extends VueMixin {
         title: '',
         toaster: 'b-toaster-bottom-right'
       })
+      this.fileUploadingMsg = 'Uploading compressed files...'
       await zipFile.upload(data)
 
       this.$bvToast.toast('Unzipping compressed files', {
@@ -426,6 +435,7 @@ export default class ServerFileComp extends VueMixin {
         title: '',
         toaster: 'b-toaster-bottom-right'
       })
+      this.fileUploadingMsg = 'Unzipping compressed files...'
       await zipFile.unzip(this.newFileParent.id)
 
       this.zipContents.forEach((relativePath, file) => {
@@ -442,6 +452,7 @@ export default class ServerFileComp extends VueMixin {
 
       this.treeKey += 1
 
+      this.fileUploadingMsg = 'Files uploaded...'
       this.$bvToast.toast('Files uploaded!', {
         noCloseButton: true,
         title: '',

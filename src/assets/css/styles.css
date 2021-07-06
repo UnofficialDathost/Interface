@@ -516,6 +516,19 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
   background-color: var(--dathost-orange-dark);
 }
 
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.slide-fade-enter, .slide-fade-leave-to {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
 .filepond--panel-root {
   background-color: var(--dathost-dark-dark) !important;
 }
