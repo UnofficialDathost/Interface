@@ -168,6 +168,7 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/clike/clike'
 
 import vueFilePond from 'vue-filepond'
+import { FilePondFile } from 'filepond'
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import FilePondPluginFileEncode from 'filepond-plugin-file-encode'
 import 'filepond/dist/filepond.min.css'
@@ -394,10 +395,12 @@ export default class ServerFileComp extends VueMixin {
     this.$bvModal.show('upload-select')
   }
 
-  zipUploadedContents (files: unknown[]): void {
+  zipUploadedContents (files: FilePondFile[]): void {
     // Needs to be notated correctly!
     for (const file of files) {
       if (!this.zipContents.file(file.filename)) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         const data = file.getFileEncodeBase64String()
         if (data) {
           this.zipContents.file(file.filename, data, { base64: true })
@@ -407,7 +410,7 @@ export default class ServerFileComp extends VueMixin {
   }
 
   // eslint-disable-next-line handle-callback-err
-  removeFromZip (error: unknown, file: unknown): void {
+  removeFromZip (error: unknown, file: FilePondFile): void {
     // Needs to be notated correctly!
     const zipFile = this.zipContents.file(file.filename)
     if (zipFile && zipFile.name) {
