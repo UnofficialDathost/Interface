@@ -16,7 +16,7 @@
     <div class="row">
       <div class="col-4" style="overflow-y:scroll;overflow-x:hidden;max-height:60vh;">
         <div v-if="treeLoaded">
-          <vue-tree-list v-if="tree.children != null && tree.children.length > 0" :key="treeKey" :model="tree" @click="nodeClicked" @add-node="addNode" @delete-node="deleteNode" @drop="moveNode" v-bind:default-expanded="false">
+          <vue-tree-list ref="treeView" v-if="tree.children != null && tree.children.length > 0" :key="treeKey" :model="tree" @click="nodeClicked" @add-node="addNode" @delete-node="deleteNode" @drop="moveNode" v-bind:default-expanded="false">
             <template v-slot:leafNameDisplay="node">
               <span v-if="!node.model.isLeaf">{{ node.model.name.replace('/', '') }}</span>
               <span v-else v-b-tooltip.hover :title="node.model.size >= 1000000 ? `${(node.model.size * 0.000001).toFixed(2)} MB` : `${(node.model.size * 0.0009765625).toFixed(2)} KB`">
@@ -198,6 +198,7 @@ export default class ServerFileComp extends VueMixin {
 
   treeLoaded = false
   tree: ReturnType<typeof Tree>
+  treeRoot: ReturnType<typeof TreeNode>
   treeKey = 0
   treeBackup: ReturnType<typeof Tree>
   dirs: { path: string, size: number }[] = []
@@ -286,7 +287,16 @@ export default class ServerFileComp extends VueMixin {
     }
 
     this.treeLoaded = false
-    this.tree = new Tree([])
+    this.tree = new Tree([{
+      name: this.server.game,
+      id: '',
+      isLeaf: false,
+      addTreeNodeDisabled: true,
+      editNodeDisabled: true,
+      delNodeDisabled: true,
+      children: []
+    }])
+    this.treeRoot = this.tree.children[0]
 
     for await (const file of this.serverObj.files({ fileSizes: true })) {
       this.dirs.push({
@@ -296,12 +306,23 @@ export default class ServerFileComp extends VueMixin {
       this.subTreeAdd(file[0])
     }
 
-    this.sortByNodeThenAlhpa()
-
     // Clone tree object.
     this.treeBackup = clone(this.tree)
-
     this.treeLoaded = true
+
+    this.expandRootNode()
+  }
+
+  expandRootNode (): void {
+    this.sortByNodeThenAlhpa()
+
+    // Toggles root node to be expanded.
+    this.$nextTick(() => {
+      const treeView = this.$refs.treeView
+      if (treeView) {
+        (treeView as ReturnType<typeof TreeNode>).$children[0].toggle()
+      }
+    })
   }
 
   async regenerateFtp (): Promise<void> {
@@ -358,7 +379,7 @@ export default class ServerFileComp extends VueMixin {
     })
   }
 
-  async nodeClicked (tree: ReturnType<typeof Tree>): Promise<void> {
+  async nodeClicked (tree: ReturnType<typeof TreeNode>): Promise<void> {
     if (!tree.isLeaf) {
       tree.toggle()
     } else {
@@ -382,7 +403,7 @@ export default class ServerFileComp extends VueMixin {
     }
   }
 
-  addNode (tree: ReturnType<typeof Tree>): void {
+  addNode (tree: ReturnType<typeof TreeNode>): void {
     this.zipContents = new JSZip()
     this.newFileParent = tree.parent
     this.uploadType = ''
@@ -442,18 +463,26 @@ export default class ServerFileComp extends VueMixin {
       await zipFile.unzip(this.newFileParent.id)
 
       this.zipContents.forEach((relativePath, file) => {
+        const path = `${this.newFileParent.id}${file.name}`
+
         this.newFileParent.addChildren(new TreeNode({
           name: file.name,
-          id: `${this.newFileParent.id}${file.name}`,
+          id: path,
           size: data.size,
           isLeaf: true,
           addLeafNodeDisabled: true,
           addTreeNodeDisabled: true,
           editNodeDisabled: true
         }))
+
+        this.dirs.push({
+          path: path,
+          size: data.size
+        })
       })
 
-      this.treeKey += 1
+      this.treeBackup = clone(this.tree)
+      this.reloadTree()
 
       this.fileUploadingMsg = 'Files uploaded...'
       this.$bvToast.toast('Files uploaded!', {
@@ -497,7 +526,13 @@ export default class ServerFileComp extends VueMixin {
       editNodeDisabled: true
     }))
 
-    this.treeKey += 1
+    this.dirs.push({
+      path: serverFilePath,
+      size: fileBlob.size
+    })
+
+    this.treeBackup = clone(this.tree)
+    this.reloadTree()
 
     this.$bvModal.hide('upload-select')
 
@@ -509,7 +544,7 @@ export default class ServerFileComp extends VueMixin {
     })
   }
 
-  async deleteNode (tree: ReturnType<typeof Tree>): Promise<void> {
+  async deleteNode (tree: ReturnType<typeof TreeNode>): Promise<void> {
     const nodeType = tree.isLeaf ? 'file' : 'folder & all its contents'
     this.$bvModal.msgBoxConfirm(`Are you sure you want to delete ${tree.name}?`, {
       title: `You are about to delete a ${nodeType}!`,
@@ -528,7 +563,8 @@ export default class ServerFileComp extends VueMixin {
         })
 
         tree.remove()
-        this.treeKey += 1
+        this.treeBackup = clone(this.tree)
+        this.reloadTree()
 
         await this.serverObj.file(tree.id).delete()
 
@@ -639,12 +675,19 @@ export default class ServerFileComp extends VueMixin {
       }
     } else {
       this.tree = clone(this.treeBackup)
+      this.treeRoot = this.tree.children[0]
+      this.expandRootNode()
     }
 
     this.treeLoaded = true
   }
 
-  subTreeAdd (file: IFile, tree = this.tree, dir?: string): void {
+  reloadTree (): void {
+    this.treeKey += 1
+    this.expandRootNode()
+  }
+
+  subTreeAdd (file: IFile, tree = this.treeRoot, dir?: string): void {
     let pathToFormat: string
     if (typeof dir !== 'undefined') {
       pathToFormat = dir
@@ -675,7 +718,7 @@ export default class ServerFileComp extends VueMixin {
     }
   }
 
-  sortByNodeThenAlhpa (tree = this.tree): void {
+  sortByNodeThenAlhpa (tree = this.treeRoot): void {
     if (tree.children != null) {
       tree.children.sort((a: { id: string, isLeaf: boolean }, b: { id: string, isLeaf: boolean }) => {
         if (a.isLeaf && b.isLeaf) {
