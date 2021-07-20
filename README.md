@@ -2,6 +2,9 @@
 
 [Hosted ver](https://interface.dathost.wardpearce.com/)
 
+## Status
+Still in development, not all features competed. Currently server creation only works for counter strike.
+
 ## Previews
 ![p6](https://i.imgur.com/EakIUPI.gif)
 ![p1](https://i.imgur.com/Jar4mhn.png)
