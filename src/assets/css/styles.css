@@ -1,0 +1,603 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap');
+@import url('https://fonts.googleapis.com/css?family=Poppins');
+
+body {
+    background-color: #343746;
+    font-family: Poppins, sans-serif;
+    overflow-x: hidden;
+}
+
+:root {
+    --dathost-orange: #FFA14B;
+    --dathost-orange-dark: #CF823A;
+    --dathost-dark: #424556;
+    --dathost-dark-dark: #2a2c38;
+}
+
+.alert-warning {
+  background-color: var(--dathost-orange);
+}
+
+.btn {
+  border-radius: 0;
+}
+
+.left-nav {
+    background: var(--dathost-dark);
+    min-height: 100vh;
+    padding: 0 2em;
+    box-shadow: 2px 0px 0px rgb(255 255 255 / 15%);
+}
+
+.nav-branding {
+    border-bottom: 1px solid var(--dathost-dark-dark);
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    align-items: center;
+    overflow: hidden;
+}
+
+.nav-branding > img {
+    height: 60%;
+}
+
+.nav-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+a {
+    color: var(--dathost-orange);
+}
+
+a:hover {
+    color: #ee9544;
+    text-decoration: none;
+}
+
+.card {
+    background-color: var(--dathost-dark);
+}
+
+.btn-primary {
+    color: #343746;
+    background-color: var(--dathost-orange);
+    border-color: var(--dathost-orange);
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
+    color: #343746;
+    background-color: var(--dathost-orange-dark);
+    border-color: var(--dathost-orange);
+}
+
+.btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
+    background-image: none;
+}
+
+.btn-primary.disabled, .btn-primary[disabled], fieldset[disabled] .btn-primary, .btn-primary.disabled:hover, .btn-primary[disabled]:hover, fieldset[disabled] .btn-primary:hover, .btn-primary.disabled:focus, .btn-primary[disabled]:focus, fieldset[disabled] .btn-primary:focus, .btn-primary.disabled:active, .btn-primary[disabled]:active, fieldset[disabled] .btn-primary:active, .btn-primary.disabled.active, .btn-primary[disabled].active, fieldset[disabled] .btn-primary.active {
+    background-color: var(--dathost-orange);
+    border-color: var(--dathost-orange);
+}
+
+.btn-primary .badge {
+    color: var(--dathost-orange);
+    background-color: #343746;
+}
+
+.btn-primary:focus {
+    box-shadow: none!important;
+    color: #343746!important;
+    border: none!important;
+    background-color: var(--dathost-orange-dark)!important;
+}
+
+button {
+    border-radius: 0!important;
+}
+
+.disclaimer {
+    padding: 1em;
+    background-color: var(--dathost-dark-dark);
+    font-size: .8em;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show > .btn-primary.dropdown-toggle {
+    background-color: var(--dathost-orange);
+    border: none;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    background-color: var(--dathost-orange-dark);
+}
+
+.dropdown-item:focus, .dropdown-item:hover {
+    background-color: var(--dathost-orange-dark);
+}
+
+.dropdown-menu {
+    background-color: var(--dathost-dark);
+    border-radius: 0;
+}
+
+.node-icon {
+  margin-right: 5px;
+}
+
+.content {
+    padding-top: 10px;
+}
+
+.game-icon {
+    vertical-align: middle;
+    opacity: 0.7;
+    filter: brightness(100);
+    width: 25px;
+}
+
+.game-name {
+    margin-bottom: 0px;
+}
+
+.btn-secondary {
+    background: #343746;
+    border: 1px solid #343746;
+    color: #fff;
+    fill: #fff;
+}
+
+.btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active, .btn-secondary.active, .open .dropdown-toggle.btn-secondary {
+    background-color: #343746;
+    border-color: #343746;
+}
+
+.btn-secondary.disabled, .btn-secondary[disabled], fieldset[disabled] .btn-secondary, .btn-secondary.disabled:hover, .btn-secondary[disabled]:hover, fieldset[disabled] .btn-secondary:hover, .btn-secondary.disabled:focus, .btn-secondary[disabled]:focus, fieldset[disabled] .btn-secondary:focus, .btn-secondary.disabled:active, .btn-secondary[disabled]:active, fieldset[disabled] .btn-secondary:active, .btn-secondary.disabled.active, .btn-secondary[disabled].active, fieldset[disabled] .btn-secondary.active {
+    background-color: #343746;
+    border-color: #343746;
+}
+
+.btn-secondary .badge {
+    color: #343746;
+    background-color: #343746;
+}
+
+.btn-secondary:focus {
+    box-shadow: none!important;
+    border: none!important;
+    background-color: #292c37!important;
+}
+
+.btn-secondary:active, .btn-secondary.active, .open .dropdown-toggle.btn-secondary {
+    background-image: none;
+}
+
+.game-footer {
+    font-size: 0.7em;
+}
+
+.game-card {
+    margin-top: 10px;
+}
+
+@keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
+.game-selected {
+  outline: 1px solid var(--dathost-orange);
+  transition: 0.3s all fadeIn;
+}
+
+.upload-type:hover {
+  outline: 1px solid var(--dathost-orange);
+  transition: 0.3s all fadeIn;
+}
+
+.toast {
+  border-radius: 0;
+}
+
+.toast-header-competed {
+  background-color: #35c44d !important;
+}
+
+.toast-header {
+  background-color: var(--dathost-orange);
+  color: #fff;
+}
+
+.toast-body {
+  background-color: var(--dathost-dark-dark);
+}
+
+.card {
+    border-radius: 0;
+}
+
+.b-icon {
+    font-size: 1.3em!important;
+}
+
+.custom-search-input {
+    border: none;
+    border-bottom: 2px solid #383a49;
+    color: #fffff4;
+    background: transparent;
+    outline: none;
+    padding-bottom: 5px;
+    min-width: 250px;
+    text-indent: 40px;
+}
+
+.search-area {
+    display: inline-block;
+}
+
+.search-icon {
+    font-size: 18px;
+    margin-right: -20px;
+    margin-top: 3px;
+}
+
+.gutter-2.row {
+    margin-right: -2px;
+    margin-left: -2px;
+}
+
+.gutter-2 > [class^="col-"], .gutter-2 > [class^=" col-"] {
+    padding-right: 2px;
+    padding-left: 2px;
+}
+
+.card.login {
+    width: 40%;
+}
+
+.form-control.focus {
+    outline: 0;
+    box-shadow: none;
+    border: none;
+    color: #fff;
+    background-color: var(--dathost-dark-dark) !important;
+}
+
+textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {   
+  box-shadow: 0 2.5px 1px -1px var(--dathost-orange);
+  outline: 0 none;
+}
+
+.game-select-card {
+    min-height: 130px;
+}
+
+.nav-pills .nav-link.active, .nav-tabs .nav-link.active {
+    background-color: var(--dathost-orange);
+}
+
+.game-select-icon {
+    margin-bottom: 5px;
+    width: 45px;
+}
+
+.side-option.active {
+    background: rgba(255,161,75,.1);
+    border-left: 2px solid var(--dathost-orange);
+    color: #fff;
+    padding-left: 28px;
+    text-decoration: none;
+}
+
+.side-option-large {
+    align-items: center;
+    background: transparent;
+    border: 0px;
+    color: rgba(255,255,255,.77);
+    display: flex;
+    font-size: 1.1em;
+    height: 40px;
+    width: 100%;
+}
+
+.side-option {
+    display: block;
+    padding-left: 30px;
+    padding-right: 28px;
+}
+
+.side-option > svg {
+    width: 30px;
+    margin-right: 5px;
+}
+
+.console-card {
+    background-color: rgba(0,0,0,.03);
+}
+
+.form-control {
+    border: 0;
+    border-radius: 0;
+    background-color: var(--dathost-dark-dark);
+    color: #fff;
+}
+
+.form-control:focus {
+    background-color: #181921;
+    color: #fff;
+}
+
+.downloading-title {
+  font-size: 1em;
+}
+
+#editor-fullscreen {
+  overflow-y: hidden !important;
+}
+
+#editor-fullscreen .modal {
+  padding: 0 !important;
+}
+
+#editor-fullscreen .modal-dialog {
+  width: 90%;
+  max-width: none;
+}
+
+#editor-fullscreen .modal-content {
+  height: 90%;
+  border: 0;
+  border-radius: 0;
+}
+
+#editor-fullscreen .modal .modal-body {
+  overflow-y: auto;
+}
+
+.CodeMirror {
+  min-height: 60vh;
+}
+
+.console {
+    background-color: #000;
+    height: 60vh;
+    overflow-y: scroll;
+    white-space: pre-line;
+}
+
+.modal-content {
+  background-color: var(--dathost-dark);
+  border-radius: 0;
+  white-space: pre-line;
+}
+
+.modal-header {
+  padding: .75rem 1.25rem !important;
+  margin-bottom: 0 !important;
+  background-color: rgba(0,0,0,.03) !important;
+  border-bottom: 1px solid rgba(0,0,0,.125) !important;
+}
+
+.modal-footer {
+  background-color: rgba(0,0,0,.03) !important;
+  border-top: 1px solid rgba(0,0,0,.125) !important;
+}
+
+.ghost {
+  opacity: 0 !important;
+}
+
+.moved {
+  opacity: 1 !important;
+  -webkit-transform: rotate(3deg);
+  -moz-transform: rotate(3deg);
+  -o-transform: rotate(3deg);
+  transform: rotate(3deg);
+}
+
+.btn-warning {
+  background-color: var(--dathost-orange);
+}
+
+.console p {
+    margin-bottom: 1px;
+    font-size: .9em;
+}
+
+.steps-progressbar > ul {
+    display: table;
+    table-layout: fixed;
+    border-collapse: separate;
+    margin: 12px 0 10px;
+    width: 100%;
+    padding: 0;
+    list-style: none;
+    color: #999;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.steps-progressbar > ul > li {
+    position: relative;
+    display: table-cell;
+    list-style-type: none;
+    font-weight: 400;
+    text-align: center;
+}
+
+.steps-progressbar > ul > li:before {
+    position: inherit;
+    display: block;
+    margin: 10px auto 20px;
+    width: 30px;
+    height: 30px;
+    border: 2px solid #343746;
+    border-radius: 50%;
+    background-color: #343746;
+    line-height: 30px;
+    content: " ";
+    z-index: 1;
+}
+
+.steps-progressbar > ul > li:after {
+    position: absolute;
+    top: 19px;
+    right: 50%;
+    width: 100%;
+    height: 12px;
+    box-shadow: inset 0 0 5px #343746;
+    background-color: #343746;
+    content: " ";
+    z-index: 0;
+}
+
+.steps-progressbar > ul > li:first-child:after {
+    content: none;
+}
+
+.steps-progressbar > ul > li.active:before, .steps-progressbar > ul > li.previous:before {
+    border-color: var(--dathost-orange);
+    background-color: var(--dathost-orange);
+}
+
+.steps-progressbar > ul > li.active:after, .steps-progressbar > ul > li.previous:after {
+    box-shadow: none;
+    background-color: var(--dathost-orange);
+}
+
+.steps-progressbar > ul > li.active:before {
+    margin-top: 0;
+    margin-bottom: 10px;
+    width: 50px;
+    height: 50px;
+}
+
+.side-option.active-right {
+    background: rgba(255,161,75,.1);
+    border-right: 2px solid var(--dathost-orange);
+    color: #fff;
+    padding-left: 28px;
+    text-decoration: none;
+}
+
+.treeIcon {
+  margin-right: 5px;
+}
+
+.vtl-node-main:hover {
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+
+.vtl-icon:hover {
+  color: var(--dathost-orange-dark) !important;
+}
+
+.vtl-operation .vtl-icon {
+  margin-right: 5px;
+  font-size: 1.2em;
+}
+
+.filepond--credits {
+  display: none;
+}
+
+.filepond--drop-label {
+  background-color: var(--dathost-dark-dark);
+}
+
+.filepond--drop-label {
+  color: #fff !important;
+}
+
+.filepond--file-wrapper {
+  background-color: var(--dathost-orange-dark);
+}
+
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.slide-fade-enter, .slide-fade-leave-to {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
+.filepond--panel-root {
+  background-color: var(--dathost-dark-dark) !important;
+}
+
+.flag {
+  width: 30px;
+}
+
+.location-card > .card-body, .location-card > .card-header {
+  padding: 10px;
+}
+
+.location-card {
+    margin-bottom: 15px;
+}
+
+thead {
+    background-color: var(--dathost-dark-dark);
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  background: var(--dathost-orange);
+  border-color: var(--dathost-orange);
+  border-radius: 0;
+}
+
+.custom-radio .custom-control-input:checked~.custom-control-label::before,
+.custom-radio .custom-control-input:checked~.custom-control-label::after {
+  background: var(--dathost-orange);
+  border-radius: 0;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  height: 1em;
+  width: 1em;
+  border-radius: 50em;
+  background: url(https://pro.fontawesome.com/releases/v5.10.0/svgs/solid/times-circle.svg) no-repeat 50% 50%;
+  background-size: contain;
+  opacity: 0;
+  pointer-events: none;
+}
+
+input[type="search"]:focus::-webkit-search-cancel-button {
+  opacity: .3;
+  pointer-events: all;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  filter: invert(1);
+}
+
+::-webkit-scrollbar {
+  width: 1em;
+}
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--dathost-orange);
+  outline: 1px solid var(--dathost-orange-dark);
+}
+
+.CodeMirror-scrollbar-filler {
+  background-color: var(--dathost-orange) !important;
+}
+
+@media screen and (max-width: 800px) {
+    .card.login {
+        width: 100%;
+    }
+}
