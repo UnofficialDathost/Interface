@@ -1,29 +1,11 @@
-# dathost-interface
+# Dathost interface
 
-## Project setup
-```
-npm install
-```
+[Hosted ver](https://interface.dathost.wardpearce.com/)
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your unit tests
-```
-npm run test:unit
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Previews
+![p6](https://i.imgur.com/EakIUPI.gif)
+![p1](https://i.imgur.com/Jar4mhn.png)
+![p5](https://i.imgur.com/ZU2ijM6.png)
+![p2](https://i.imgur.com/yHvbGa4.png)
+![p3](https://i.imgur.com/dNxHhlQ.png)
+![p4](https://i.imgur.com/0rVglnl.png)
