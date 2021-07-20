@@ -5,6 +5,8 @@
 ## Status
 Still in development, not all features competed. Currently server creation only works for counter strike.
 
+**Mobile support not ideal yet**
+
 ## Previews
 ![p6](https://i.imgur.com/EakIUPI.gif)
 ![p1](https://i.imgur.com/Jar4mhn.png)
